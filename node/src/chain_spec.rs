@@ -19,7 +19,7 @@
 //! Substrate chain configurations.
 
 use grandpa_primitives::AuthorityId as GrandpaId;
-use node_template_runtime::{
+use argochain_runtime::{
 	constants::currency::*, wasm_binary_unwrap, BabeConfig, BalancesConfig, Block, CouncilConfig,
 	DemocracyConfig, ElectionsConfig, ImOnlineConfig, IndicesConfig, MaxNominations,
 	NominationPoolsConfig, SessionConfig, SessionKeys, SocietyConfig, StakerStatus, StakingConfig,
@@ -38,7 +38,7 @@ use sp_runtime::{
 	Perbill,
 };
 
-pub use node_template_runtime::RuntimeGenesisConfig;
+pub use argochain_runtime::RuntimeGenesisConfig;
 pub use node_primitives::{AccountId, Balance, Signature};
 
 type AccountPublic = <Signature as Verify>::Signer;
@@ -78,14 +78,6 @@ fn session_keys(
 
 fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 	#[rustfmt::skip]
-		// stash, controller, session-key
-		// generated with secret:
-		// for i in 1 2 3 4 ; do for j in stash controller; do subkey inspect "$secret"/fir/$j/$i; done; done
-		//
-		// and
-		//
-		// for i in 1 2 3 4 ; do for j in session; do subkey --ed25519 inspect "$secret"//fir//$j//$i; done; done
-
 		let initial_authorities: Vec<(
 		AccountId,
 		AccountId,
@@ -290,7 +282,7 @@ pub fn testnet_genesis(
 
 	let num_endowed_accounts = endowed_accounts.len();
 
-	const ENDOWMENT: Balance = 10_000_000 * DOLLARS;
+	const ENDOWMENT: Balance = 30_000_000 * ARGO;
 	const STASH: Balance = ENDOWMENT / 1000;
 
 	RuntimeGenesisConfig {
@@ -339,7 +331,7 @@ pub fn testnet_genesis(
 		},
 		sudo: SudoConfig { key: Some(root_key) },
 		babe: BabeConfig {
-			epoch_config: Some(node_template_runtime::BABE_GENESIS_EPOCH_CONFIG),
+			epoch_config: Some(argochain_runtime::BABE_GENESIS_EPOCH_CONFIG),
 			..Default::default()
 		},
 		im_online: ImOnlineConfig { keys: vec![] },
@@ -360,8 +352,8 @@ pub fn testnet_genesis(
 		alliance: Default::default(),
 		alliance_motion: Default::default(),
 		nomination_pools: NominationPoolsConfig {
-			min_create_bond: 10 * DOLLARS,
-			min_join_bond: 1 * DOLLARS,
+			min_create_bond: 10 * ARGO,
+			min_join_bond: 1 * ARGO,
 			..Default::default()
 		},
 		glutton: Default::default(),
@@ -405,8 +397,8 @@ fn local_testnet_genesis() -> RuntimeGenesisConfig {
 /// Local testnet config (multivalidator Alice + Bob)
 pub fn local_testnet_config() -> ChainSpec {
 	ChainSpec::from_genesis(
-		"Local Testnet",
-		"local_testnet",
+		"ArgoChain Testnet",
+		"argochain_testnet",
 		ChainType::Local,
 		local_testnet_genesis,
 		vec![],

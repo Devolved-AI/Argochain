@@ -1,8 +1,8 @@
 [package]
-name = "node-template-runtime"
-version = "4.0.0-dev"
-authors = ["Parity Technologies <admin@parity.io>"]
-description = "Substrate node kitchensink runtime."
+name = "argochain-runtime"
+version = "1.0.0"
+authors = ["Argo Chain Team"]
+description = "Argo chain runtime."
 edition = "2021"
 build = "build.rs"
 license = "Apache-2.0"

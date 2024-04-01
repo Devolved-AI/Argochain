@@ -1,1 +1,1 @@
-# Substrate Node Template
+# Argo chain 

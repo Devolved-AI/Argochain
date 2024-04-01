@@ -23,8 +23,7 @@ use crate::{
 	cli::{Cli, Subcommand},
 };
 use frame_benchmarking_cli::*;
-use node_template_runtime::{ExistentialDeposit, RuntimeApi};
-use node_executor::ExecutorDispatch;
+use argochain_runtime::ExistentialDeposit;
 use node_primitives::Block;
 use sc_cli::{Result, SubstrateCli};
 use sc_service::PartialComponents;
@@ -34,7 +33,7 @@ use std::sync::Arc;
 
 #[cfg(feature = "try-runtime")]
 use {
-	node_template_runtime::constants::time::SLOT_DURATION,
+	argochain_runtime::constants::time::SLOT_DURATION,
 	try_runtime_cli::block_building_info::substrate_info,
 };
 

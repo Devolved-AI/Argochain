@@ -29,7 +29,7 @@
 //! be placed here or imported from corresponding FRAME RPC definitions.
 
 #![warn(missing_docs)]
-#![warn(unused_crate_dependencies)]
+// #![warn(unused_crate_dependencies)]
 
 use std::sync::Arc;
 

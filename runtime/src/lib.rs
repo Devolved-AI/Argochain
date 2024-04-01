@@ -136,14 +136,14 @@ pub fn wasm_binary_unwrap() -> &'static [u8] {
 /// Runtime version.
 #[sp_version::runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("node"),
-	impl_name: create_runtime_str!("substrate-node"),
-	authoring_version: 10,
+	spec_name: create_runtime_str!("argo"),
+	impl_name: create_runtime_str!("argochain-node"),
+	authoring_version: 1,
 	// Per convention: if the runtime behavior changes, increment spec_version
 	// and set impl_version to 0. If only runtime
 	// implementation changes and behavior does not, then leave spec_version as
 	// is and increment impl_version.
-	spec_version: 268,
+	spec_version: 1,
 	impl_version: 0,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 2,
@@ -387,7 +387,7 @@ impl pallet_glutton::Config for Runtime {
 
 parameter_types! {
 	pub const PreimageMaxSize: u32 = 4096 * 1024;
-	pub const PreimageBaseDeposit: Balance = 1 * DOLLARS;
+	pub const PreimageBaseDeposit: Balance = 1 * ARGO;
 	// One cent: $10,000 / MB
 	pub const PreimageByteDeposit: Balance = 1 * CENTS;
 }
@@ -424,7 +424,7 @@ impl pallet_babe::Config for Runtime {
 }
 
 parameter_types! {
-	pub const IndexDeposit: Balance = 1 * DOLLARS;
+	pub const IndexDeposit: Balance = 1 * ARGO;
 }
 
 impl pallet_indices::Config for Runtime {
@@ -436,7 +436,7 @@ impl pallet_indices::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: Balance = 1 * DOLLARS;
+	pub const ExistentialDeposit: Balance = 1 * ARGO;
 	// For weight estimation, we assume that the most locks on an individual account will be 50.
 	// This number may need to be adjusted in the future if this assumption no longer holds true.
 	pub const MaxLocks: u32 = 50;
@@ -608,7 +608,7 @@ impl pallet_fast_unstake::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type ControlOrigin = frame_system::EnsureRoot<AccountId>;
 	type BatchSize = ConstU32<64>;
-	type Deposit = ConstU128<{ DOLLARS }>;
+	type Deposit = ConstU128<{ ARGO }>;
 	type Currency = Balances;
 	type Staking = Staking;
 	type MaxErasToCheckPerBlock = ConstU32<1>;
@@ -623,8 +623,8 @@ parameter_types! {
 	pub const UnsignedPhase: u32 = EPOCH_DURATION_IN_BLOCKS / 4;
 
 	// signed config
-	pub const SignedRewardBase: Balance = 1 * DOLLARS;
-	pub const SignedDepositBase: Balance = 1 * DOLLARS;
+	pub const SignedRewardBase: Balance = 1 * ARGO;
+	pub const SignedDepositBase: Balance = 1 * ARGO;
 	pub const SignedDepositByte: Balance = 1 * CENTS;
 
 	pub BetterUnsignedThreshold: Perbill = Perbill::from_rational(1u32, 10_000);
@@ -835,7 +835,7 @@ impl pallet_conviction_voting::Config for Runtime {
 
 parameter_types! {
 	pub const AlarmInterval: BlockNumber = 1;
-	pub const SubmissionDeposit: Balance = 100 * DOLLARS;
+	pub const SubmissionDeposit: Balance = 100 * ARGO;
 	pub const UndecidingTimeout: BlockNumber = 28 * DAYS;
 }
 
@@ -942,7 +942,7 @@ parameter_types! {
 	pub const LaunchPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
 	pub const VotingPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
 	pub const FastTrackVotingPeriod: BlockNumber = 3 * 24 * 60 * MINUTES;
-	pub const MinimumDeposit: Balance = 100 * DOLLARS;
+	pub const MinimumDeposit: Balance = 100 * ARGO;
 	pub const EnactmentPeriod: BlockNumber = 30 * 24 * 60 * MINUTES;
 	pub const CooloffPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
 	pub const MaxProposals: u32 = 100;
@@ -1021,7 +1021,7 @@ impl pallet_collective::Config<CouncilCollective> for Runtime {
 }
 
 parameter_types! {
-	pub const CandidacyBond: Balance = 10 * DOLLARS;
+	pub const CandidacyBond: Balance = 10 * ARGO;
 	// 1 storage item created, key size is 32 bytes, value size is 16+16.
 	pub const VotingBondBase: Balance = deposit(1, 64);
 	// additional data per vote is 32 bytes (account id).
@@ -1100,13 +1100,14 @@ impl pallet_membership::Config<pallet_membership::Instance1> for Runtime {
 
 parameter_types! {
 	pub const ProposalBond: Permill = Permill::from_percent(5);
-	pub const ProposalBondMinimum: Balance = 1 * DOLLARS;
+	pub const ProposalBondMinimum: Balance = 1 * ARGO;
 	pub const SpendPeriod: BlockNumber = 1 * DAYS;
 	pub const Burn: Permill = Permill::from_percent(50);
 	pub const TipCountdown: BlockNumber = 1 * DAYS;
 	pub const TipFindersFee: Percent = Percent::from_percent(20);
-	pub const TipReportDepositBase: Balance = 1 * DOLLARS;
+	pub const TipReportDepositBase: Balance = 1 * ARGO;
 	pub const DataDepositPerByte: Balance = 1 * CENTS;
+	// 5EYCAe5ijiYfyeZ2JJCGq56LmPyNRAKzpG4QkoQkkQNB5e6Z
 	pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
 	pub const MaximumReasonLength: u32 = 300;
 	pub const MaxApprovals: u32 = 100;
@@ -1151,11 +1152,11 @@ impl pallet_asset_rate::Config for Runtime {
 
 parameter_types! {
 	pub const BountyCuratorDeposit: Permill = Permill::from_percent(50);
-	pub const BountyValueMinimum: Balance = 5 * DOLLARS;
-	pub const BountyDepositBase: Balance = 1 * DOLLARS;
+	pub const BountyValueMinimum: Balance = 5 * ARGO;
+	pub const BountyDepositBase: Balance = 1 * ARGO;
 	pub const CuratorDepositMultiplier: Permill = Permill::from_percent(50);
-	pub const CuratorDepositMin: Balance = 1 * DOLLARS;
-	pub const CuratorDepositMax: Balance = 100 * DOLLARS;
+	pub const CuratorDepositMin: Balance = 1 * ARGO;
+	pub const CuratorDepositMax: Balance = 100 * ARGO;
 	pub const BountyDepositPayoutDelay: BlockNumber = 1 * DAYS;
 	pub const BountyUpdatePeriod: BlockNumber = 14 * DAYS;
 }
@@ -1196,7 +1197,7 @@ impl pallet_message_queue::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ChildBountyValueMinimum: Balance = 1 * DOLLARS;
+	pub const ChildBountyValueMinimum: Balance = 1 * ARGO;
 }
 
 impl pallet_child_bounties::Config for Runtime {
@@ -1363,9 +1364,9 @@ impl pallet_grandpa::Config for Runtime {
 }
 
 parameter_types! {
-	pub const BasicDeposit: Balance = 10 * DOLLARS;       // 258 bytes on-chain
+	pub const BasicDeposit: Balance = 10 * ARGO;       // 258 bytes on-chain
 	pub const FieldDeposit: Balance = 250 * CENTS;        // 66 bytes on-chain
-	pub const SubAccountDeposit: Balance = 2 * DOLLARS;   // 53 bytes on-chain
+	pub const SubAccountDeposit: Balance = 2 * ARGO;   // 53 bytes on-chain
 	pub const MaxSubAccounts: u32 = 100;
 	pub const MaxAdditionalFields: u32 = 100;
 	pub const MaxRegistrars: u32 = 20;
@@ -1387,10 +1388,10 @@ impl pallet_identity::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ConfigDepositBase: Balance = 5 * DOLLARS;
+	pub const ConfigDepositBase: Balance = 5 * ARGO;
 	pub const FriendDepositFactor: Balance = 50 * CENTS;
 	pub const MaxFriends: u16 = 9;
-	pub const RecoveryDeposit: Balance = 5 * DOLLARS;
+	pub const RecoveryDeposit: Balance = 5 * ARGO;
 }
 
 impl pallet_recovery::Config for Runtime {
@@ -1408,7 +1409,7 @@ parameter_types! {
 	pub const GraceStrikes: u32 = 10;
 	pub const SocietyVotingPeriod: BlockNumber = 80 * HOURS;
 	pub const ClaimPeriod: BlockNumber = 80 * HOURS;
-	pub const PeriodSpend: Balance = 500 * DOLLARS;
+	pub const PeriodSpend: Balance = 500 * ARGO;
 	pub const MaxLockDuration: BlockNumber = 36 * 30 * DAYS;
 	pub const ChallengePeriod: BlockNumber = 7 * DAYS;
 	pub const MaxPayouts: u32 = 10;
@@ -1435,7 +1436,7 @@ impl pallet_society::Config for Runtime {
 }
 
 parameter_types! {
-	pub const MinVestedTransfer: Balance = 100 * DOLLARS;
+	pub const MinVestedTransfer: Balance = 100 * ARGO;
 	pub UnvestedFundsAllowedWithdrawReasons: WithdrawReasons =
 		WithdrawReasons::except(WithdrawReasons::TRANSFER | WithdrawReasons::RESERVE);
 }
@@ -1480,11 +1481,11 @@ impl pallet_lottery::Config for Runtime {
 }
 
 parameter_types! {
-	pub const AssetDeposit: Balance = 100 * DOLLARS;
-	pub const ApprovalDeposit: Balance = 1 * DOLLARS;
+	pub const AssetDeposit: Balance = 100 * ARGO;
+	pub const ApprovalDeposit: Balance = 1 * ARGO;
 	pub const StringLimit: u32 = 50;
-	pub const MetadataDepositBase: Balance = 10 * DOLLARS;
-	pub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
+	pub const MetadataDepositBase: Balance = 10 * ARGO;
+	pub const MetadataDepositPerByte: Balance = 1 * ARGO;
 }
 
 impl pallet_assets::Config<Instance1> for Runtime {
@@ -1496,7 +1497,7 @@ impl pallet_assets::Config<Instance1> for Runtime {
 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
 	type ForceOrigin = EnsureRoot<AccountId>;
 	type AssetDeposit = AssetDeposit;
-	type AssetAccountDeposit = ConstU128<DOLLARS>;
+	type AssetAccountDeposit = ConstU128<ARGO>;
 	type MetadataDepositBase = MetadataDepositBase;
 	type MetadataDepositPerByte = MetadataDepositPerByte;
 	type ApprovalDeposit = ApprovalDeposit;
@@ -1523,7 +1524,7 @@ impl pallet_assets::Config<Instance2> for Runtime {
 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSignedBy<AssetConversionOrigin, AccountId>>;
 	type ForceOrigin = EnsureRoot<AccountId>;
 	type AssetDeposit = AssetDeposit;
-	type AssetAccountDeposit = ConstU128<DOLLARS>;
+	type AssetAccountDeposit = ConstU128<ARGO>;
 	type MetadataDepositBase = MetadataDepositBase;
 	type MetadataDepositPerByte = MetadataDepositPerByte;
 	type ApprovalDeposit = ApprovalDeposit;
@@ -1540,7 +1541,7 @@ impl pallet_assets::Config<Instance2> for Runtime {
 parameter_types! {
 	pub const AssetConversionPalletId: PalletId = PalletId(*b"py/ascon");
 	pub AllowMultiAssetPools: bool = true;
-	pub const PoolSetupFee: Balance = 1 * DOLLARS; // should be more or equal to the existential deposit
+	pub const PoolSetupFee: Balance = 1 * ARGO; // should be more or equal to the existential deposit
 	pub const MintMinLiquidity: Balance = 100;  // 100 is good enough when the main currency has 10-12 decimals.
 	pub const LiquidityWithdrawalFee: Permill = Permill::from_percent(0);  // should be non-zero if AllowMultiAssetPools is true, otherwise can be zero.
 }
@@ -1575,7 +1576,7 @@ parameter_types! {
 	pub const MaxQueueLen: u32 = 1000;
 	pub const FifoQueueLen: u32 = 500;
 	pub const NisBasePeriod: BlockNumber = 30 * DAYS;
-	pub const MinBid: Balance = 100 * DOLLARS;
+	pub const MinBid: Balance = 100 * ARGO;
 	pub const MinReceipt: Perquintill = Perquintill::from_percent(1);
 	pub const IntakePeriod: BlockNumber = 10;
 	pub MaxIntakeWeight: Weight = MAXIMUM_BLOCK_WEIGHT / 10;
@@ -1609,8 +1610,8 @@ impl pallet_nis::Config for Runtime {
 }
 
 parameter_types! {
-	pub const CollectionDeposit: Balance = 100 * DOLLARS;
-	pub const ItemDeposit: Balance = 1 * DOLLARS;
+	pub const CollectionDeposit: Balance = 100 * ARGO;
+	pub const ItemDeposit: Balance = 1 * ARGO;
 	pub const KeyLimit: u32 = 32;
 	pub const ValueLimit: u32 = 256;
 	pub const ApprovalsLimit: u32 = 20;
@@ -1641,14 +1642,14 @@ impl pallet_uniques::Config for Runtime {
 }
 
 parameter_types! {
-	pub const Budget: Balance = 10_000 * DOLLARS;
+	pub const Budget: Balance = 10_000 * ARGO;
 	pub TreasuryAccount: AccountId = Treasury::account_id();
 }
 
 pub struct SalaryForRank;
 impl GetSalary<u16, AccountId, Balance> for SalaryForRank {
 	fn get_salary(a: u16, _: &AccountId) -> Balance {
-		Balance::from(a) * 1000 * DOLLARS
+		Balance::from(a) * 1000 * ARGO
 	}
 }
 
@@ -1758,7 +1759,7 @@ impl pallet_whitelist::Config for Runtime {
 
 parameter_types! {
 	pub const MigrationSignedDepositPerItem: Balance = 1 * CENTS;
-	pub const MigrationSignedDepositBase: Balance = 20 * DOLLARS;
+	pub const MigrationSignedDepositBase: Balance = 20 * ARGO;
 	pub const MigrationMaxKeyLen: u32 = 512;
 }
 
@@ -1802,7 +1803,7 @@ impl pallet_collective::Config<AllianceCollective> for Runtime {
 parameter_types! {
 	pub const MaxFellows: u32 = AllianceMaxMembers::get();
 	pub const MaxAllies: u32 = 100;
-	pub const AllyDeposit: Balance = 10 * DOLLARS;
+	pub const AllyDeposit: Balance = 10 * ARGO;
 	pub const RetirementPeriod: BlockNumber = ALLIANCE_MOTION_DURATION_IN_BLOCKS + (1 * DAYS);
 }
 
@@ -1847,7 +1848,7 @@ impl frame_benchmarking_pallet_pov::Config for Runtime {
 }
 
 parameter_types! {
-	pub StatementCost: Balance = 1 * DOLLARS;
+	pub StatementCost: Balance = 1 * ARGO;
 	pub StatementByteCost: Balance = 100 * MILLICENTS;
 	pub const MinAllowedStatements: u32 = 4;
 	pub const MaxAllowedStatements: u32 = 10;
