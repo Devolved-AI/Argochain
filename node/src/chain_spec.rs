@@ -175,8 +175,8 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 pub fn staging_testnet_config() -> ChainSpec {
 	let boot_nodes = vec![];
 	ChainSpec::from_genesis(
-		"Staging Testnet",
-		"staging_testnet",
+		"ArgoChain Testnet",
+		"argochain_testnet",
 		ChainType::Live,
 		staging_testnet_config_genesis,
 		boot_nodes,
@@ -397,8 +397,8 @@ fn local_testnet_genesis() -> RuntimeGenesisConfig {
 /// Local testnet config (multivalidator Alice + Bob)
 pub fn local_testnet_config() -> ChainSpec {
 	ChainSpec::from_genesis(
-		"ArgoChain Testnet",
-		"argochain_testnet",
+		"ArgoChain local",
+		"argochain_local",
 		ChainType::Local,
 		local_testnet_genesis,
 		vec![],
