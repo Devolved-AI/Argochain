@@ -37,7 +37,7 @@ use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
 	Perbill,
 };
-
+use sc_service::Properties;
 pub use argochain_runtime::RuntimeGenesisConfig;
 pub use node_primitives::{AccountId, Balance, Signature};
 
@@ -196,6 +196,10 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 
 /// Staging testnet config.
 pub fn staging_testnet_config() -> ChainSpec {
+	let mut properties = Properties::new();
+	properties.insert("tokenSymbol".into(), "AGC".into());
+	properties.insert("tokenDecimals".into(), 18.into());
+	properties.insert("ss58Format".into(), 33.into());
 	let boot_nodes = vec![];
 	ChainSpec::from_genesis(
 		"ArgoChain Testnet",
@@ -394,6 +398,10 @@ fn development_config_genesis() -> RuntimeGenesisConfig {
 
 /// Development config (single validator Alice)
 pub fn development_config() -> ChainSpec {
+	let mut properties = Properties::new();
+	properties.insert("tokenSymbol".into(), "AGC".into());
+	properties.insert("tokenDecimals".into(), 18.into());
+	properties.insert("ss58Format".into(), 33.into());
 	ChainSpec::from_genesis(
 		"Development",
 		"dev",

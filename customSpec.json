@@ -10,7 +10,11 @@
     ]
   ],
   "protocolId": null,
-  "properties": null,
+  "properties": {
+    "ss58Format": 33,
+    "tokenDecimals": 18,
+    "tokenSymbol": "AGC"
+  },
   "forkBlocks": null,
   "badBlocks": null,
   "lightSyncState": null,
