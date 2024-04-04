@@ -4,7 +4,6 @@ Welcome to Argochain! This document will guide you through the necessary steps t
 
 ## Requirements
 
-Before you start, ensure your development environment is ready. Follow these steps:
 
 1. **Prepare your development environment**: Make sure to set up your development environment by following the [official Substrate installation instructions](https://docs.substrate.io/install/).
 
