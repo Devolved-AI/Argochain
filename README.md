@@ -37,6 +37,4 @@ After building the project, you can start a single node running in a development
 ./target/release/argochain --dev
 ```
 
-## Argochain
 
-Dive into the world of Argochain and start exploring the capabilities of your newly set-up node. If you encounter any issues or have questions, refer to our documentation or reach out to the community for support.
