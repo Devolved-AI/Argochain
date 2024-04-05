@@ -28,7 +28,7 @@ To build and launch the Argochain node, follow these QuickStart steps:
 
 First, build the codebase using Cargo with the `--release` flag to compile the project in release mode for optimal performance:
 ```bash
-cargo run --release
+cargo build --release
 ```
 
 ### Run the Single Node in a Development Environment
