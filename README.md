@@ -1,7 +1,3 @@
-Certainly! Here's a markdown version of the instructions with some added emojis for a bit of GitHub flair:
-
----
-
 ## 🚀 Running a Single Node
 
 After setting up your development environment, you're ready to spin up a single Argochain node. This is great for solo development and testing, letting you dive into the core features of Argochain without the complexity of a full network.
