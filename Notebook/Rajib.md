@@ -1,0 +1,1 @@
+- [] When we create two nodes from the same computer locally, communication between the two nodes works fine. However, when attempting to communicate between two nodes remotely, it does not work. We have customized our Argochain based on our requirements. Currently, we are conducting research to resolve these issues.
