@@ -1,6 +1,18 @@
 - [] When we create two nodes from the same computer locally, communication between the two nodes works fine. However, when attempting to communicate between two nodes remotely, it does not work. We have customized our Argochain based on our requirements. Currently, we are conducting research to resolve these issues.
 
 
+- `Error:` : failed to run custom build command for `tikv-jemalloc-sys v0.4.3+5.2.1-patched.2`
+For fixing this error I found below command is very important:
+```
+cargo clean
+rustup toolchain list
+rustup uninstall nightly-2023-08-08-x86_64-unknown-linux-gnu
+rustup uninstall nightly-x86_64-unknown-linux-gnu
+rustup toolchain list
+```
+
+
+
 ## For Rust Programming language:
 
 | Resource | Link |
