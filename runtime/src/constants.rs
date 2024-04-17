@@ -70,8 +70,5 @@ pub mod time {
 		(EPOCH_DURATION_IN_BLOCKS as f64 * SLOT_FILL_RATE) as u64
 	};
 
-	// These time units are defined in number of blocks.
-	pub const MINUTES: BlockNumber = 60 / (SECS_PER_BLOCK as BlockNumber);
-	pub const HOURS: BlockNumber = MINUTES * 60;
-	pub const DAYS: BlockNumber = HOURS * 24;
+	
 }
