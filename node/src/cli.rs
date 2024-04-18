@@ -17,7 +17,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 /// An overarching CLI command definition.
-#[derive(Debug, clap::Parser)]
+#[derive(Debug, extern crate clap::Parser)]
 pub struct Cli {
 	/// Possible subcommand with parameters.
 	#[command(subcommand)]
@@ -43,7 +43,7 @@ pub struct Cli {
 }
 
 /// Possible subcommands of the main binary.
-#[derive(Debug, clap::Subcommand)]
+#[derive(Debug, extern crate clap::Subcommand)]
 pub enum Subcommand {
 	/// The custom inspect subcommmand for decoding blocks and extrinsics.
 	#[command(

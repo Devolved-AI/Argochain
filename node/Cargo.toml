@@ -14,13 +14,13 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 array-bytes = "6.1"
 # clap = { version = "3.1.18", features = ["derive"] }
-clap = { version = "4.2.5", features = ["derive"], optional = true }
+clap = { version = "4.2.5", optional = false }
 
 #clap_complete = { version = "4.0.2", optional = true }
-hex-literal = "0.3.4"
+hex-literal = "0.4.1"
 codec = { package = "parity-scale-codec", version = "3.6.1" }
 rand = "0.8"
-jsonrpsee = { version = "0.16.2", features = ["server"] }
+jsonrpsee = { version = "0.22.4", features = ["server"] }
 hex = { version = "0.4", default-features = false }
 serde_json = "1.0.85"
 serde = { version = "1.0.163", features = ["derive"] }
@@ -71,7 +71,7 @@ sc-rpc-spec-v2 = { version = "0.10.0-dev", git = "https://github.com/paritytech/
 grandpa = { version = "0.10.0-dev", package = "sc-consensus-grandpa", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
 grandpa-primitives = { version = "4.0.0-dev", package = "sp-consensus-grandpa" , git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
 # These dependencies are used for the node template's RPCs
-jsonrpc-core = "18.0.0"
+jsonrpc-core = "17.1.0"
 sc-rpc = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
 sp-api = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
 sc-rpc-api = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
@@ -120,12 +120,12 @@ sc-client-db = { version = "0.10.0-dev", git = "https://github.com/paritytech/su
 futures = "0.3.21"
 tempfile = "3.1.0"
 assert_cmd = "2.0.2"
-nix = { version = "0.26.1", features = ["signal"] }
+nix = { version = "0.28.0", features = ["signal"] }
 serde_json = "1.0"
 regex = "1.6.0"
 platforms = "3.0"
-soketto = "0.7.1"
-criterion = { version = "0.4.0", features = ["async_tokio"] }
+soketto = "0.8.0"
+criterion = { version = "0.5.1", features = ["async_tokio"] }
 tokio = { version = "1.22.0", features = ["macros", "time", "parking_lot"] }
 tokio-util = { version = "0.7.4", features = ["compat"] }
 wait-timeout = "0.2"

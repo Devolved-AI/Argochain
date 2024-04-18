@@ -86,9 +86,13 @@ pub fn run() -> Result<()> {
 
 	match &cli.subcommand {
 		None => {
-			let runner = cli.create_runner(&cli.run)?;
-			runner.run_node_until_exit(|config| async move {
-				service::new_full(config, cli.no_hardware_benchmarks).map_err(sc_cli::Error::Service)
+			let runner: sc_cli::Runner<Cli> = Cli::from_args().create_runner(&cli.run)?;
+			runner.run_node_until_exit(|config| {
+				let future = async move {
+				let map_err = service::new_full(config, cli.no_hardware_benchmarks).map_err(sc_cli::Error::Service);
+				map_err
+				};
+				future
 			})
 		},
 		// Some(Subcommand::Inspect(cmd)) => {
@@ -97,7 +101,7 @@ pub fn run() -> Result<()> {
 		// 	runner.sync_run(|config| cmd.run::<Block, RuntimeApi, ExecutorDispatch>(config))
 		// },
 		Some(Subcommand::Benchmark(cmd)) => {
-			let runner = cli.create_runner(cmd)?;
+			let runner: sc_cli::Runner<Cli> = cli.create_runner(cmd)?;
 
 			runner.sync_run(|config| {
 				// This switch needs to be in the client, since the client decides
