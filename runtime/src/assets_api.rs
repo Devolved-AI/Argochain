@@ -21,8 +21,9 @@
 use codec::Codec;
 use sp_std::vec::Vec;
 
+/// Runtime API for assets.
 sp_api::decl_runtime_apis! {
-	pub trait AssetsApi<AccountId, AssetBalance, AssetId>
+	pub trait AssetsApi<Accounts, AssetBalance, AssetId>
 	where
 		AccountId: Codec,
 		AssetBalance: Codec,

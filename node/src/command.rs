@@ -39,7 +39,7 @@ use {
 
 impl SubstrateCli for Cli {
 	fn impl_name() -> String {
-		"Substrate Node".into()
+		"Argochain Testnet".into()
 	}
 
 	fn impl_version() -> String {
@@ -59,7 +59,7 @@ impl SubstrateCli for Cli {
 	}
 
 	fn copyright_start_year() -> i32 {
-		2017
+		2024
 	}
 
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
@@ -82,7 +82,7 @@ impl SubstrateCli for Cli {
 
 /// Parse command line arguments into service configuration.
 pub fn run() -> Result<()> {
-	let cli = Cli::from_args();
+	let cli: Cli = Cli::from_args();
 
 	match &cli.subcommand {
 		None => {

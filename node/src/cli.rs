@@ -50,7 +50,8 @@ pub enum Subcommand {
 	name = "inspect",
 	about = "Decode given block or extrinsic using current native runtime."
 	)]
-	// Inspect(node_inspect::cli::InspectCmd),
+	// 
+	Inspect(node_inspect::cli::InspectCmd),
 
 	/// Sub-commands concerned with benchmarking.
 	/// The pallet benchmarking moved to the `pallet` sub-command.
