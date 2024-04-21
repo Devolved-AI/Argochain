@@ -553,6 +553,21 @@ pallet_staking_reward_curve::build! {
 		test_precision: 0_005_000,
 	);
 }
+//emission calculation
+fn calculate_annual_emissions(initial_emissions: f64, reductions: &[f64], years: usize) -> Vec<f64> {
+    let mut emissions = vec![initial_emissions];
+    let mut last_emission = initial_emissions;
+
+    for i in 0..years {
+        let reduction = reductions.get(i).cloned().unwrap_or(0.0);
+        let new_emission = last_emission * (1.0 - reduction / 100.0);
+        emissions.push(new_emission);
+        last_emission = new_emission;
+    }
+
+    emissions
+}
+
 
 parameter_types! {
 	pub const SessionsPerEra: sp_staking::SessionIndex = 6;
