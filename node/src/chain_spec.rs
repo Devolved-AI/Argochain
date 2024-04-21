@@ -195,6 +195,8 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 }
 
 /// Staging testnet config.
+/// Have used this to create customSpec.json
+/// For more info see cli.rs file
 pub fn staging_testnet_config() -> ChainSpec {
 	let mut properties = Properties::new();
 	properties.insert("tokenSymbol".into(), "AGC".into());
