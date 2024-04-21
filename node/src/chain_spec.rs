@@ -18,20 +18,21 @@
 
 //! Substrate chain configurations.
 
-use grandpa_primitives::AuthorityId as GrandpaId;
+use grandpa_primitives::AuthorityId as GrandpaId;// Importing the AuthorityId type from the grandpa_primitives crate as GrandpaId for use in the runtime.
 use argochain_runtime::{
 	constants::currency::*, wasm_binary_unwrap, BabeConfig, BalancesConfig, Block, CouncilConfig,
 	DemocracyConfig, ElectionsConfig, ImOnlineConfig, IndicesConfig, MaxNominations,
 	NominationPoolsConfig, SessionConfig, SessionKeys, SocietyConfig, StakerStatus, StakingConfig,
 	SudoConfig, SystemConfig, TechnicalCommitteeConfig,
 };
-use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
-use sc_chain_spec::ChainSpecExtension;
-use sc_service::ChainType;
-use sc_telemetry::TelemetryEndpoints;
-use serde::{Deserialize, Serialize};
-use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;
-use sp_consensus_babe::AuthorityId as BabeId;
+use pallet_im_online::sr25519::AuthorityId as ImOnlineId; // Importing the AuthorityId type specific to the sr25519 signature scheme from the ImOnline pallet as ImOnlineId for use in the project.
+use sc_chain_spec::ChainSpecExtension;// Importing the ChainSpecExtension trait from the sc_chain_spec crate for implementing chain specification extensions.
+use sc_service::ChainType;// Importing the ChainType enum from the sc_service crate for specifying the type of chain.
+use sc_telemetry::TelemetryEndpoints;// Importing TelemetryEndpoints for specifying telemetry endpoints.
+use serde::{Deserialize, Serialize};// Importing the Deserialize and Serialize traits from the serde crate for serialization and deserialization.
+use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;// Importing the AuthorityId type from the sp_authority_discovery crate as AuthorityDiscoveryId for use in the project.
+
+use sp_consensus_babe::AuthorityId as BabeId;// Importing the AuthorityId type specific to the BABE consensus mechanism from the sp_consensus_babe crate as BabeId for use in the project.
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public};
 use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
@@ -197,7 +198,7 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 /// Staging testnet config.
 /// For staging perposes.
 /// Used in the production level
-/// 
+
 pub fn staging_testnet_config() -> ChainSpec {
 	let mut properties = Properties::new();
 	properties.insert("tokenSymbol".into(), "AGC".into());
@@ -220,7 +221,6 @@ pub fn staging_testnet_config() -> ChainSpec {
 		Default::default(),
 	)
 }
-
 /// Helper function to generate a crypto pair from seed
 pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
 	TPublic::Pair::from_string(&format!("//{}", seed), None)
