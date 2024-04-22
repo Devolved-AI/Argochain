@@ -568,6 +568,15 @@ fn calculate_annual_emissions(initial_emissions: f64, reductions: &[f64], years:
     emissions
 }
 
+static INITIAL_SUPPLY: f64 = 150_000_000.0; 
+static ANNUAL_EMISSIONS: &[f64] = &[4_750_000.0, 4_180_000.0, 3_678_400.0]; 
+
+fn calculate_inflation(initial_supply: f64, emissions: &[f64]) -> Vec<f64> {
+    emissions.iter().map(|&annual| annual / initial_supply * 100.0).collect()
+}
+
+
+
 
 parameter_types! {
 	pub const SessionsPerEra: sp_staking::SessionIndex = 6;
