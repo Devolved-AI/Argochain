@@ -1118,19 +1118,13 @@ impl pallet_treasury::Config for Runtime {
 	type PalletId = TreasuryPalletId;
 	type Currency = Balances;
 	// type ApproveOrigin = EnsureRoot<AccountId>;
-	type ApproveOrigin = EitherOfDiverse<
-		EnsureRoot<AccountId>,
-		pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 5>,
-	>;
-	type RejectOrigin = EitherOfDiverse<
-		EnsureRoot<AccountId>,
-		pallet_collective::EnsureProportionMoreThan<AccountId, CouncilCollective, 1, 2>,
-	>;
+	type ApproveOrigin = EitherOfDiverse<EnsureRoot<AccountId>,pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 5>,>; // Root can approve
+	type RejectOrigin = EitherOfDiverse<EnsureRoot<AccountId>,pallet_collective::EnsureProportionMoreThan<AccountId, CouncilCollective, 1, 2>,>;
 	type RuntimeEvent = RuntimeEvent;
-	type OnSlash = ();
+	type OnSlash = (); // No action on slash
 	type ProposalBond = ProposalBond;
 	type ProposalBondMinimum = ProposalBondMinimum;
-	type ProposalBondMaximum = ();
+	type ProposalBondMaximum = (); // No maximum bond limit
 	type SpendPeriod = SpendPeriod;
 	type Burn = Burn;
 	type BurnDestination = (); // Implement this if funds should be sent somewhere when burnt
