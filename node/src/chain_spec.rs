@@ -288,6 +288,8 @@ pub fn testnet_genesis(
 			get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
 		]
 	});
+
+	
 	// endow all authorities and nominators.
 	initial_authorities
 		.iter()
@@ -399,13 +401,15 @@ pub fn testnet_genesis(
 }
 
 fn development_config_genesis() -> RuntimeGenesisConfig {
-	testnet_genesis(
-		vec![authority_keys_from_seed("Alice")],
-		vec![],
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
-		None,
-	)
+    let alice_authority_keys = authority_keys_from_seed("Alice");
+    testnet_genesis(
+        vec![alice_authority_keys],
+        vec![],
+        get_account_id_from_seed::<sr25519::Public>("Alice"),
+        None,
+    )
 }
+
 
 /// Development config (single validator Alice)
 pub fn development_config() -> ChainSpec {
@@ -428,13 +432,16 @@ pub fn development_config() -> ChainSpec {
 }
 
 fn local_testnet_genesis() -> RuntimeGenesisConfig {
-	testnet_genesis(
-		vec![authority_keys_from_seed("Alice"), authority_keys_from_seed("Bob")],
-		vec![],
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
-		None,
-	)
+    let alice_authority_keys = authority_keys_from_seed("Alice");
+    let bob_authority_keys = authority_keys_from_seed("Bob");
+    testnet_genesis(
+        vec![alice_authority_keys, bob_authority_keys],
+        vec![],
+        get_account_id_from_seed::<sr25519::Public>("Alice"),
+        None,
+    )
 }
+
 
 /// Local testnet config (multivalidator Alice + Bob)
 pub fn local_testnet_config() -> ChainSpec {
