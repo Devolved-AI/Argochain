@@ -9,6 +9,7 @@
 // (at your option) any later version.
 
 // This program is distributed in the hope that it will be useful,
+
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
@@ -30,7 +31,7 @@ pub struct Cli {
 	/// Disable automatic hardware benchmarks.
 	///
 	/// By default these benchmarks are automatically ran at startup and measure
-	/// the CPU speed, the memory bandwidth and the disk speed.
+	/// the CPU speed,   the memory bandwidth and the disk speed.
 	///
 	/// The results are then printed out in the logs, and also sent as part of
 	/// telemetry, if telemetry is enabled.
