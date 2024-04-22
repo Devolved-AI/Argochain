@@ -13,9 +13,9 @@ Token economics models serve to define the inflation and reward distribution bas
 3. **Interest Rate and Inflation Rate Functions:**
    The equations model two scenarios:
    - **For `0 < x ≤ χ_ideal`**:
-   ```
+      ```
       i(x) = I_0 + (I_NPoS * (χ_ideal) - I_0) * (x /  χ_ideal)
-   ```
+      ```
      This equation linearly scales the inflation rate from a base rate `I_0` up to the inflation rate at the ideal staking rate, proportional to how much `x` (the staking rate) deviates from zero up to `χ_ideal`.
    - **For `χ_ideal < x ≤ 1`**:
      ```
@@ -27,3 +27,34 @@ Token economics models serve to define the inflation and reward distribution bas
    This term adjusts the nominal inflation rate by dividing it by the staking ratio, which normalizes the reward per staked token. It ensures that the effective per-token reward decreases as more tokens are staked, which balances the incentive for staking more tokens against the dilution of rewards as the total staked amount increases.
 
 These mathematical models are designed to dynamically adjust the incentives for validators and nominators based on the network's staking conditions, ensuring security and participation while preventing hyperinflation or under-compensation.
+
+
+
+## Calculating Coins per Block
+
+1. **Annual Inflation Rate**: Based on your setup, the inflation rate could vary between 2.37% (minimum) and 10% (maximum) annually, depending on the staking percentage relative to the total coin supply.
+
+2. **Total Coin Supply**: The exact number of coins created per block also depends on the total supply of coins in the network. which is `2,000,000` Let's denote this as \( S \).
+
+3. **Block Time**: The time it takes to produce a block on the network. Polkadot, for example, has a block time of approximately 6 seconds.
+
+4. **Blocks per Year Calculation**: The number of blocks per year is calculated by considering the block time. For a block time of 6 seconds:
+   ```
+   Blocks per year = (365 * 24 * 3600) / 6 = 5,256,000 blocks per year
+   ```
+
+5. **Coins Created per Block**:
+   - If the inflation rate is at its maximum (10%), the total new coins created annually would be \( 0.1 \times S \).
+   - To find the number of coins created per block:
+     ```
+     Coins per block = ( 0.1 * S ) / 5,256,000
+     ```
+
+### Exact Calculation
+
+Assuming a total coin supply \( S \) of 10 million coins (10,000,000) and an inflation rate at the maximum (10%), the calculation would be:
+```
+Coins per block = ( 2.37 * 2,000,000 ) / 5,256,000 ~ 0.901826484 coins per block
+```
+
+The actual number of coins per block will vary based on the real-time staking rate and total supply dynamics. The actual live data from your blockchain, will need to fetch current values of the total supply and dynamically calculate the inflation rate based on the current staking percentage.
