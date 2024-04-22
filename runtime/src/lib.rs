@@ -1117,6 +1117,7 @@ parameter_types! {
 impl pallet_treasury::Config for Runtime {
 	type PalletId = TreasuryPalletId;
 	type Currency = Balances;
+	// type ApproveOrigin = EnsureRoot<AccountId>;
 	type ApproveOrigin = EitherOfDiverse<
 		EnsureRoot<AccountId>,
 		pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 5>,
@@ -1132,7 +1133,7 @@ impl pallet_treasury::Config for Runtime {
 	type ProposalBondMaximum = ();
 	type SpendPeriod = SpendPeriod;
 	type Burn = Burn;
-	type BurnDestination = ();
+	type BurnDestination = (); // Implement this if funds should be sent somewhere when burnt
 	type SpendFunds = Bounties;
 	type WeightInfo = pallet_treasury::weights::SubstrateWeight<Runtime>;
 	type MaxApprovals = MaxApprovals;
