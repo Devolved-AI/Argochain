@@ -20,19 +20,30 @@
 //!
 //! Should only be used for benchmarking as it may break in other contexts.
 
+//------------------------------------------------------------------------
+
+// Importing symbols from the `service` module in the current crate
+// to access functions for creating extrinsics and the `FullClient` type.
 use crate::service::{create_extrinsic, FullClient};
 
+// Importing call types from the `argochain_runtime` module or crate
+// to interact with Balances and System pallets in the ArgoChain runtime.
 use argochain_runtime::{BalancesCall, SystemCall};
+// Importing types from the `node_primitives` module or crate
+// to work with account identifiers (`AccountId`) and balances (`Balance`).
 use node_primitives::{AccountId, Balance};
 use sc_cli::Result;
+// Importing types related to inherents from the `sp_inherents` module or crate
+// to work with inherent data and provide inherent data providers.
 use sp_inherents::{InherentData, InherentDataProvider};
 use sp_keyring::Sr25519Keyring;
+// Importing the `OpaqueExtrinsic` type from the `sp_runtime` module or crate
+// to handle opaque extrinsics in Substrate-based runtimes.
 use sp_runtime::OpaqueExtrinsic;
-
+//to work with time durations (`Duration`).
 use std::{sync::Arc, time::Duration};
 
 /// Generates `System::Remark` extrinsics for the benchmarks.
-///
 /// Note: Should only be used for benchmarking.
 pub struct RemarkBuilder {
 	client: Arc<FullClient>,
