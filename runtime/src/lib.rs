@@ -2633,6 +2633,18 @@ mod tests {
 			maximum_chain_accuracy.iter().fold(0, |acc, x| acc.checked_add(*x).unwrap());
 	}
 
+
+
+	// Revenue Sharing with Treasury
+	
+	// #[pallet::config]
+	// pub trait Config: frame_system::Config {
+	// 	/// Part of the transaction fee that is directed to the Treasury.
+	// 	#[pallet::constant]
+	// 	type TreasuryFee: Get<Permill>;
+	// }
+
+
 	#[test]
 	fn call_size() {
 		let size = core::mem::size_of::<RuntimeCall>();
