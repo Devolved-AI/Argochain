@@ -1104,18 +1104,18 @@ impl pallet_membership::Config<pallet_membership::Instance1> for Runtime {
 }
 
 parameter_types! {
-	pub const ProposalBond: Permill = Permill::from_percent(5);
+	pub const ProposalBond: Permill = Permill::from_percent(7);
 	pub const ProposalBondMinimum: Balance = 1 * ARGO;
-	pub const SpendPeriod: BlockNumber = 1 * DAYS;
+	pub const SpendPeriod: BlockNumber = 24 * DAYS;
 	pub const Burn: Permill = Permill::from_percent(50);
 	pub const TipCountdown: BlockNumber = 1 * DAYS;
 	pub const TipFindersFee: Percent = Percent::from_percent(20);
-	pub const TipReportDepositBase: Balance = 1 * ARGO;
-	pub const DataDepositPerByte: Balance = 1 * CENTS;
+	pub const TipReportDepositBase: Balance = 5 * ARGO;
+	pub const DataDepositPerByte: Balance = 5 * CENTS;
 	// 5EYCAe5ijiYfyeZ2JJCGq56LmPyNRAKzpG4QkoQkkQNB5e6Z
 	pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
-	pub const MaximumReasonLength: u32 = 300;
-	pub const MaxApprovals: u32 = 100;
+	pub const MaximumReasonLength: u32 = 50;
+	pub const MaxApprovals: u32 = 10;
 	pub const MaxBalance: Balance = Balance::max_value();
 }
 
