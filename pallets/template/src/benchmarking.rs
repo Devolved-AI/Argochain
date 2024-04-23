@@ -4,32 +4,36 @@ use super::*;
 
 #[allow(unused)]
 use crate::Pallet as Template;
-use frame_benchmarking::v2::*;
+use frame_benchmarking::benchmarks;
 use frame_system::RawOrigin;
 
-#[benchmarks]
-mod benchmarks {
-	use super::*;
+benchmarks! {
+    do_something {
+        let value = 100u32.into();
+        let caller: T::AccountId = whitelisted_caller();
+    }: _(RawOrigin::Signed(caller), value)
+    verify {
+        assert_eq!(Something::<T>::get(), Some(value));
+    }
 
-	#[benchmark]
-	fn do_something() {
-		let value = 100u32.into();
-		let caller: T::AccountId = whitelisted_caller();
-		#[extrinsic_call]
-		do_something(RawOrigin::Signed(caller), value);
+    cause_error {
+        Something::<T>::put(100u32);
+        let caller: T::AccountId = whitelisted_caller();
+    }: _(RawOrigin::Signed(caller))
+    verify {
+        assert_eq!(Something::<T>::get(), Some(101u32));
+    }
+}
 
-		assert_eq!(Something::<T>::get(), Some(value));
-	}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-	#[benchmark]
-	fn cause_error() {
-		Something::<T>::put(100u32);
-		let caller: T::AccountId = whitelisted_caller();
-		#[extrinsic_call]
-		cause_error(RawOrigin::Signed(caller));
-
-		assert_eq!(Something::<T>::get(), Some(101u32));
-	}
-
-	impl_benchmark_test_suite!(Template, crate::mock::new_test_ext(), crate::mock::Test);
+    #[test]
+    fn test_benchmarks() {
+        new_test_ext().execute_with(|| {
+            do_something::<Test>();
+            cause_error::<Test>();
+        });
+    }
 }
