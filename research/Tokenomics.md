@@ -52,7 +52,7 @@ These mathematical models are designed to dynamically adjust the incentives for 
 
 ### Exact Calculation
 
-Assuming a total coin supply \( S \) of 10 million coins (10,000,000) and an inflation rate at the maximum (10%), the calculation would be:
+Assuming a total coin supply \( S \) of 10 million coins (2,000,000) and an inflation rate at the maximum (2.37%), the calculation would be:
 ```
 Coins per block = ( 2.37 * 2,000,000 ) / 5,256,000 ~ 0.901826484 coins per block
 ```
