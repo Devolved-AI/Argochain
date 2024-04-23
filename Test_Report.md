@@ -13,7 +13,7 @@ The load test was configured with the following parameters:
 
 - Load Generator: Apache JMeter
 
-- Concurrency Levels: The test was run with varying numbers of concurrent users to simulate different load scenarios. This ranged from 10 to 1,000 users.
+- Concurrency Levels: The test was run with varying numbers of concurrent users to simulate different load scenarios. This thread ranged from 1,0000 users per seconds.
 
 - Test Duration: Each test run lasted for 10 minutes to collect sufficient data for analysis.
 
