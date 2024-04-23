@@ -2638,4 +2638,25 @@ mod tests {
 			size,
 		);
 	}
+
+	#[test]
+    fn test_fees_only() {
+        let imbalances = vec![NegativeImbalance::new(100)];
+        let mut iterator = imbalances.into_iter();
+        DealWithFees::on_unbalanceds(&mut iterator);
+    }
+
+    #[test]
+    fn test_fees_and_tips() {
+        let imbalances = vec![NegativeImbalance::new(100), NegativeImbalance::new(50)];
+        let mut iterator = imbalances.into_iter();
+        DealWithFees::on_unbalanceds(&mut iterator);
+    }
+
+    #[test]
+    fn test_no_imbalances() {
+        let imbalances = Vec::new();
+        let mut iterator = imbalances.into_iter();
+        DealWithFees::on_unbalanceds(&mut iterator);
+    }
 }

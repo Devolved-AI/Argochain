@@ -189,7 +189,13 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 		"48ec35b461b474c36b69ea524787bdea45d8cf6cc0e1f38ccc2c2adb5e4ae600",
 	);
 
-	let endowed_accounts: Vec<AccountId> = vec![root_key.clone()];
+
+	let pov_key: AccountId = array_bytes::hex_n_into_unchecked(
+		// 5HWVfrQ58esyboMFquNtDyQJ2LY8EYfxxYujfX4n23mTADNC
+		"f0d8863f78f4044a38c84fc2111e9ae75d4bbe776eb886254d3236027ea39c1b",
+	);
+
+	let endowed_accounts: Vec<AccountId> = vec![root_key.clone(), pov_key.clone()];
 
 	testnet_genesis(initial_authorities, vec![], root_key, Some(endowed_accounts))
 }
@@ -271,12 +277,14 @@ pub fn testnet_genesis(
 			get_account_id_from_seed::<sr25519::Public>("Dave"),
 			get_account_id_from_seed::<sr25519::Public>("Eve"),
 			get_account_id_from_seed::<sr25519::Public>("Ferdie"),
+			get_account_id_from_seed::<sr25519::Public>("pov"),
 			get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
 			get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
 			get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
 			get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
 			get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
 			get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
+			get_account_id_from_seed::<sr25519::Public>("pov//stash"),
 		]
 	});
 	// endow all authorities and nominators.
