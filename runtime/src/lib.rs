@@ -468,6 +468,19 @@ parameter_types! {
 	pub MaximumMultiplier: Multiplier = Bounded::max_value();
 }
 
+
+// Transaction Fees and Gas Fees
+
+// impl pallet_transaction_payment::Config for Runtime {
+//     type OnChargeTransaction = CurrencyAdapter<Balances, ()>;
+//     type TransactionByteFee = ConstU128<1>;
+//     type WeightToFee = IdentityFee<Balance>;
+//     type FeeMultiplierUpdate = DefaultFeeMultiplierUpdate<Runtime>;
+// }
+
+
+
+
 impl pallet_transaction_payment::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type OnChargeTransaction = CurrencyAdapter<Balances, DealWithFees>;
