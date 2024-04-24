@@ -549,7 +549,7 @@ pallet_staking_reward_curve::build! {
 		max_inflation: 0_100_000,
 		ideal_stake: 0_500_000,
 		falloff: 0_050_000,
-		max_piece_count: 40,
+		max_piece_count: 38, //40
 		test_precision: 0_005_000,
 	);
 }
