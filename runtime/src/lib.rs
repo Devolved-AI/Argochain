@@ -170,7 +170,7 @@ impl OnUnbalanced<NegativeImbalance> for DealWithFees {
 	fn on_unbalanceds<B>(mut fees_then_tips: impl Iterator<Item = NegativeImbalance>) {
 		if let Some(fees) = fees_then_tips.next() {
 			// for fees, 50% to treasury, 50% to author
-			let mut split = fees.ration(80, 20);
+			let mut split = fees.ration(50, 50);
 			if let Some(tips) = fees_then_tips.next() {
 				// for tips, if any, 50% to treasury, 50% to author (though this can be anything)
 				tips.ration_merge_into(50, 50, &mut split);
@@ -545,8 +545,8 @@ impl pallet_session::historical::Config for Runtime {
 
 pallet_staking_reward_curve::build! {
 	const REWARD_CURVE: PiecewiseLinear<'static> = curve!(
-		min_inflation: 0_025_000,
-		max_inflation: 0_100_000,
+		min_inflation: 0_023_700,
+		max_inflation: 0_023_700,
 		ideal_stake: 0_500_000,
 		falloff: 0_050_000,
 		max_piece_count: 40,
