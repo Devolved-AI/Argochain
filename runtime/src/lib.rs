@@ -2644,6 +2644,12 @@ mod tests {
 	// 	type TreasuryFee: Get<Permill>;
 	// }
 
+	// Set the Value in Runtime Configuration:
+	// [test]
+	// impl my_pallet::Config for Runtime {
+	// 	type TreasuryFee = Permill::from_percent(2);
+	// }
+	
 
 	#[test]
 	fn call_size() {
