@@ -57,4 +57,50 @@ Assuming a total coin supply \( S \) of 10 million coins (2,000,000) and an infl
 Coins per block = ( 2.37 * 2,000,000 ) / 5,256,000 ~ 0.901826484 coins per block
 ```
 
-The actual number of coins per block will vary based on the real-time staking rate and total supply dynamics. The actual live data from your blockchain, will need to fetch current values of the total supply and dynamically calculate the inflation rate based on the current staking percentage.
+The actual number of coins per block will vary based on the real-time staking rate and total supply dynamics. The actual live data from your blockchain will need to fetch current values of the total supply and dynamically calculate the inflation rate based on the current staking percentage.
+
+
+
+
+## Calculation of total payout for the era based on the actual staking rate
+
+### Variables
+- \( T_s \) = `npos_token_staked`: Number of tokens that are staked by nominators and validators.
+- \( T \) = `total_tokens`: Total number of tokens in circulation.
+- \( D \) = `era_duration`: Duration of the era for which the payout is being calculated, in milliseconds.
+- \( Y \) = `MILLISECONDS_PER_YEAR`: Number of milliseconds in a Julian year (365.25 days).
+
+### Inflation Function
+- `I(t)` = `yearly_inflation`: A piecewise linear function that defines the inflation rate as a function of the staking rate, `t`, where `t = T_s/T` (the fraction of total tokens that are staked).
+
+### Calculation Components
+1. **Proportional Time Factor**:
+   - The proportional time factor `P` is calculated by the ratio of the era duration to the number of milliseconds in a year, which determines what fraction of the annual inflation should be applied:
+   ```
+   P = D/Y
+   ```
+
+2. **Yearly Inflation from Staking**:
+   - The yearly inflation `I(T_s, T)` depends on the staking rate. It is calculated as:
+   ```
+   I_year = I * (T_s / T) * T
+   ```
+   This gives the amount of new tokens created per year due to inflation, based on the current staking rate.
+
+3. **Total Payout for the Era**:
+   - The total payout for the era ` P_total ` is then:
+   ```
+   P_total = P * I_year = (D / Y) * I * (T_s / T) * T
+   ```
+
+4. **Maximum Inflation Scenario**:
+   - If `I_max` is the maximum rate defined in the yearly inflation model, the maximum potential payout for the era is calculated similarly:
+   ```
+   P_max = P * I_max * T = (D / Y) * I_max * T
+   ```
+
+### Final Output
+The function returns a tuple of `(P_total`, `P_max)`, which are the total payout and the maximum payout respectively, calculated for the given era duration based on the current and maximum staking inflation scenarios.
+
+### Conclusion
+This mathematical representation helps to clarify how the staking proportion and era duration influence the inflation-derived payouts. It shows that the payout is directly proportional to both the era's length relative to a year and the inflationary response to the fraction of tokens staked. This framework ensures that the incentives for staking are aligned with the network's economic security objectives, dynamically adjusting to the staking behavior of the network participants.
