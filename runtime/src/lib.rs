@@ -354,11 +354,11 @@ impl pallet_proxy::Config for Runtime {
 	type ProxyDepositBase = ProxyDepositBase;
 	type ProxyDepositFactor = ProxyDepositFactor;
 	type MaxProxies = ConstU32<32>;
-	type WeightInfo = pallet_proxy::weights::SubstrateWeight<Runtime>;
+	type WeightInfo = pallet_proxy::weights::SubstrateWeight<Runtime>;//the weight information type as `SubstrateWeight<Runtime>`
 	type MaxPending = ConstU32<32>;
 	type CallHasher = BlakeTwo256;
 	type AnnouncementDepositBase = AnnouncementDepositBase;
-	type AnnouncementDepositFactor = AnnouncementDepositFactor;
+	type AnnouncementDepositFactor = AnnouncementDepositFactor; //Define the factor by which to multiply the deposit for announcements
 }
 
 parameter_types! {
@@ -392,6 +392,7 @@ parameter_types! {
 	pub const PreimageMaxSize: u32 = 4096 * 1024;
 	pub const PreimageBaseDeposit: Balance = 1 * ARGO;
 	// One cent: $10,000 / MB
+	//Cost of storing preimage data: One cent per byte
 	pub const PreimageByteDeposit: Balance = 1 * CENTS;
 }
 
@@ -420,8 +421,11 @@ impl pallet_babe::Config for Runtime {
 	type DisabledValidators = Session;
 	type WeightInfo = ();
 	type MaxAuthorities = MaxAuthorities;
+	//the type of key owner proof using historical data and the `pallet_babe` authority ID
 	type KeyOwnerProof =
 	<Historical as KeyOwnerProofSystem<(KeyTypeId, pallet_babe::AuthorityId)>>::Proof;
+
+	//the system for handling equivocation reports with specified parameters
 	type EquivocationReportSystem =
 	pallet_babe::EquivocationReportSystem<Self, Offences, Historical, ReportLongevity>;
 }
@@ -529,11 +533,14 @@ impl_opaque_keys! {
 
 impl pallet_session::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
+	//the type of validator ID, derived from the AccountId of the frame_system module
 	type ValidatorId = <Self as frame_system::Config>::AccountId;
 	type ValidatorIdOf = pallet_staking::StashOf<Self>;
 	type ShouldEndSession = Babe;
 	type NextSessionRotation = Babe;
+	//the session manager, which notes historical session roots in the staking pallet
 	type SessionManager = pallet_session::historical::NoteHistoricalRoot<Self, Staking>;
+	//the session handler, which provides opaque keys for session management
 	type SessionHandler = <SessionKeys as OpaqueKeys>::KeyTypeIdProviders;
 	type Keys = SessionKeys;
 	type WeightInfo = pallet_session::weights::SubstrateWeight<Runtime>;
@@ -1582,9 +1589,11 @@ parameter_types! {
 	pub const FifoQueueLen: u32 = 500;
 	pub const NisBasePeriod: BlockNumber = 30 * DAYS;
 	pub const MinBid: Balance = 100 * ARGO;
+	// Modified the value to be 1% of the maximum value
 	pub const MinReceipt: Perquintill = Perquintill::from_percent(1);
 	pub const IntakePeriod: BlockNumber = 10;
 	pub MaxIntakeWeight: Weight = MAXIMUM_BLOCK_WEIGHT / 10;
+	// Modified the throttle percentage to 10%
 	pub const ThawThrottle: (Perquintill, BlockNumber) = (Perquintill::from_percent(25), 5);
 	pub Target: Perquintill = Perquintill::zero();
 	pub const NisPalletId: PalletId = PalletId(*b"py/nis  ");
