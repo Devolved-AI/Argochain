@@ -1132,9 +1132,18 @@ impl pallet_treasury::Config for Runtime {
 	type Currency = Balances;
 	// type ApproveOrigin = EnsureRoot<AccountId>;
 	type ApproveOrigin = EitherOfDiverse<EnsureRoot<AccountId>,pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 5>,>; // Root can approve
+	
+	/// Defines who can reject treasury proposals.
+    /// In this case, either the root account (full unrestricted rejection)
+    /// OR a higher than minimum proportion (more than 1 out of 2) of the Council collective can reject.
 	type RejectOrigin = EitherOfDiverse<EnsureRoot<AccountId>,pallet_collective::EnsureProportionMoreThan<AccountId, CouncilCollective, 1, 2>,>;
+	
+	/// The type of event emitted by this pallet.
 	type RuntimeEvent = RuntimeEvent;
+
 	type OnSlash = (); // No action on slash
+
+	/// The type for the treasury proposal bond amount.
 	type ProposalBond = ProposalBond;
 	type ProposalBondMinimum = ProposalBondMinimum;
 	type ProposalBondMaximum = (); // No maximum bond limit
@@ -2654,6 +2663,10 @@ mod tests {
 	// 2. Use the Parameter in Pallet Logic:
 	// let fee = 1000;
 	// let treasury_part = T::TreasuryFee::get() * fee;
+
+
+	// Assume function exists in a custom pallet or external script
+	// submit_treasury_proposal(proposal_amount, beneficiary_account);
 
 
 	#[test]
