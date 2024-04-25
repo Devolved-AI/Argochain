@@ -1,4 +1,4 @@
-//! Substrate Node Template CLI library.
+//! Substrate Node CLI library.
 #![warn(missing_docs)]
 
 mod chain_spec;
@@ -8,6 +8,10 @@ mod benchmarking;
 mod cli;
 mod command;
 mod rpc;
+mod eth;
+mod client;
+
+// mod command_helper;
 
 fn main() -> sc_cli::Result<()> {
 	command::run()
