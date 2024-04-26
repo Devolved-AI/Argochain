@@ -480,7 +480,7 @@ parameter_types! {
 //     type FeeMultiplierUpdate = DefaultFeeMultiplierUpdate<Runtime>;
 // }
 
-
+// Balances::transfer(origin, target, amount)?;
 
 // Outflows (debits from an account) 
 impl pallet_transaction_payment::Config for Runtime {
