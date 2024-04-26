@@ -482,20 +482,14 @@ parameter_types! {
 
 
 
-
+// Outflows (debits from an account) 
 impl pallet_transaction_payment::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type OnChargeTransaction = CurrencyAdapter<Balances, DealWithFees>;
 	type OperationalFeeMultiplier = OperationalFeeMultiplier;
 	type WeightToFee = IdentityFee<Balance>;
 	type LengthToFee = ConstantMultiplier<Balance, TransactionByteFee>;
-	type FeeMultiplierUpdate = TargetedFeeAdjustment<
-		Self,
-		TargetBlockFullness,
-		AdjustmentVariable,
-		MinimumMultiplier,
-		MaximumMultiplier,
-	>;
+	type FeeMultiplierUpdate = TargetedFeeAdjustment<Self,TargetBlockFullness,AdjustmentVariable,MinimumMultiplier,MaximumMultiplier,>;
 }
 
 impl pallet_asset_tx_payment::Config for Runtime {
