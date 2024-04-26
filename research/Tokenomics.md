@@ -102,5 +102,37 @@ The actual number of coins per block will vary based on the real-time staking ra
 ### Final Output
 The function returns a tuple of `(P_total`, `P_max)`, which are the total payout and the maximum payout respectively, calculated for the given era duration based on the current and maximum staking inflation scenarios.
 
-### Conclusion
+### Observation
 This mathematical representation helps to clarify how the staking proportion and era duration influence the inflation-derived payouts. It shows that the payout is directly proportional to both the era's length relative to a year and the inflationary response to the fraction of tokens staked. This framework ensures that the incentives for staking are aligned with the network's economic security objectives, dynamically adjusting to the staking behavior of the network participants.
+
+### Implementation
+
+The `compute_total_payout` function in the code snippet calculates the total reward payout for an era based on a few input parameters: the total staked tokens in the NPoS (Nominated Proof of Stake) system, the total token supply, the era duration in milliseconds, and a yearly inflation model defined by a piecewise linear function. The function also calculates the maximum possible payout based on the maximum yearly inflation rate. Here’s a step-by-step explanation of the code:
+
+### Inputs
+- `yearly_inflation`: This is a `PiecewiseLinear` model defining how inflation changes based on the staking rate. It likely defines various points on a curve that dictate the inflation percentage as a function of the fraction of staked tokens.
+- `npos_token_staked`: The total number of tokens staked by validators and nominators.
+- `total_tokens`: The total number of tokens in circulation.
+- `era_duration`: The length of the era for which the payout is being calculated, expressed in milliseconds.
+
+### Constants
+- `MILLISECONDS_PER_YEAR`: This constant represents the number of milliseconds in a Julian year (365.25 days). It’s used to calculate what fraction of a year the era represents.
+
+### Calculations
+1. **Fraction of the Year**:
+   - `portion` is calculated as the ratio of the `era_duration` to `MILLISECONDS_PER_YEAR`. This represents what fraction of a year the era duration is.
+
+2. **Total Payout Calculation**:
+   - `payout` is calculated by multiplying the `portion` of a year by the total yearly inflation (in terms of tokens), as determined by the staking ratio (`npos_token_staked / total_tokens`). 
+   - `yearly_inflation.calculate_for_fraction_times_denominator(npos_token_staked, total_tokens.clone())` computes the yearly inflation based on the staking rate, which is the number of staked tokens divided by the total token supply. This method probably returns the number of tokens that should be released as inflation for that staking rate over a full year.
+
+3. **Maximum Payout Calculation**:
+   - `maximum` represents the theoretical maximum payout if the maximum inflation rate were applied. It is calculated as the `portion` of a year multiplied by the product of the `yearly_inflation.maximum` and `total_tokens`. The `yearly_inflation.maximum` represents the highest possible yearly inflation rate as defined in the `PiecewiseLinear` model.
+
+### Output
+- The function returns a tuple `(payout, maximum)`:
+  - `payout`: The calculated total payout for the era based on the actual staking rate.
+  - `maximum`: The maximum possible payout for the era if the inflation were at its maximum permissible rate.
+
+### Observation
+This function effectively scales the inflation based on how long the era is relative to a year and how much of the total token supply is staked. The use of a piecewise linear model allows for flexible inflation dynamics that can be adjusted based on economic goals and network security needs.
