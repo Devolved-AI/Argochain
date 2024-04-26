@@ -215,7 +215,10 @@ pub fn staging_testnet_config() -> ChainSpec {
 		),
 		None,
 		None,
-		None,
+		Some(
+			serde_json::from_str("{\"tokenDecimals\": 18, \"tokenSymbol\": \"AGC\"}")
+				.expect("Provided valid json map"),
+		),
 		Default::default(),
 	)
 }
@@ -383,8 +386,68 @@ pub fn testnet_genesis(
 		},
 		glutton: Default::default(),
 		// EVM compatibility
-		evm: Default::default(),
-		ethereum: Default::default(),
+		// EVM compatibility
+		evm: EVMConfig {
+			accounts: {
+				let mut map = BTreeMap::new();
+				map.insert(
+					// H160 address of Alice dev account
+					// Derived from SS58 (42 prefix) address
+					// SS58: 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
+					// hex: 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
+					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
+					// chars)
+					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+						.expect("internal H160 is valid; qed"),
+					GenesisAccount {
+						balance: U256::from_str("0xfffffffffffffffffffff")
+							.expect("internal U256 is valid; qed"),
+						code: Default::default(),
+						nonce: Default::default(),
+						storage: Default::default(),
+					},
+				);
+				map.insert(
+					// H160 address of Bob dev account
+					// Derived from SS58 (42 prefix) address
+					// SS58: 5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty
+					// hex: 0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48
+					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
+					// chars)
+					H160::from_str("8eaf04151687736326c9fea17e25fc5287613693")
+						.expect("internal H160 is valid; qed"),
+					GenesisAccount {
+						balance: U256::from_str("0xfffffffffffffffffffff")
+							.expect("internal U256 is valid; qed"),
+						code: Default::default(),
+						nonce: Default::default(),
+						storage: Default::default(),
+					},
+				);
+				map.insert(
+					// H160 address of Bob dev account
+					// Derived from SS58 (42 prefix) address
+					// SS58: 5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty
+					// hex: 0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48
+					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
+					// chars)
+					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+						.expect("internal H160 is valid; qed"),
+					GenesisAccount {
+						balance: U256::from_str("0xfffffffffffffffffffff")
+							.expect("internal U256 is valid; qed"),
+						code: Default::default(),
+						nonce: Default::default(),
+						storage: Default::default(),
+					},
+				);
+				map
+			},
+			_marker: Default::default(),
+		},
+		ethereum: EthereumConfig {
+			_marker: Default::default(),
+		},
 		dynamic_fee: Default::default(),
 		base_fee: Default::default(),
 	}
@@ -452,7 +515,7 @@ pub fn development_genesis(
 
 	let num_endowed_accounts = endowed_accounts.len();
 
-	const ENDOWMENT: Balance = 5_000_000_000 * ARGO;
+	const ENDOWMENT: Balance = 2_000_000 * ARGO;
 	const STASH: Balance = ENDOWMENT / 1000;
 
 	RuntimeGenesisConfig {
@@ -611,8 +674,12 @@ fn development_config_genesis() -> RuntimeGenesisConfig {
 
 /// Development config (single validator Alice)
 pub fn development_config() -> ChainSpec {
+	let mut properties = Properties::new();
+	properties.insert("tokenSymbol".into(), "AGC".into());
+	properties.insert("tokenDecimals".into(), 18.into());
+	properties.insert("ss58Format".into(), 33.into());
 	ChainSpec::from_genesis(
-		"Development",
+		"Argochain Development",
 		"dev",
 		ChainType::Development,
 		development_config_genesis,
@@ -620,7 +687,10 @@ pub fn development_config() -> ChainSpec {
 		None,
 		None,
 		None,
-		None,
+		Some(
+			serde_json::from_str("{\"tokenDecimals\": 18, \"tokenSymbol\": \"AGC\"}")
+				.expect("Provided valid json map"),
+		),
 		Default::default(),
 	)
 }
