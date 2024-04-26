@@ -136,3 +136,50 @@ The `compute_total_payout` function in the code snippet calculates the total rew
 
 ### Observation
 This function effectively scales the inflation based on how long the era is relative to a year and how much of the total token supply is staked. The use of a piecewise linear model allows for flexible inflation dynamics that can be adjusted based on economic goals and network security needs.
+
+### Example
+Here's a example to illustrate how reward distribution might be calculated in Polkadot using the Nominated Proof of Stake (NPoS) system. This example will include both the validators and their nominators:
+
+### Setup:
+- Let's assume the total reward for an Era is 1000 DOTs.
+- There are two validators, Validator A and Validator B.
+- Validator A has 2 nominators, Nominator A1 and A2.
+- Validator B has 1 nominator, Nominator B1.
+- Validator A has staked 300 DOTs, Nominator A1 has staked 100 DOTs, and Nominator A2 has staked 100 DOTs.
+- Validator B has staked 400 DOTs and Nominator B1 has staked 100 DOTs.
+- Validator A charges a 10% commission, while Validator B charges a 20% commission.
+
+### Calculation Steps:
+
+#### 1. **Total Stake Calculation**
+   - Total stake for Validator A = 300 (validator) + 100 (A1) + 100 (A2) = 500 DOTs
+   - Total stake for Validator B = 400 (validator) + 100 (B1) = 500 DOTs
+
+#### 2. **Reward Proportional to Stake**
+   - Each validator’s group gets an equal share of the total rewards because their total stakes are equal.
+   - Reward for Validator A's group = 1000 * (500 / 1000) = 500 DOTs
+   - Reward for Validator B's group = 1000 * (500 / 1000) = 500 DOTs
+
+#### 3. **Commission Taken by Validators**
+   - Validator A's commission = 10% of 500 = 50 DOTs
+   - Validator B's commission = 20% of 500 = 100 DOTs
+
+#### 4. **Reward Distribution to Nominators**
+   - Remaining reward for Validator A's nominators = 500 - 50 = 450 DOTs
+   - Remaining reward for Validator B's nominators = 500 - 100 = 400 DOTs
+
+#### 5. **Distribution Based on Individual Stakes**
+   - Nominators A1 and A2 each staked 100 DOTs out of a total 500 DOTs.
+     - Reward for Nominator A1 = 450 * (100 / 500) = 90 DOTs
+     - Reward for Nominator A2 = 450 * (100 / 500) = 90 DOTs
+   - Nominator B1 staked 100 DOTs out of a total 500 DOTs.
+     - Reward for Nominator B1 = 400 * (100 / 500) = 80 DOTs
+
+#### 6. **Final Payout**
+   - Validator A receives 50 (commission) + 270 (own stake reward, calculated similarly to nominators) = 320 DOTs
+   - Nominator A1 receives 90 DOTs
+   - Nominator A2 receives 90 DOTs
+   - Validator B receives 100 (commission) + 300 (own stake reward) = 400 DOTs
+   - Nominator B1 receives 80 DOTs
+
+This example covers how validators and nominators receive rewards based on their stake and the validator's commission rate. The actual calculation in Polkadot would depend on various factors, including total network stakes, validator performance (Era points), and the dynamic inflation mechanism.
