@@ -443,6 +443,8 @@ parameter_types! {
 	pub const MaxReserves: u32 = 50;
 }
 
+
+// Inflows (credits to an account)
 impl pallet_balances::Config for Runtime {
 	type MaxLocks = MaxLocks;
 	type MaxReserves = MaxReserves;
