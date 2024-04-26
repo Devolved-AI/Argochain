@@ -1660,12 +1660,21 @@ parameter_types! {
 	pub TreasuryAccount: AccountId = Treasury::account_id();
 }
 
+
+
+/// Struct representing a salary based on rank.
 pub struct SalaryForRank;
+
+/// Implementation of the GetSalary trait for `SalaryForRank`.
 impl GetSalary<u16, AccountId, Balance> for SalaryForRank {
-	fn get_salary(a: u16, _: &AccountId) -> Balance {
-		Balance::from(a) * 1000 * ARGO
-	}
+    /// Returns the salary for a given rank.
+    
+    /// A Balance calculated as the rank multiplied by 1000 and ARGO.
+    fn get_salary(rank: u16, _account_id: &AccountId) -> Balance {
+        Balance::from(rank) * 1000 * ARGO
+    }
 }
+
 
 impl pallet_salary::Config for Runtime {
 	type WeightInfo = ();
@@ -1692,9 +1701,13 @@ impl pallet_core_fellowship::Config for Runtime {
 
 parameter_types! {
 	pub const NftFractionalizationPalletId: PalletId = PalletId(*b"fraction");
+	/// Default symbol for new assets created in the pallet.
 	pub NewAssetSymbol: BoundedVec<u8, StringLimit> = (*b"FRAC").to_vec().try_into().unwrap();
+	/// Default name for new assets created in the pallet.
 	pub NewAssetName: BoundedVec<u8, StringLimit> = (*b"Frac").to_vec().try_into().unwrap();
 }
+
+
 
 impl pallet_nft_fractionalization::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
