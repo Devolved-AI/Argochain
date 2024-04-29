@@ -1,4 +1,5 @@
 # Introducing the ArgoChain-SDK: Your Gateway to the ArgoChain Testnet
+![IMAGE 2024-04-29 13:28:23](https://github.com/Devolved-AI/Argochain/assets/96510238/b961ae6d-f3f2-4d9e-b307-da104f38a331)
 
 We are thrilled to release the ArgoChain-SDK, specifically designed for developers eager to explore and innovate within the ArgoChain ecosystem. This toolkit facilitates the development, testing, and deployment of decentralized applications, providing you a robust platform on our testnet.
 
