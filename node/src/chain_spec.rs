@@ -391,12 +391,6 @@ pub fn testnet_genesis(
 			accounts: {
 				let mut map = BTreeMap::new();
 				map.insert(
-					// H160 address of Alice dev account
-					// Derived from SS58 (42 prefix) address
-					// SS58: 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
-					// hex: 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
-					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
-					// chars)
 					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
@@ -408,12 +402,6 @@ pub fn testnet_genesis(
 					},
 				);
 				map.insert(
-					// H160 address of Bob dev account
-					// Derived from SS58 (42 prefix) address
-					// SS58: 5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty
-					// hex: 0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48
-					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
-					// chars)
 					H160::from_str("8eaf04151687736326c9fea17e25fc5287613693")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
@@ -425,12 +413,6 @@ pub fn testnet_genesis(
 					},
 				);
 				map.insert(
-					// H160 address of Bob dev account
-					// Derived from SS58 (42 prefix) address
-					// SS58: 5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty
-					// hex: 0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48
-					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
-					// chars)
 					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
@@ -600,12 +582,7 @@ pub fn development_genesis(
 			accounts: {
 				let mut map = BTreeMap::new();
 				map.insert(
-					// H160 address of Alice dev account
-					// Derived from SS58 (42 prefix) address
-					// SS58: 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
-					// hex: 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
-					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
-					// chars)
+
 					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
@@ -617,12 +594,6 @@ pub fn development_genesis(
 					},
 				);
 				map.insert(
-					// H160 address of Bob dev account
-					// Derived from SS58 (42 prefix) address
-					// SS58: 5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty
-					// hex: 0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48
-					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
-					// chars)
 					H160::from_str("8eaf04151687736326c9fea17e25fc5287613693")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
@@ -634,12 +605,6 @@ pub fn development_genesis(
 					},
 				);
 				map.insert(
-					// H160 address of Bob dev account
-					// Derived from SS58 (42 prefix) address
-					// SS58: 5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty
-					// hex: 0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48
-					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex
-					// chars)
 					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
