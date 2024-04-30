@@ -21,4 +21,4 @@ We are thrilled to release the ArgoChain-SDK, specifically designed for develope
    cargo run --release --dev
 
 Explore More:
-Visit our documentation for detailed information on SDK capabilities, examples, and more. Join the ArgoChain developer community and start building the future of blockchain technology today!# argochain-sdk
+Visit our documentation for detailed information on SDK capabilities, examples, and more. Join the ArgoChain developer community and start building the future of blockchain technology today!
