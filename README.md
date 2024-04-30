@@ -18,7 +18,7 @@ We are thrilled to release the ArgoChain-SDK, specifically designed for develope
 2. ```bash
    cd argochain-sdk
 3. ```bash
-   cargo run --release
+   cargo run --release --dev
 
 Explore More:
 Visit our documentation for detailed information on SDK capabilities, examples, and more. Join the ArgoChain developer community and start building the future of blockchain technology today!# argochain-sdk
