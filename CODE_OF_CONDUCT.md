@@ -51,7 +51,7 @@ community.
 ---------------------------
 
 If you experience or witness any incidents that violate this Code of 
-Conduct, please report them to [reporting contact information]. We'll 
+Conduct, please report them to christian@devolvedai.com. We'll 
 handle all reports promptly and fairly.
 
 Thanks for being part of the Argochain community! Let's work together 
@@ -60,4 +60,4 @@ can contribute without fear of harassment or discrimination.
 
 ---
 
-[Last updated: 2024-04-26]
+[Last updated: 2024-04-30]
