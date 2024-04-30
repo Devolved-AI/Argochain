@@ -4,9 +4,8 @@
 ### Question Information
 -------------------------
 
-|---|---|
-| **Title**: | [Provide a clear and descriptive title for the question]|
-|**Description**: | [Briefly describe the question you have, including any relevant context or background information] |
+* **Title**: [Provide a clear and descriptive title for the question]|
+* **Description**: [Briefly describe the question you have, including any relevant context or background information]
 
 ### Related Context
 -------------------
