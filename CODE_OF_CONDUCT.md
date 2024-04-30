@@ -2,8 +2,8 @@ Code of Conduct
 ===
 
 Hey there! As a community-driven project, we want to make sure everyone
-feels welcome and valued when participating in Argochain. To achieve 
-this, we've created a set of guidelines for behavior and communication 
+feels welcome and valued when participating in the Argochain network. To 
+achieve this, we've created a set of guidelines for behavior and communication 
 that we call our Code of Conduct.
 
 ### Our Principles
