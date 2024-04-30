@@ -16,7 +16,7 @@ We are thrilled to release the ArgoChain-SDK, specifically designed for develope
    ```bash
    git clone https://github.com/devolved-ai/argochain.git
 2. ```bash
-   cd argochain-sdk
+   cd argochain
 3. ```bash
    cargo run --release --dev
 
