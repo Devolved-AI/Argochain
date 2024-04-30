@@ -93,7 +93,7 @@ contributions of others.
 ### Acknowledge Contributions
 We'll acknowledge all contributors on our project's wiki page. Your
 name will be proudly displayed alongside those of other passionate
-individuals who have helped shape the future of [Project Name].
+individuals who have helped shape the future of Devolved AI's ArgoChain.
 
 **Licensing**
 ------------
@@ -118,6 +118,6 @@ this project, please create a new issue on our GitHub page. Our
 maintainers will respond promptly and work with you to resolve the
 issue.
 
-Thank you for considering contributing to [Project Name]! We're excited
+Thank you for considering contributing to the ArgoChain SDK! We're excited
 to see what you can do. As an open-source project in development, we
 rely on passionate individuals like you to help shape its future.
