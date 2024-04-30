@@ -14,7 +14,7 @@ We are thrilled to release the ArgoChain-SDK, specifically designed for develope
 
 1. Clone the SDK from our GitHub repository:
    ```bash
-   git clone https://github.com/devolved-ai/argochain-sdk.git
+   git clone https://github.com/devolved-ai/argochain.git
 2. ```bash
    cd argochain-sdk
 3. ```bash
