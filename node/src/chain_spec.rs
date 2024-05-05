@@ -391,7 +391,7 @@ pub fn testnet_genesis(
 			accounts: {
 				let mut map = BTreeMap::new();
 				map.insert(
-					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+					H160::from_str("64d5C233999B6222A7fef1B04408DBDc0056e092")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
 						balance: U256::from_str("0xfffffffffffffffffffff")
@@ -402,7 +402,7 @@ pub fn testnet_genesis(
 					},
 				);
 				map.insert(
-					H160::from_str("8eaf04151687736326c9fea17e25fc5287613693")
+					H160::from_str("196d9978db441947AA281512841FFbecFCD12A7D")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
 						balance: U256::from_str("0xfffffffffffffffffffff")
@@ -413,7 +413,7 @@ pub fn testnet_genesis(
 					},
 				);
 				map.insert(
-					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+					H160::from_str("7904410150D016A31C673b5e058d9bBe9cd2CD8a")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
 						balance: U256::from_str("0xfffffffffffffffffffff")
