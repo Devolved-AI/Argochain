@@ -3,20 +3,23 @@ use libp2p::{
     autonat::{Behaviour as AutoNatBehaviour, Config as AutoNatConfig},
     relay::{Behaviour as RelayBehaviour, Config as RelayConfig},
     request_response::{RequestResponse, RequestResponseCodec, ProtocolSupport},
-    swarm::{NetworkBehaviour, NetworkBehaviourEventProcess, SwarmBuilder},
+    swarm::{NetworkBehaviour, NetworkBehaviourEventProcess, Swarm, SwarmBuilder},
     PeerId, Multiaddr,
 };
 use async_std::task;
 use futures::prelude::*;
 
+// Define the request structure
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct BootstrapRequest;
 
+// Define the response structure containing a list of known peers
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct BootstrapResponse {
     peers: Vec<Multiaddr>,
 }
 
+// Implement the codec for the custom bootstrapping protocol
 #[derive(Clone)]
 struct BootstrapCodec;
 
@@ -42,6 +45,7 @@ impl RequestResponseCodec for BootstrapCodec {
     }
 }
 
+// Define the custom network behaviour
 #[derive(NetworkBehaviour)]
 struct MyBehaviour {
     autonat: AutoNatBehaviour,
@@ -77,15 +81,16 @@ impl NetworkBehaviourEventProcess<libp2p::request_response::RequestResponseEvent
     }
 }
 
+// Build the swarm with custom behaviour
 async fn build_swarm() -> Swarm<MyBehaviour> {
-    let local_key = identity::Keypair::generate_ed25519();
+    let local_key = libp2p::identity::Keypair::generate_ed25519();
     let local_peer_id = PeerId::from(local_key.public());
 
-    let transport = TcpConfig::new()
-        .upgrade(upgrade::Version::V1)
+    let transport = libp2p::tcp::TcpConfig::new()
+        .upgrade(libp2p::core::upgrade::Version::V1)
         .authenticate(libp2p::noise::NoiseConfig::xx(&local_key).unwrap())
         .multiplex(libp2p::yamux::YamuxConfig::default())
-        .or_transport(TcpConfig::new().multiplex(libp2p::mplex::MplexConfig::new()));
+        .or_transport(libp2p::tcp::TcpConfig::new().multiplex(libp2p::mplex::MplexConfig::new()));
 
     let request_response_config = libp2p::request_response::RequestResponseConfig::default();
     let request_response = RequestResponse::new(
@@ -111,6 +116,7 @@ async fn build_swarm() -> Swarm<MyBehaviour> {
         .build()
 }
 
+// Bootstrap the network with known peers
 async fn bootstrap(swarm: &mut Swarm<MyBehaviour>, bootstrap_peers: Vec<Multiaddr>) {
     for addr in bootstrap_peers {
         if let Ok(peer_id) = addr.iter().last().and_then(|comp| match comp {
@@ -127,4 +133,3 @@ async fn bootstrap(swarm: &mut Swarm<MyBehaviour>, bootstrap_peers: Vec<Multiadd
         }
     }
 }
-
