@@ -14,6 +14,10 @@ targets = ["x86_64-unknown-linux-gnu"]
 #name = "argochain"
 
 [dependencies]
+libp2p = "0.53.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+async-std = "1.10" # Ensure async-std is included for async tasks`
 array-bytes = "6.1"
 # clap = { version = "3.1.18", features = ["derive"] }
 clap = { version = "4.2.5", features = ["derive"], optional = true }
@@ -24,8 +28,6 @@ codec = { package = "parity-scale-codec", version = "3.6.1" }
 rand = "0.8"
 jsonrpsee = { version = "0.16.2", features = ["server"] }
 hex = { version = "0.4", default-features = false }
-serde_json = "1.0.85"
-serde = { version = "1.0.163", features = ["derive"] }
 log = "0.4.17"
 #rand = "0.8"
 

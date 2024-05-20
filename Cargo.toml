@@ -170,7 +170,8 @@ ark-bw6-761 = { version = "0.4.0", default-features = false }
 ark-ec = { version = "0.4.0", default-features = false }
 ark-ff = { version = "0.4.0", default-features = false }
 ark-std = { version = "0.4.0", default-features = false }
-
+libp2p = "0.45"
+async-std = "1.10" # Ensure async-std is included for async tasks
 
 [profile.release]
 panic = "unwind"
