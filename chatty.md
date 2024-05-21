@@ -1,6 +1,6 @@
 # Integrating QUIC, AutoNAT, and Circuit Relay into Our Substrate Node
 
-##Introducing:
+## Introducing:
 ------------------------------------------
 # CHATTY: Connectivity, High-Availability, and Transport Technology Yield
 -----------------------------
