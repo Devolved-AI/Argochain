@@ -1,0 +1,8 @@
+            - name: Install Rust for Substrate
+  # You may pin to the exact commit or the version.
+  # uses: standardweb3/install-rust-substrate-action@e33b27ec0c99327642bab810402bf7580861c2b2
+  uses: standardweb3/install-rust-substrate-action@0.4.0
+  with:
+    # Which version of rust toolchain to use
+    nightly_toolchain_build: # optional, default is nightly-2021-04-22
+          
