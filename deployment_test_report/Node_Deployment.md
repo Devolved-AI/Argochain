@@ -445,3 +445,20 @@ nohup ./target/release/argochain \
 --name MyNode06 \
 --bootnodes /ip4/<IP-ADDRESS>/tcp/30333/p2p/12D3KooWLSZ47SEDCwEvRRRg3efqhfUoYQocwusqbyRX68AGm2Wz &
 ```
+### For Archive Node / RPC Node
+```
+./target/release/argochain \
+  --base-path /tmp/dbnode \
+  --db=rocksdb \
+  --pruning=archive \
+  --chain ./customSpecRaw.json \
+  --rpc-port=9933 \
+  --public-addr=/ip4/<Server-IP-Address>/tcp/30333 \
+  --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+  --telemetry-url "wss:/telemetry.polkadot.io/submit/ 0" \
+  --wasm-execution Compiled --prometheus-external --db-cache 512 \
+  --rpc-max-connections 5000 \
+  --rpc-external
+  --rpc-cors all \
+  --name=dbnode
+```
