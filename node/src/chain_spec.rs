@@ -540,3 +540,41 @@ pub(crate) mod tests {
 		staging_testnet_config().build_storage().unwrap();
 	}
 }
+/* 
+struct Blockchain {
+    current_block_height: u64,
+    initial_reward: f64,
+    halving_interval: u64,
+    current_reward: f64,
+}
+
+impl Blockchain {
+    fn new(initial_reward: f64, halving_interval: u64) -> Self {
+        Blockchain {
+            current_block_height: 0,
+            initial_reward,
+            halving_interval,
+            current_reward: initial_reward,
+        }
+    }
+
+    fn get_block_reward(&self) -> f64 {
+        self.current_reward
+    }
+
+    
+
+fn main() {
+    // Initial setup
+    let initial_block_reward = 0.0;
+    let halving_interval = 000;
+
+    // Create a blockchain instance
+    let mut blockchain = Blockchain::new(initial_block_reward, halving_interval);
+
+    // Simulate mining blocks
+    for _ in 0..630_000 {
+        blockchain.mine_block();
+    }
+}
+*/
