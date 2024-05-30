@@ -548,6 +548,7 @@ struct Blockchain {
     current_reward: f64,
 }
 
+
 impl Blockchain {
     fn new(initial_reward: f64, halving_interval: u64) -> Self {
         Blockchain {
@@ -562,7 +563,20 @@ impl Blockchain {
         self.current_reward
     }
 
-    
+
+	fn mine_block(&mut self) {
+        self.current_block_height += 1;
+
+        // Check if it's time to halve the reward
+        if self.current_block_height % self.halving_interval == 0 {
+            self.halve_reward();
+        }
+
+        println!(
+            "Block Height: {}, Block Reward: {}",
+            self.current_block_height, self.get_block_reward()
+        );
+    }
 
 fn main() {
     // Initial setup
