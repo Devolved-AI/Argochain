@@ -609,11 +609,13 @@ pallet_staking_reward_curve::build! {
 }
 
 parameter_types! {
-    pub const SessionsPerEra: sp_staking::SessionIndex = 6;
+    pub const SessionsPerEra: sp_staking::SessionIndex = 1;
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
     pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; // 1/4 the bonding duration.
     pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
+    //1425.6918
+    pub const BlockReward: Balance = 1_425_691_800_000_000_000_000;
     pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);
     pub OffchainRepeat: BlockNumber = 5;
     pub HistoryDepth: u32 = 84;
@@ -644,7 +646,7 @@ impl pallet_staking::Config for Runtime {
         pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 4>,
     >;
     type SessionInterface = Self;
-    type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
+    type EraPayout = FixedReward<BlockReward>;
     type NextNewSession = Session;
     type MaxNominatorRewardedPerValidator = MaxNominatorRewardedPerValidator;
     type OffendingValidatorsThreshold = OffendingValidatorsThreshold;
@@ -671,6 +673,21 @@ impl pallet_fast_unstake::Config for Runtime {
     #[cfg(feature = "runtime-benchmarks")]
     type MaxBackersPerValidator = MaxNominatorRewardedPerValidator;
     type WeightInfo = ();
+}
+use sp_runtime::traits::Zero;
+
+
+pub struct FixedReward<Amount>(PhantomData<Amount>);
+impl<Amount: Get<Balance>> pallet_staking::EraPayout<Balance> for FixedReward<Amount> {
+    fn era_payout(
+        _total_staked: Balance,
+        _total_issuance: Balance,
+        era_duration_millis: u64,
+    ) -> (Balance, Balance) {
+        (Amount::get(), Zero::zero())
+    }
+
+   
 }
 
 parameter_types! {
