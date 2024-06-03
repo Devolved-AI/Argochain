@@ -207,14 +207,23 @@ impl OnUnbalanced<NegativeImbalance> for DealWithFees {
             Treasury::on_unbalanced(split.0);
             Author::on_unbalanced(split.1);
         }
+        // Mint 1 unit into the total issuance
+        <Balances as Currency<AccountId>>::deposit_creating(&pallet_treasury::Pallet::<Runtime>::account_id(), 1_250_000_000_000_000_000);
     }
+
     fn on_nonzero_unbalanced(amount: NegativeImbalance) {
         // for fees, 80% to treasury, 20% to author
         let split = amount.ration(80, 20);
         Treasury::on_unbalanced(split.0);
         Author::on_unbalanced(split.1);
+
+        // Mint 1 unit into the total issuance
+        <Balances as Currency<AccountId>>::deposit_creating(&pallet_treasury::Pallet::<Runtime>::account_id(), 1_250_000_000_000_000_000);
     }
 }
+
+
+
 
 /// We assume that ~10% of the block weight is consumed by `on_initialize` handlers.
 /// This is used to limit the maximal weight of a single extrinsic.
@@ -686,7 +695,6 @@ impl<Amount: Get<Balance>> pallet_staking::EraPayout<Balance> for FixedReward<Am
     ) -> (Balance, Balance) {
         (Amount::get(), Zero::zero())
     }
-
    
 }
 
