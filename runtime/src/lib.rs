@@ -618,7 +618,7 @@ pallet_staking_reward_curve::build! {
 }
 
 parameter_types! {
-    pub const SessionsPerEra: sp_staking::SessionIndex = 1;
+    pub const SessionsPerEra: sp_staking::SessionIndex = 6;
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
     pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; // 1/4 the bonding duration.
     pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
@@ -1228,7 +1228,7 @@ impl pallet_treasury::Config for Runtime {
 
 parameter_types! {
     pub  TreasuryAccountId: AccountId = Treasury::account_id();
-    pub const MintAmount: Balance = 125_570_776_255_708_000; // 1.250 with 18 decimal places
+    pub const MintAmount: Balance = 1_255_707_762_557_080_000; // 1.250 with 18 decimal places
 }
 
 impl minting::Config for Runtime {
