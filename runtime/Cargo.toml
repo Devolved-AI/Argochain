@@ -129,6 +129,7 @@ pallet-vesting = { version = "4.0.0-dev", default-features = false, git = "https
 pallet-whitelist = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
 # The pallet in this template.
 pallet-template = { path = "../pallets/template", default-features = false }
+minting = { path = "../pallets/minting", default-features = false }
 
 # Frontier
 fp-account = { workspace = true, features = ["serde"] }
@@ -266,6 +267,7 @@ std = [
 	'pallet-evm-precompile-simple/std',
 	'pallet-evm-precompile-sha3fips/std',
 	"pallet-evm-precompile-simple/std",
+	"minting/std"
 ]
 runtime-benchmarks = [
 	"frame-benchmarking/runtime-benchmarks",

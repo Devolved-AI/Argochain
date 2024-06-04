@@ -624,7 +624,8 @@ parameter_types! {
     pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
     //1425.6918
-    pub const BlockReward: Balance = 1_425_691_800_000_000_000_000;
+    pub const BlockReward: Balance = 616_438_356_164_383_561_644;
+    //616.438356164383561644
     pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);
     pub OffchainRepeat: BlockNumber = 5;
     pub HistoryDepth: u32 = 84;
@@ -1182,6 +1183,8 @@ impl pallet_membership::Config<pallet_membership::Instance1> for Runtime {
     type WeightInfo = pallet_membership::weights::SubstrateWeight<Runtime>;
 }
 
+
+
 parameter_types! {
     pub const ProposalBond: Permill = Permill::from_percent(5);
     pub const ProposalBondMinimum: Balance = 100 * ARGO;
@@ -1222,6 +1225,18 @@ impl pallet_treasury::Config for Runtime {
     type MaxApprovals = MaxApprovals;
     type SpendOrigin = EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;
 }
+
+parameter_types! {
+    pub  TreasuryAccountId: AccountId = Treasury::account_id();
+    pub const MintAmount: Balance = 125_570_776_255_708_000; // 1.250 with 18 decimal places
+}
+
+impl minting::Config for Runtime {
+    type Currency = Balances;
+    type MintingAccount = TreasuryAccountId;
+    type MintAmount = MintAmount;
+}
+
 
 impl pallet_asset_rate::Config for Runtime {
     type CreateOrigin = EnsureRoot<AccountId>;
@@ -2124,6 +2139,7 @@ construct_runtime!(
         EVM: pallet_evm,
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
+        MintPallet:minting,
     }
 );
 
