@@ -208,7 +208,7 @@ impl OnUnbalanced<NegativeImbalance> for DealWithFees {
             Author::on_unbalanced(split.1);
         }
         // Mint 1 unit into the total issuance
-        <Balances as Currency<AccountId>>::deposit_creating(&pallet_treasury::Pallet::<Runtime>::account_id(), 1_250_000_000_000_000_000);
+        // <Balances as Currency<AccountId>>::deposit_creating(&pallet_treasury::Pallet::<Runtime>::account_id(), 1_250_000_000_000_000_000);
     }
 
     fn on_nonzero_unbalanced(amount: NegativeImbalance) {
@@ -218,7 +218,7 @@ impl OnUnbalanced<NegativeImbalance> for DealWithFees {
         Author::on_unbalanced(split.1);
 
         // Mint 1 unit into the total issuance
-        <Balances as Currency<AccountId>>::deposit_creating(&pallet_treasury::Pallet::<Runtime>::account_id(), 1_250_000_000_000_000_000);
+        // <Balances as Currency<AccountId>>::deposit_creating(&pallet_treasury::Pallet::<Runtime>::account_id(), 1_250_000_000_000_000_000);
     }
 }
 
