@@ -48,6 +48,8 @@ use frame_support::{
     },
     BoundedVec, PalletId, RuntimeDebug,
 };
+use sp_io::logging::log;
+
 use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
@@ -90,6 +92,18 @@ use pallet_base_fee;
 use pallet_dynamic_fee;
 mod precompiles;
 use precompiles::FrontierPrecompiles;
+
+///
+use sp_core::crypto::AccountId32;
+use hex_literal::hex;
+//Hello
+parameter_types! {
+    pub const PovAccount: AccountId32 = AccountId32::new(hex!("e483f6d0d4a9f04510d7506227a149579fd63b8c8b828d9d0b306c48aad99c67"));
+    // pub const ValidatorRewardPercentage: Perbill = Perbill::from_percent(45);
+    // pub const PovRewardPercentage: Perbill = Perbill::from_percent(55);
+    // pub const TreasuryRewardPercentage: Perbill = Perbill::from_percent(1);
+}
+
 
 use sp_runtime::{
     create_runtime_str,
@@ -597,22 +611,22 @@ impl pallet_session::historical::Config for Runtime {
     type FullIdentificationOf = pallet_staking::ExposureOf<Runtime>;
 }
 
-pallet_staking_reward_curve::build! {
-    const REWARD_CURVE: PiecewiseLinear<'static> = curve!(
-        min_inflation: 0_025_000,
-        max_inflation: 0_100_000,
-        ideal_stake: 0_500_000,
-        falloff: 0_050_000,
-        max_piece_count: 40,
-        test_precision: 0_005_000,
-    );
-}
+// pallet_staking_reward_curve::build! {
+//     const REWARD_CURVE: PiecewiseLinear<'static> = curve!(
+//         min_inflation: 0_025_000,
+//         max_inflation: 0_100_000,
+//         ideal_stake: 0_500_000,
+//         falloff: 0_050_000,
+//         max_piece_count: 40,
+//         test_precision: 0_005_000,
+//     );
+// }
 
 parameter_types! {
-    pub const SessionsPerEra: sp_staking::SessionIndex = 6;
+    pub const SessionsPerEra: sp_staking::SessionIndex = 1;//session 6
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
     pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; // 1/4 the bonding duration.
-    pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
+    // pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
     pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);
     pub OffchainRepeat: BlockNumber = 5;
@@ -631,7 +645,7 @@ impl pallet_staking::Config for Runtime {
     type CurrencyBalance = Balance;
     type UnixTime = Timestamp;
     type CurrencyToVote = sp_staking::currency_to_vote::U128CurrencyToVote;
-    type RewardRemainder = Treasury;
+    type RewardRemainder = ();//Treasury
     type RuntimeEvent = RuntimeEvent;
     type Slash = Treasury; // send the slashed funds to the treasury.
     type Reward = (); // rewards are minted from the void
@@ -644,7 +658,8 @@ impl pallet_staking::Config for Runtime {
         pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 4>,
     >;
     type SessionInterface = Self;
-    type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
+    // type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
+    type EraPayout =  CustomEraPayout;//FixedReward
     type NextNewSession = Session;
     type MaxNominatorRewardedPerValidator = MaxNominatorRewardedPerValidator;
     type OffendingValidatorsThreshold = OffendingValidatorsThreshold;
@@ -1160,8 +1175,8 @@ impl pallet_membership::Config<pallet_membership::Instance1> for Runtime {
 parameter_types! {
     pub const ProposalBond: Permill = Permill::from_percent(5);
     pub const ProposalBondMinimum: Balance = 1 * ARGO;
-    pub const SpendPeriod: BlockNumber = 1 * DAYS;
-    pub const Burn: Permill = Permill::from_percent(50);
+    pub const SpendPeriod: BlockNumber = 10;// 1 * DAYS
+    pub const Burn: Permill = Permill::from_percent(0); //from_percent(50)
     pub const TipCountdown: BlockNumber = 1 * DAYS;
     pub const TipFindersFee: Percent = Percent::from_percent(20);
     pub const TipReportDepositBase: Balance = 1 * ARGO;
@@ -1172,6 +1187,33 @@ parameter_types! {
     pub const MaxApprovals: u32 = 100;
     pub const MaxBalance: Balance = Balance::max_value();
 }
+
+
+const FIXED_REWARD: Balance = (1369.863014 * 1_000_000_000_000_000_000f64) as u128; 
+
+pub struct CustomEraPayout;
+
+impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
+    fn era_payout(_total_staked: Balance, _total_issuance: Balance, _era_duration: u64) -> (Balance, Balance) {
+        let total_reward = FIXED_REWARD;
+
+        let validator_reward = (total_reward * 45) / 100;
+        let pov_reward = (total_reward * 55) / 100;
+
+        let treasury_reward_from_validator = (validator_reward * 1) / 100;
+        let treasury_reward_from_pov = (pov_reward * 1) / 100;
+
+        let final_validator_reward = validator_reward - treasury_reward_from_validator;
+        let final_pov_reward = pov_reward - treasury_reward_from_pov;
+
+        Treasury::on_unbalanced(NegativeImbalance::new(treasury_reward_from_validator + treasury_reward_from_pov));
+        Balances::deposit_creating(&PovAccount::get(), final_pov_reward);
+
+        (final_validator_reward, total_reward) 
+    }
+}
+
+
 
 impl pallet_treasury::Config for Runtime {
     type PalletId = TreasuryPalletId;

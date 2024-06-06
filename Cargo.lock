@@ -408,6 +408,7 @@ dependencies = [
 name = "argochain-runtime"
 version = "1.0.0"
 dependencies = [
+ "array-bytes",
  "fp-account",
  "fp-evm",
  "fp-rpc",
@@ -421,6 +422,7 @@ dependencies = [
  "frame-system-benchmarking",
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
+ "hex-literal 0.4.1",
  "log",
  "node-primitives",
  "pallet-alliance",
