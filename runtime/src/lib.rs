@@ -49,7 +49,9 @@ use frame_support::{
     BoundedVec, PalletId, RuntimeDebug,
 };
 use sp_io::logging::log;
-
+//Hello
+use frame_system::pallet_prelude::*;
+use sp_runtime::traits::Saturating; 
 use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
@@ -1188,30 +1190,45 @@ parameter_types! {
     pub const MaxBalance: Balance = Balance::max_value();
 }
 
-
-const FIXED_REWARD: Balance = (1369.863014 * 1_000_000_000_000_000_000f64) as u128; 
+const INITIAL_REWARD: Balance = (1369.863014 * 1_000_000_000_000_000_000f64) as u128;
+const HALVING_PERIOD: u64 = 5; //17,520
 
 pub struct CustomEraPayout;
 
-impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
-    fn era_payout(_total_staked: Balance, _total_issuance: Balance, _era_duration: u64) -> (Balance, Balance) {
-        let total_reward = FIXED_REWARD;
-
-        let validator_reward = (total_reward * 45) / 100;
-        let pov_reward = (total_reward * 55) / 100;
-
-        let treasury_reward_from_validator = (validator_reward * 1) / 100;
-        let treasury_reward_from_pov = (pov_reward * 1) / 100;
-
-        let final_validator_reward = validator_reward - treasury_reward_from_validator;
-        let final_pov_reward = pov_reward - treasury_reward_from_pov;
-
-        Treasury::on_unbalanced(NegativeImbalance::new(treasury_reward_from_validator + treasury_reward_from_pov));
-        Balances::deposit_creating(&PovAccount::get(), final_pov_reward);
-
-        (final_validator_reward, total_reward) 
+impl CustomEraPayout {
+    fn calculate_halvings(current_era: u64, halving_period: u64) -> u32 {
+        if current_era < halving_period {
+            0
+        } else {
+            ((current_era - 1) / halving_period) as u32
+        }
     }
 }
+
+impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
+    fn era_payout(_total_staked: Balance, _total_issuance: Balance, _era_duration: u64) -> (Balance, Balance) {
+        let current_era = pallet_staking::CurrentEra::<Runtime>::get().unwrap_or(0) as u64;
+        let halvings: u32 = CustomEraPayout::calculate_halvings(current_era, HALVING_PERIOD);
+        let reward = INITIAL_REWARD.saturating_div(2u128.saturating_pow(halvings));
+
+        let validator_reward = reward.saturating_mul(45u128).saturating_div(100u128);
+        let pov_reward = reward.saturating_mul(55u128).saturating_div(100u128);
+
+        let treasury_reward_from_validator = validator_reward.saturating_mul(1u128).saturating_div(100u128);
+        let treasury_reward_from_pov = pov_reward.saturating_mul(1u128).saturating_div(100u128);
+
+        let final_validator_reward = validator_reward.saturating_sub(treasury_reward_from_validator);
+        let final_pov_reward = pov_reward.saturating_sub(treasury_reward_from_pov);
+
+        Treasury::on_unbalanced(NegativeImbalance::new(treasury_reward_from_validator.saturating_add(treasury_reward_from_pov)));
+        Balances::deposit_creating(&PovAccount::get(), final_pov_reward);
+
+        (final_validator_reward, reward)
+    }
+}
+
+
+
 
 
 
