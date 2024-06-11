@@ -444,6 +444,7 @@ dependencies = [
  "pallet-contracts-primitives",
  "pallet-conviction-voting",
  "pallet-core-fellowship",
+ "pallet-counter",
  "pallet-democracy",
  "pallet-dynamic-fee",
  "pallet-election-provider-multi-phase",
@@ -6482,6 +6483,18 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
+]
+
+[[package]]
+name = "pallet-counter"
+version = "0.1.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-runtime",
 ]
 
 [[package]]

@@ -1,0 +1,36 @@
+thread 'rustc' panicked at compiler/rustc_metadata/src/rmeta/encoder.rs:442:9:
+assertion failed: pos.get() <= self.position()
+stack backtrace:
+   0:        0x104f4e614 - <std::sys_common::backtrace::_print::DisplayBacktrace as core::fmt::Display>::fmt::h19e8eb5a56022c53
+   1:        0x104fa2098 - core::fmt::write::h6373878e34a07824
+   2:        0x104f43bd8 - std::io::Write::write_fmt::h060cb4075fbfdd5d
+   3:        0x104f4e454 - std::sys_common::backtrace::print::hebcb522a1854f29f
+   4:        0x104f51254 - std::panicking::panic_hook_with_disk_dump::{{closure}}::hdc57be773e711a54
+   5:        0x104f50f0c - std::panicking::panic_hook_with_disk_dump::h4e79e68b0a1610a1
+   6:        0x10cfacef8 - rustc_driver_impl[a1cd10567cbb0d94]::install_ice_hook::{closure#0}
+   7:        0x104f51a3c - std::panicking::rust_panic_with_hook::ha58f9d3d470a4f7c
+   8:        0x104f517d0 - std::panicking::begin_panic_handler::{{closure}}::h9a71848cc9a24486
+   9:        0x104f4eab0 - std::sys_common::backtrace::__rust_end_short_backtrace::h4cffb54296f61d72
+  10:        0x104f51578 - _rust_begin_unwind
+  11:        0x104fcd044 - core::panicking::panic_fmt::h4cbec48de0869047
+  12:        0x104fcd0b4 - core::panicking::panic::h35539001e955c795
+  13:        0x11054c278 - <rustc_metadata[8d2462556dde505a]::rmeta::encoder::EncodeContext>::encode_crate_root
+  14:        0x1105514cc - rustc_metadata[8d2462556dde505a]::rmeta::encoder::encode_metadata_impl
+  15:        0x110583144 - rustc_data_structures[6bfe5defad525d5e]::sync::join::<rustc_metadata[8d2462556dde505a]::rmeta::encoder::encode_metadata::{closure#0}, rustc_metadata[8d2462556dde505a]::rmeta::encoder::encode_metadata::{closure#1}, (), ()>
+  16:        0x110550d04 - rustc_metadata[8d2462556dde505a]::rmeta::encoder::encode_metadata
+  17:        0x11058c6fc - rustc_metadata[8d2462556dde505a]::fs::encode_and_write_metadata
+  18:        0x10d0f48c8 - rustc_interface[4e6ff82e355fd61c]::passes::start_codegen
+  19:        0x10d0f736c - <rustc_middle[2a7ea28696b56f43]::ty::context::GlobalCtxt>::enter::<<rustc_interface[4e6ff82e355fd61c]::queries::Queries>::ongoing_codegen::{closure#0}, core[db8166dcdb89c550]::result::Result<alloc[d7c92532828e9a3]::boxed::Box<dyn core[db8166dcdb89c550]::any::Any>, rustc_span[7569dfeac9d10104]::ErrorGuaranteed>>
+  20:        0x10d124c30 - <rustc_interface[4e6ff82e355fd61c]::queries::Queries>::ongoing_codegen
+  21:        0x10cfc359c - <rustc_interface[4e6ff82e355fd61c]::interface::Compiler>::enter::<rustc_driver_impl[a1cd10567cbb0d94]::run_compiler::{closure#1}::{closure#2}, core[db8166dcdb89c550]::result::Result<core[db8166dcdb89c550]::option::Option<rustc_interface[4e6ff82e355fd61c]::queries::Linker>, rustc_span[7569dfeac9d10104]::ErrorGuaranteed>>
+  22:        0x10cfeedd8 - std[4dbdadb29501640]::sys_common::backtrace::__rust_begin_short_backtrace::<rustc_interface[4e6ff82e355fd61c]::util::run_in_thread_pool_with_globals<rustc_interface[4e6ff82e355fd61c]::interface::run_compiler<core[db8166dcdb89c550]::result::Result<(), rustc_span[7569dfeac9d10104]::ErrorGuaranteed>, rustc_driver_impl[a1cd10567cbb0d94]::run_compiler::{closure#1}>::{closure#0}, core[db8166dcdb89c550]::result::Result<(), rustc_span[7569dfeac9d10104]::ErrorGuaranteed>>::{closure#0}::{closure#0}, core[db8166dcdb89c550]::result::Result<(), rustc_span[7569dfeac9d10104]::ErrorGuaranteed>>
+  23:        0x10cff0724 - <<std[4dbdadb29501640]::thread::Builder>::spawn_unchecked_<rustc_interface[4e6ff82e355fd61c]::util::run_in_thread_pool_with_globals<rustc_interface[4e6ff82e355fd61c]::interface::run_compiler<core[db8166dcdb89c550]::result::Result<(), rustc_span[7569dfeac9d10104]::ErrorGuaranteed>, rustc_driver_impl[a1cd10567cbb0d94]::run_compiler::{closure#1}>::{closure#0}, core[db8166dcdb89c550]::result::Result<(), rustc_span[7569dfeac9d10104]::ErrorGuaranteed>>::{closure#0}::{closure#0}, core[db8166dcdb89c550]::result::Result<(), rustc_span[7569dfeac9d10104]::ErrorGuaranteed>>::{closure#1} as core[db8166dcdb89c550]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  24:        0x104f5a4b8 - std::sys::unix::thread::Thread::new::thread_start::h9646c6b7b11aaf15
+  25:        0x19f6dffa8 - __pthread_joiner_wake
+
+
+rustc version: 1.73.0-nightly (03a119b0b 2023-08-07)
+platform: aarch64-apple-darwin
+
+query stack during panic:
+end of query stack

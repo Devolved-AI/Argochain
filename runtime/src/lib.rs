@@ -56,6 +56,7 @@ use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
 };
+
 pub use node_primitives::{AccountId, Signature};
 pub use node_primitives::{AccountIndex, Balance, BlockNumber, Hash, Moment, Nonce};
 use pallet_asset_conversion::{NativeOrAssetId, NativeOrAssetIdConverter};
@@ -1228,10 +1229,6 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
 }
 
 
-
-
-
-
 impl pallet_treasury::Config for Runtime {
     type PalletId = TreasuryPalletId;
     type Currency = Balances;
@@ -2158,8 +2155,22 @@ construct_runtime!(
         EVM: pallet_evm,
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
+        PalletCounter: pallet_counter::{Pallet, Call, Storage, Event<T>},
+
+
+
     }
 );
+
+// use pallet_counter::{self, WeightInfo, DefaultWeightInfo};
+pub use pallet_counter;
+
+impl pallet_counter::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type Currency = Balances;
+    // type WeightInfo = pallet_counter::weights::DefaultWeightInfo;
+}
+
 
 // All migrations executed on runtime upgrade as a nested tuple of types implementing
 // `OnRuntimeUpgrade`.
