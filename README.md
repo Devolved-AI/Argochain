@@ -52,7 +52,7 @@ Here's the updated guide with instructions on how to check the time until the ne
 
 2. **Clone and Build ArgoChain**:
    ```bash
-   git clone --branch chainspec-modified https://github.com/Devolved-AI/Argochain.git
+   git clone --branch tokenomics https://github.com/Devolved-AI/Argochain.git
    cd Argochain
    cargo build --release
    ```

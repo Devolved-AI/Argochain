@@ -2,7 +2,11 @@
   "name": "ArgoChain Testnet",
   "id": "argochain_testnet",
   "chainType": "Live",
-  "bootNodes": [],
+  "bootNodes": [
+    "/ip4/3.6.207.119/tcp/30333/p2p/12D3KooWDiHrpZ7C4qzmSFrVpRp6SzYeiHdgZw6yE8QYuFv8WyLX",
+    "/ip4/13.202.107.21/tcp/30334/p2p/12D3KooWDtqAjvbJ4v2FPYFGSdxSekrumwfhQNi3JHWvd5vGHb2R",
+    "/ip4/13.233.40.40/tcp/30335/p2p/12D3KooWNrjvCtHns4XBJc8GBRCbeurFG4Evzt24e9Horrqs6zQP"
+  ],
   "telemetryEndpoints": [
     [
       "/dns/telemetry.polkadot.io/tcp/443/x-parity-wss/%2Fsubmit%2F",
