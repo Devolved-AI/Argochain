@@ -1192,7 +1192,7 @@ parameter_types! {
 }
 
 const INITIAL_REWARD: Balance = (1369.863014 * 1_000_000_000_000_000_000f64) as u128;
-const HALVING_PERIOD: u64 = 5; //17,520
+const HALVING_PERIOD: u64 = 17520; //17,520
 
 pub struct CustomEraPayout;
 
