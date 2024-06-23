@@ -89,6 +89,7 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 		AuthorityDiscoveryId,
 	)> = vec![
 		(
+			// Validator 01
 			// Stash Account
 			// 5GP6QhAFgC2AGqk4SjBxjo8QbsyFSqLerFXkeei3Ja4ub6yC
 			array_bytes::hex_n_into_unchecked("bef744b4a41a91f56bf8ca2f5dfd92e3d55f2419a620e10bbc967a703708eb5e"),
@@ -113,6 +114,7 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 				.unchecked_into(),
 		),
 		(
+			// Validator 02
 			// Stash Account
 			// 5GzcnkD9ToM3eZ5bfLPzg87wyAFTaxQ5U1q4qaAUjWCpu26L
 			array_bytes::hex_n_into_unchecked("da0f205fba369ea8d1a3dc925aaba2cc7fe691e44e351854ead006b2a926545b"),
@@ -136,7 +138,8 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 			array_bytes::hex2array_unchecked("885e1f8a0b2f3a1526d294f9030b9b9f7329cd2657a81f13d9eb1391dfd20415")
 				.unchecked_into(),
 		),
-		(
+		(	
+			// Validator 03
 			// Stash Account
 			// 5Cct2po3wyn4VbQ3jLAyttkBmuazxFBE1x7LLyTW5y9e93BT
 			array_bytes::hex_n_into_unchecked("188a1afb495f13861bebbbb04ba71a22cadfab71bd79d54b848f4d71c7a6d64e"),
@@ -161,6 +164,7 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 				.unchecked_into(),
 		),
 		(
+			// Validator 04
 			// Stash Account
 			// 5FRQCEfqfy1KPk7sEwzvab2m91rtEWkZTguHnWyZh8GmdUM2
 			array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"),
@@ -211,6 +215,7 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 	];
 
 	let root_key: AccountId = array_bytes::hex_n_into_unchecked(
+		// Sudo Account
 		// 5GErqqnpPaXJWdwb9EobdQwcPsD38ijaMUGV6mJkjhZJkzwd
 		"b8afa2f67521bd80e4febceea9dd44a249744596b658b06e943ae265bf5be252",
 	);
@@ -228,8 +233,8 @@ pub fn staging_testnet_config() -> ChainSpec {
 	properties.insert("ss58Format".into(), 33.into());
 	let boot_nodes = vec![];
 	ChainSpec::from_genesis(
-		"ArgoChain Testnet",
-		"argochain_testnet",
+		"ArgoChain",
+		"argochain",
 		ChainType::Live,
 		staging_testnet_config_genesis,
 		boot_nodes,

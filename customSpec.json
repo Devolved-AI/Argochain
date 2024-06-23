@@ -1,6 +1,6 @@
 {
-  "name": "ArgoChain Testnet",
-  "id": "argochain_testnet",
+  "name": "ArgoChain",
+  "id": "argochain",
   "chainType": "Live",
   "bootNodes": [],
   "telemetryEndpoints": [
@@ -102,7 +102,7 @@
           ]
         ],
         "minNominatorBond": 0,
-        "minValidatorBond": 19999000000000000000000,
+        "minValidatorBond": 20000000000000000000000,
         "maxValidatorCount": null,
         "maxNominatorCount": null
       },
