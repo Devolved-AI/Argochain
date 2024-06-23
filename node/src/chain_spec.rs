@@ -339,7 +339,7 @@ pub fn testnet_genesis(
 	let num_endowed_accounts = endowed_accounts.len();
 
 	const ENDOWMENT: Balance = 400_000 * ARGO;
-	const STASH: Balance = ENDOWMENT / 1000;
+	const STASH: Balance = ENDOWMENT / 20;
 
 	RuntimeGenesisConfig {
 		system: SystemConfig { code: wasm_binary_unwrap().to_vec(), ..Default::default() },
@@ -365,6 +365,8 @@ pub fn testnet_genesis(
 			invulnerables: initial_authorities.iter().map(|x| x.0.clone()).collect(),
 			slash_reward_fraction: Perbill::from_percent(10),
 			stakers,
+			// min_validator_bond:20_000_000_000_000_000_000_000,
+			min_validator_bond:20_000 * ARGO,
 			..Default::default()
 		},
 		democracy: DemocracyConfig::default(),
@@ -414,39 +416,39 @@ pub fn testnet_genesis(
 		evm: EVMConfig {
 			accounts: {
 				let mut map = BTreeMap::new();
-				map.insert(
-					H160::from_str("B446eB701a26516061d983BfB393f389483B230b")
-						.expect("internal H160 is valid; qed"),
-					GenesisAccount {
-						balance: U256::from_str("0")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map.insert(
-					H160::from_str("F8c6Aedee63d7ADfc5cAf5d2C35707832C19B07b")
-						.expect("internal H160 is valid; qed"),
-					GenesisAccount {
-						balance: U256::from_str("0")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map.insert(
-					H160::from_str("39129dC473BE64c45C2140939969947E6C3ffCf9")
-						.expect("internal H160 is valid; qed"),
-					GenesisAccount {
-						balance: U256::from_str("0")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
+				// map.insert(
+				// 	H160::from_str("B446eB701a26516061d983BfB393f389483B230b")
+				// 		.expect("internal H160 is valid; qed"),
+				// 	GenesisAccount {
+				// 		balance: U256::from_str("0")
+				// 			.expect("internal U256 is valid; qed"),
+				// 		code: Default::default(),
+				// 		nonce: Default::default(),
+				// 		storage: Default::default(),
+				// 	},
+				// );
+				// map.insert(
+				// 	H160::from_str("F8c6Aedee63d7ADfc5cAf5d2C35707832C19B07b")
+				// 		.expect("internal H160 is valid; qed"),
+				// 	GenesisAccount {
+				// 		balance: U256::from_str("0")
+				// 			.expect("internal U256 is valid; qed"),
+				// 		code: Default::default(),
+				// 		nonce: Default::default(),
+				// 		storage: Default::default(),
+				// 	},
+				// );
+				// map.insert(
+				// 	H160::from_str("39129dC473BE64c45C2140939969947E6C3ffCf9")
+				// 		.expect("internal H160 is valid; qed"),
+				// 	GenesisAccount {
+				// 		balance: U256::from_str("0")
+				// 			.expect("internal U256 is valid; qed"),
+				// 		code: Default::default(),
+				// 		nonce: Default::default(),
+				// 		storage: Default::default(),
+				// 	},
+				// );
 				map
 			},
 			_marker: Default::default(),
