@@ -89,6 +89,7 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 		AuthorityDiscoveryId,
 	)> = vec![
 		(
+			// Validator 01
 			// Stash Account
 			// 5GP6QhAFgC2AGqk4SjBxjo8QbsyFSqLerFXkeei3Ja4ub6yC
 			array_bytes::hex_n_into_unchecked("bef744b4a41a91f56bf8ca2f5dfd92e3d55f2419a620e10bbc967a703708eb5e"),
@@ -113,6 +114,7 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 				.unchecked_into(),
 		),
 		(
+			// Validator 02
 			// Stash Account
 			// 5GzcnkD9ToM3eZ5bfLPzg87wyAFTaxQ5U1q4qaAUjWCpu26L
 			array_bytes::hex_n_into_unchecked("da0f205fba369ea8d1a3dc925aaba2cc7fe691e44e351854ead006b2a926545b"),
@@ -136,7 +138,8 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 			array_bytes::hex2array_unchecked("885e1f8a0b2f3a1526d294f9030b9b9f7329cd2657a81f13d9eb1391dfd20415")
 				.unchecked_into(),
 		),
-		(
+		(	
+			// Validator 03
 			// Stash Account
 			// 5Cct2po3wyn4VbQ3jLAyttkBmuazxFBE1x7LLyTW5y9e93BT
 			array_bytes::hex_n_into_unchecked("188a1afb495f13861bebbbb04ba71a22cadfab71bd79d54b848f4d71c7a6d64e"),
@@ -161,6 +164,7 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 				.unchecked_into(),
 		),
 		(
+			// Validator 04
 			// Stash Account
 			// 5FRQCEfqfy1KPk7sEwzvab2m91rtEWkZTguHnWyZh8GmdUM2
 			array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"),
@@ -184,38 +188,23 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 			array_bytes::hex2array_unchecked("a21a5d08177dce2ad9d2bd38000aa1b0db6b6f7b5b30c9cf67eb7a8cb681ba30")
 				.unchecked_into(),
 		),
-		// (
-		// 	// Stash Account
-		// 	// 5Ff8smmDR9VV6x9MeguLZLtzQTxRSwDR1QtJbAExdsGayN7C
-		// 	array_bytes::hex_n_into_unchecked("9ef74403465bf3b714c250b663ef2ddf759d36a5f7568dc3ad99b330365aed1b"),
-		// 	// Controller account
-		// 	// 5DZpWR7QgmwS5HQ5gVyf5as8Z9guoQR1owRSkZLD5ASjh7zD
-		// 	array_bytes::hex_n_into_unchecked("4270bd2515ba814b8478cccf8183d257616d6628bb19ba82cc0863fdb38b303a"),
-		// 	// Grandpa account
-		// 	// 5FZ5dZQhmwocaHp137ZGt1qzj6DpVXQfHAoq7PbX3JEBP9Zv
-		// 	array_bytes::hex2array_unchecked("9a58de930caf823b1bfc60bfd565504e685c69bf73e4b0b5ff54eb46fa57d178")
-		// 		.unchecked_into(),
-		// 	// Babe Account
-		// 	// 5CtCoCfy9z7W4KS1bKMjWv7BL6JZtqhuw7JQpALWbT6DMGV2
-		// 	array_bytes::hex2array_unchecked("2439f49bbc53dc4cb624e8496457e558270363dc3c3c5af7c28a7098650fc303")
-		// 		.unchecked_into(),
-		// 	// imonline Account
-		// 	// 5G1hx6uRTW3Q97xiLmNwBL7SewkvyZgroMYaWVinbKQJjk5T
-		// 	array_bytes::hex2array_unchecked("aea7835285329d267c63c1ba29b00c2817e15f2ba6497b5dd735d844dd49af6b")
-		// 		.unchecked_into(),
-		// 	// authority discovery account
-		// 	// 5Fhgj1MbTHmJC9QQAVhxREAHUKb5TD9Swpx64uG5pLT4vJ1F
-		// 	array_bytes::hex2array_unchecked("a0e8f82617a4efe279794e3c5112853eaa03fd9f482d9d7c5d33400bb5c11077")
-		// 		.unchecked_into(),
-		// ),
 	];
 
 	let root_key: AccountId = array_bytes::hex_n_into_unchecked(
+		// Sudo Account
 		// 5GErqqnpPaXJWdwb9EobdQwcPsD38ijaMUGV6mJkjhZJkzwd
 		"b8afa2f67521bd80e4febceea9dd44a249744596b658b06e943ae265bf5be252",
 	);
 
-	let endowed_accounts: Vec<AccountId> = vec![root_key.clone()];
+	// let endowed_accounts: Vec<AccountId> = vec![root_key.clone()];
+
+	let mut endowed_accounts: Vec<(AccountId, Balance)> = vec![
+		(root_key.clone(), 1_920_000 * ARGO),
+	];
+
+	initial_authorities.iter().for_each(|x| {
+		endowed_accounts.push((x.0.clone(), 20_000 * ARGO));
+	});
 
 	testnet_genesis(initial_authorities, vec![], root_key, Some(endowed_accounts))
 }
@@ -228,8 +217,8 @@ pub fn staging_testnet_config() -> ChainSpec {
 	properties.insert("ss58Format".into(), 33.into());
 	let boot_nodes = vec![];
 	ChainSpec::from_genesis(
-		"ArgoChain Testnet",
-		"argochain_testnet",
+		"ArgoChain",
+		"argochain",
 		ChainType::Live,
 		staging_testnet_config_genesis,
 		boot_nodes,
@@ -288,63 +277,62 @@ pub fn testnet_genesis(
 	)>,
 	initial_nominators: Vec<AccountId>,
 	root_key: AccountId,
-	endowed_accounts: Option<Vec<AccountId>>,
+	endowed_accounts: Option<Vec<(AccountId,Balance)>>,
 ) -> RuntimeGenesisConfig {
-	let mut endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(|| {
+	let mut endowed_accounts: Vec<(AccountId, Balance)> = endowed_accounts.unwrap_or_else(|| {
 		vec![
-			get_account_id_from_seed::<sr25519::Public>("Alice"),
-			get_account_id_from_seed::<sr25519::Public>("Bob"),
-			get_account_id_from_seed::<sr25519::Public>("Charlie"),
-			get_account_id_from_seed::<sr25519::Public>("Dave"),
-			get_account_id_from_seed::<sr25519::Public>("Eve"),
-			get_account_id_from_seed::<sr25519::Public>("Ferdie"),
-			get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
-			get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
-			get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
-			get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
-			get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
-			get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
+			(get_account_id_from_seed::<sr25519::Public>("Alice"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Bob"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Charlie"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Dave"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Eve"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Ferdie"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Alice//stash"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Bob//stash"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Charlie//stash"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Dave//stash"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Eve//stash"), 1_000_000 * ARGO),
+			(get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"), 1_000_000 * ARGO),
 		]
 	});
 	// endow all authorities and nominators.
-	initial_authorities
-		.iter()
-		.map(|x| &x.0)
-		.chain(initial_nominators.iter())
-		.for_each(|x| {
-			if !endowed_accounts.contains(x) {
-				endowed_accounts.push(x.clone())
-			}
-		});
-
+	initial_authorities.iter().for_each(|x| {
+		if !endowed_accounts.iter().any(|(a, _)| a == &x.0) {
+			endowed_accounts.push((x.0.clone(), 20_000 * ARGO));
+		}
+	});
+	initial_nominators.iter().for_each(|x| {
+		if !endowed_accounts.iter().any(|(a, _)| a == x) {
+			endowed_accounts.push((x.clone(), 0 * ARGO));
+		}
+	});
 	// stakers: all validators and nominators.
 	let mut rng = rand::thread_rng();
 	let stakers = initial_authorities
 		.iter()
-		.map(|x| (x.0.clone(), x.1.clone(), STASH, StakerStatus::Validator))
+		.map(|x| (x.0.clone(), x.1.clone(), 20_000 * ARGO, StakerStatus::Validator))
 		.chain(initial_nominators.iter().map(|x| {
-			use rand::{seq::SliceRandom, Rng};
-			let limit = (MaxNominations::get() as usize).min(initial_authorities.len());
-			let count = rng.gen::<usize>() % limit;
-			let nominations = initial_authorities
-				.as_slice()
-				.choose_multiple(&mut rng, count)
-				.into_iter()
-				.map(|choice| choice.0.clone())
-				.collect::<Vec<_>>();
-			(x.clone(), x.clone(), STASH, StakerStatus::Nominator(nominations))
+			(
+				x.clone(),
+				x.clone(),
+				10_000 * ARGO,
+				StakerStatus::Nominator(initial_authorities.iter().map(|a| a.0.clone()).collect()),
+			)
 		}))
 		.collect::<Vec<_>>();
 
-	let num_endowed_accounts = endowed_accounts.len();
+	// let num_endowed_accounts = endowed_accounts.len();
+	let technical_committee_members: Vec<AccountId> = endowed_accounts.iter().take((endowed_accounts.len() + 1) / 2).map(|(account_id, _)| account_id.clone()).collect();
+	let elections_members: Vec<(AccountId, Balance)> = endowed_accounts.iter().take((endowed_accounts.len() + 1) / 2).cloned().collect();
 
-	const ENDOWMENT: Balance = 400_000 * ARGO;
-	const STASH: Balance = ENDOWMENT / 1000;
+
+	// const ENDOWMENT: Balance = 400_000 * ARGO;
+	// const STASH: Balance = ENDOWMENT / 20;
 
 	RuntimeGenesisConfig {
 		system: SystemConfig { code: wasm_binary_unwrap().to_vec(), ..Default::default() },
 		balances: BalancesConfig {
-			balances: endowed_accounts.iter().cloned().map(|x| (x, ENDOWMENT)).collect(),
+			balances: endowed_accounts,
 		},
 		indices: IndicesConfig { indices: vec![] },
 		session: SessionConfig {
@@ -365,24 +353,17 @@ pub fn testnet_genesis(
 			invulnerables: initial_authorities.iter().map(|x| x.0.clone()).collect(),
 			slash_reward_fraction: Perbill::from_percent(10),
 			stakers,
+			// min_validator_bond:20_000_000_000_000_000_000_000,
+			min_validator_bond:20_000 * ARGO,
 			..Default::default()
 		},
 		democracy: DemocracyConfig::default(),
 		elections: ElectionsConfig {
-			members: endowed_accounts
-				.iter()
-				.take((num_endowed_accounts + 1) / 2)
-				.cloned()
-				.map(|member| (member, STASH))
-				.collect(),
+			members: elections_members,
 		},
 		council: CouncilConfig::default(),
 		technical_committee: TechnicalCommitteeConfig {
-			members: endowed_accounts
-				.iter()
-				.take((num_endowed_accounts + 1) / 2)
-				.cloned()
-				.collect(),
+			members: technical_committee_members,
 			phantom: Default::default(),
 		},
 		sudo: SudoConfig { key: Some(root_key) },
@@ -414,39 +395,7 @@ pub fn testnet_genesis(
 		evm: EVMConfig {
 			accounts: {
 				let mut map = BTreeMap::new();
-				map.insert(
-					H160::from_str("B446eB701a26516061d983BfB393f389483B230b")
-						.expect("internal H160 is valid; qed"),
-					GenesisAccount {
-						balance: U256::from_str("0")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map.insert(
-					H160::from_str("F8c6Aedee63d7ADfc5cAf5d2C35707832C19B07b")
-						.expect("internal H160 is valid; qed"),
-					GenesisAccount {
-						balance: U256::from_str("0")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map.insert(
-					H160::from_str("39129dC473BE64c45C2140939969947E6C3ffCf9")
-						.expect("internal H160 is valid; qed"),
-					GenesisAccount {
-						balance: U256::from_str("0")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
+				
 				map
 			},
 			_marker: Default::default(),
