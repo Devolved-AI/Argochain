@@ -101,10 +101,10 @@
             "Validator"
           ]
         ],
-        "minNominatorBond": 0,
+        "minNominatorBond": 4000000000000000000000,
         "minValidatorBond": 20000000000000000000000,
-        "maxValidatorCount": null,
-        "maxNominatorCount": null
+        "maxValidatorCount": 1000,
+        "maxNominatorCount": 256
       },
       "session": {
         "keys": [
@@ -158,14 +158,16 @@
         "members": [
           "5GErqqnpPaXJWdwb9EobdQwcPsD38ijaMUGV6mJkjhZJkzwd",
           "5GP6QhAFgC2AGqk4SjBxjo8QbsyFSqLerFXkeei3Ja4ub6yC",
-          "5GzcnkD9ToM3eZ5bfLPzg87wyAFTaxQ5U1q4qaAUjWCpu26L"
+          "5GzcnkD9ToM3eZ5bfLPzg87wyAFTaxQ5U1q4qaAUjWCpu26L",
+          "5Cct2po3wyn4VbQ3jLAyttkBmuazxFBE1x7LLyTW5y9e93BT",
+          "5FRQCEfqfy1KPk7sEwzvab2m91rtEWkZTguHnWyZh8GmdUM2"
         ]
       },
       "elections": {
         "members": [
           [
             "5GErqqnpPaXJWdwb9EobdQwcPsD38ijaMUGV6mJkjhZJkzwd",
-            1920000000000000000000000
+            20000000000000000000000
           ],
           [
             "5GP6QhAFgC2AGqk4SjBxjo8QbsyFSqLerFXkeei3Ja4ub6yC",
@@ -173,6 +175,14 @@
           ],
           [
             "5GzcnkD9ToM3eZ5bfLPzg87wyAFTaxQ5U1q4qaAUjWCpu26L",
+            20000000000000000000000
+          ],
+          [
+            "5Cct2po3wyn4VbQ3jLAyttkBmuazxFBE1x7LLyTW5y9e93BT",
+            20000000000000000000000
+          ],
+          [
+            "5FRQCEfqfy1KPk7sEwzvab2m91rtEWkZTguHnWyZh8GmdUM2",
             20000000000000000000000
           ]
         ]

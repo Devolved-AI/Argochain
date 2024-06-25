@@ -322,12 +322,27 @@ pub fn testnet_genesis(
 		.collect::<Vec<_>>();
 
 	// let num_endowed_accounts = endowed_accounts.len();
-	let technical_committee_members: Vec<AccountId> = endowed_accounts.iter().take((endowed_accounts.len() + 1) / 2).map(|(account_id, _)| account_id.clone()).collect();
-	let elections_members: Vec<(AccountId, Balance)> = endowed_accounts.iter().take((endowed_accounts.len() + 1) / 2).cloned().collect();
+	const STASH: Balance = 20_000 * ARGO;
+	let technical_committee_members: Vec<AccountId> = vec![
+		root_key.clone(),
+		array_bytes::hex_n_into_unchecked("bef744b4a41a91f56bf8ca2f5dfd92e3d55f2419a620e10bbc967a703708eb5e"),
+		array_bytes::hex_n_into_unchecked("da0f205fba369ea8d1a3dc925aaba2cc7fe691e44e351854ead006b2a926545b"),
+		array_bytes::hex_n_into_unchecked("188a1afb495f13861bebbbb04ba71a22cadfab71bd79d54b848f4d71c7a6d64e"),
+		array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"),
+	];
+
+
+	let elections_members: Vec<(AccountId,Balance)> = vec![
+		(root_key.clone(), STASH),
+        (array_bytes::hex_n_into_unchecked("bef744b4a41a91f56bf8ca2f5dfd92e3d55f2419a620e10bbc967a703708eb5e"), STASH),
+        (array_bytes::hex_n_into_unchecked("da0f205fba369ea8d1a3dc925aaba2cc7fe691e44e351854ead006b2a926545b"), STASH),
+        (array_bytes::hex_n_into_unchecked("188a1afb495f13861bebbbb04ba71a22cadfab71bd79d54b848f4d71c7a6d64e"), STASH),
+        (array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"), STASH),
+	];
 
 
 	// const ENDOWMENT: Balance = 400_000 * ARGO;
-	// const STASH: Balance = ENDOWMENT / 20;
+	
 
 	RuntimeGenesisConfig {
 		system: SystemConfig { code: wasm_binary_unwrap().to_vec(), ..Default::default() },
@@ -352,9 +367,12 @@ pub fn testnet_genesis(
 			minimum_validator_count: initial_authorities.len() as u32,
 			invulnerables: initial_authorities.iter().map(|x| x.0.clone()).collect(),
 			slash_reward_fraction: Perbill::from_percent(10),
+			max_nominator_count:Some(256),
+			max_validator_count:Some(1000),
 			stakers,
 			// min_validator_bond:20_000_000_000_000_000_000_000,
 			min_validator_bond:20_000 * ARGO,
+			min_nominator_bond:40_00 * ARGO,
 			..Default::default()
 		},
 		democracy: DemocracyConfig::default(),
