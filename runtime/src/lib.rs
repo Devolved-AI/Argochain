@@ -186,8 +186,8 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // and set impl_version to 0. If only runtime
     // implementation changes and behavior does not, then leave spec_version as
     // is and increment impl_version.
-    spec_version: 2,
-    impl_version: 1,
+    spec_version: 1,
+    impl_version: 0,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 2,
     state_version: 1,
@@ -628,8 +628,8 @@ impl pallet_session::historical::Config for Runtime {
 parameter_types! {
     pub const SessionsPerEra: sp_staking::SessionIndex = 1;//session 6
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
-    pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; // 1/4 the bonding duration.
-    pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
+    pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7 //1/4 the bonding duration.
+    // pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
     pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);
     pub OffchainRepeat: BlockNumber = 5;
@@ -648,7 +648,7 @@ impl pallet_staking::Config for Runtime {
     type CurrencyBalance = Balance;
     type UnixTime = Timestamp;
     type CurrencyToVote = sp_staking::currency_to_vote::U128CurrencyToVote;
-    type RewardRemainder = (); //Treasury
+    type RewardRemainder = Treasury;//()
     type RuntimeEvent = RuntimeEvent;
     type Slash = Treasury; // send the slashed funds to the treasury.
     type Reward = (); // rewards are minted from the void
@@ -1194,6 +1194,7 @@ parameter_types! {
 const INITIAL_REWARD: Balance = (1369.863014 * 1_000_000_000_000_000_000f64) as u128;
 const HALVING_PERIOD: u64 = 17520; //17,520
 
+// use sp_runtime::traits::Zero;
 pub struct CustomEraPayout;
 
 impl CustomEraPayout {
@@ -1212,19 +1213,58 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
         let halvings: u32 = CustomEraPayout::calculate_halvings(current_era, HALVING_PERIOD);
         let reward = INITIAL_REWARD.saturating_div(2u128.saturating_pow(halvings));
 
-        let validator_reward = reward.saturating_mul(45u128).saturating_div(100u128);
-        let pov_reward = reward.saturating_mul(55u128).saturating_div(100u128);
+        frame_support::log::info!("Current Era: {}", current_era);
+        frame_support::log::info!("Halvings: {}", halvings);
+        frame_support::log::info!("Reward: {}", reward);
 
-        let treasury_reward_from_validator = validator_reward.saturating_mul(1u128).saturating_div(100u128);
-        let treasury_reward_from_pov = pov_reward.saturating_mul(1u128).saturating_div(100u128);
+        let validator_reward = (reward * 45) / 100;
+        let pov_reward = (reward * 55) / 100;
+
+        frame_support::log::info!("Validator Reward: {}", validator_reward);
+        frame_support::log::info!("PoV Reward: {}", pov_reward);
+
+        let treasury_reward_from_validator = validator_reward / 100;
+        let treasury_reward_from_pov = pov_reward / 100;
+
+        frame_support::log::info!("Treasury Reward from Validator: {}", treasury_reward_from_validator);
+        frame_support::log::info!("Treasury Reward from PoV: {}", treasury_reward_from_pov);
 
         let final_validator_reward = validator_reward.saturating_sub(treasury_reward_from_validator);
         let final_pov_reward = pov_reward.saturating_sub(treasury_reward_from_pov);
 
-        Treasury::on_unbalanced(NegativeImbalance::new(treasury_reward_from_validator.saturating_add(treasury_reward_from_pov)));
+        frame_support::log::info!("Final Validator Reward: {}", final_validator_reward);
+        frame_support::log::info!("Final PoV Reward: {}", final_pov_reward);
+
+        let total_treasury_reward = treasury_reward_from_validator.saturating_add(treasury_reward_from_pov);
+
+        frame_support::log::info!("Total Treasury Reward: {}", total_treasury_reward);
+
+        let fractional_part = reward.saturating_sub(final_validator_reward.saturating_add(final_pov_reward).saturating_add(total_treasury_reward));
+
+        frame_support::log::info!("Fractional Part: {}", fractional_part);
+
+        let adjusted_treasury_reward = total_treasury_reward.saturating_add(fractional_part);
+
+        frame_support::log::info!("Adjusted Treasury Reward: {}", adjusted_treasury_reward);
+
+        Treasury::on_unbalanced(NegativeImbalance::new(adjusted_treasury_reward));
         Balances::deposit_creating(&PovAccount::get(), final_pov_reward);
 
-        (final_validator_reward, reward)
+        let total_distributed = final_validator_reward
+            .saturating_add(adjusted_treasury_reward)
+            .saturating_add(final_pov_reward);
+
+        frame_support::log::info!("Total Distributed: {}", total_distributed);
+
+        let remainder = reward.saturating_sub(total_distributed);
+
+        frame_support::log::info!("Remainder: {}", remainder);
+
+        let final_validator_reward_adjusted = final_validator_reward.saturating_add(remainder);
+
+        frame_support::log::info!("Final Validator Reward Adjusted: {}", final_validator_reward_adjusted);
+
+        (final_validator_reward_adjusted, remainder)
     }
 }
 
