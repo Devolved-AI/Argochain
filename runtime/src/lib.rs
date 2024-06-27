@@ -186,8 +186,8 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // and set impl_version to 0. If only runtime
     // implementation changes and behavior does not, then leave spec_version as
     // is and increment impl_version.
-    spec_version: 1,
-    impl_version: 0,
+    spec_version: 2,
+    impl_version: 1,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 2,
     state_version: 1,
@@ -614,26 +614,22 @@ impl pallet_session::historical::Config for Runtime {
     type FullIdentificationOf = pallet_staking::ExposureOf<Runtime>;
 }
 
-// pallet_staking_reward_curve::build! {
-//     const REWARD_CURVE: PiecewiseLinear<'static> = curve!(
-//         min_inflation: 0_025_000,
-//         max_inflation: 0_100_000,
-//         ideal_stake: 0_500_000,
-//         falloff: 0_050_000,
-//         max_piece_count: 40,
-//         test_precision: 0_005_000,
-//     );
-// }
+pallet_staking_reward_curve::build! {
+    const REWARD_CURVE: PiecewiseLinear<'static> = curve!(
+        min_inflation: 0_025_000,
+        max_inflation: 0_100_000,
+        ideal_stake: 0_500_000,
+        falloff: 0_050_000,
+        max_piece_count: 40,
+        test_precision: 0_005_000,
+    );
+}
 
 parameter_types! {
     pub const SessionsPerEra: sp_staking::SessionIndex = 1;//session 6
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
-    /// Number of eras that slashes are deferred by, after computation.
-	///
-	/// This should be less than the bonding duration. Set to 0 if slashes
-	/// should be applied immediately, without opportunity for intervention.
-    pub const SlashDeferDuration: sp_staking::EraIndex = 0; // 1/4 the bonding duration.
-    // pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
+    pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; // 1/4 the bonding duration.
+    pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
     pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);
     pub OffchainRepeat: BlockNumber = 5;
@@ -665,8 +661,8 @@ impl pallet_staking::Config for Runtime {
         pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 4>,
     >;
     type SessionInterface = Self;
-    // type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
-    type EraPayout =  CustomEraPayout;//FixedReward
+    type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
+    // type EraPayout =  CustomEraPayout;//FixedReward
     type NextNewSession = Session;
     type MaxNominatorRewardedPerValidator = MaxNominatorRewardedPerValidator;
     type OffendingValidatorsThreshold = OffendingValidatorsThreshold;
