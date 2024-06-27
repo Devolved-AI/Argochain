@@ -102,9 +102,21 @@ use hex_literal::hex;
 //Hello
 parameter_types! {
     pub const PovAccount: AccountId32 = AccountId32::new(hex!("e483f6d0d4a9f04510d7506227a149579fd63b8c8b828d9d0b306c48aad99c67"));
+    // pub const SlashAccount:AccountId32= AccountId32::new(hex!("9ef74403465bf3b714c250b663ef2ddf759d36a5f7568dc3ad99b330365aed1b"));
     // pub const ValidatorRewardPercentage: Perbill = Perbill::from_percent(45);
     // pub const PovRewardPercentage: Perbill = Perbill::from_percent(55);
     // pub const TreasuryRewardPercentage: Perbill = Perbill::from_percent(1);
+}
+pub struct SlashHandler;
+
+impl OnUnbalanced<pallet_balances::NegativeImbalance<Runtime>> for SlashHandler {
+    fn on_unbalanced(amount: pallet_balances::NegativeImbalance<Runtime>) {
+        // Define the account where slashed funds should go
+        let slash_account: AccountId32 = AccountId32::new(hex!("9ef74403465bf3b714c250b663ef2ddf759d36a5f7568dc3ad99b330365aed1b"));
+        
+        // Transfer the slashed amount to the specified account
+        pallet_balances::Pallet::<Runtime>::resolve_creating(&slash_account, amount);
+    }
 }
 
 
@@ -628,7 +640,11 @@ impl pallet_session::historical::Config for Runtime {
 parameter_types! {
     pub const SessionsPerEra: sp_staking::SessionIndex = 1;//session 6
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
-    pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; // 1/4 the bonding duration.
+    /// Number of eras that slashes are deferred by, after computation.
+	///
+	/// This should be less than the bonding duration. Set to 0 if slashes
+	/// should be applied immediately, without opportunity for intervention.
+    pub const SlashDeferDuration: sp_staking::EraIndex = 0; // 1/4 the bonding duration.
     // pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
     pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);
@@ -648,9 +664,9 @@ impl pallet_staking::Config for Runtime {
     type CurrencyBalance = Balance;
     type UnixTime = Timestamp;
     type CurrencyToVote = sp_staking::currency_to_vote::U128CurrencyToVote;
-    type RewardRemainder = ();//Treasury
+    type RewardRemainder = SlashHandler;
     type RuntimeEvent = RuntimeEvent;
-    type Slash = Treasury; // send the slashed funds to the treasury.
+    type Slash = SlashHandler; // send the slashed funds to the treasury.
     type Reward = (); // rewards are minted from the void
     type SessionsPerEra = SessionsPerEra;
     type BondingDuration = BondingDuration;
@@ -1192,7 +1208,7 @@ parameter_types! {
 }
 
 const INITIAL_REWARD: Balance = (1369.863014 * 1_000_000_000_000_000_000f64) as u128;
-const HALVING_PERIOD: u64 = 5; //17,520
+const HALVING_PERIOD: u64 = 17520; //17,520
 
 pub struct CustomEraPayout;
 
