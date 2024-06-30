@@ -832,7 +832,7 @@ impl pallet_election_provider_multi_phase::Config for Runtime {
     type SignedMaxRefunds = ConstU32<3>;
     type SignedDepositWeight = ();
     type SignedMaxWeight = MinerMaxWeight;
-    type SlashHandler = (); // burn slashes
+    type SlashHandler = Treasury;// (); // burn slashes
     type RewardHandler = (); // nothing to do upon rewards
     type DataProvider = Staking;
     type Fallback = onchain::OnChainExecution<OnChainSeqPhragmen>;
@@ -967,7 +967,7 @@ impl pallet_referenda::Config for Runtime {
     type SubmitOrigin = EnsureSigned<AccountId>;
     type CancelOrigin = EnsureRoot<AccountId>;
     type KillOrigin = EnsureRoot<AccountId>;
-    type Slash = ();
+    type Slash = Treasury; //();
     type Votes = pallet_conviction_voting::VotesOf<Runtime>;
     type Tally = pallet_conviction_voting::TallyOf<Runtime>;
     type SubmissionDeposit = SubmissionDeposit;
@@ -987,7 +987,7 @@ impl pallet_referenda::Config<pallet_referenda::Instance2> for Runtime {
     type SubmitOrigin = EnsureSigned<AccountId>;
     type CancelOrigin = EnsureRoot<AccountId>;
     type KillOrigin = EnsureRoot<AccountId>;
-    type Slash = ();
+    type Slash =Treasury; // ();
     type Votes = pallet_ranked_collective::Votes;
     type Tally = pallet_ranked_collective::TallyOf<Runtime>;
     type SubmissionDeposit = SubmissionDeposit;
@@ -1178,7 +1178,7 @@ impl pallet_membership::Config<pallet_membership::Instance1> for Runtime {
 parameter_types! {
     pub const ProposalBond: Permill = Permill::from_percent(5);
     pub const ProposalBondMinimum: Balance = 1 * ARGO;
-    pub const SpendPeriod: BlockNumber = 10;// 1 * DAYS
+    pub const SpendPeriod: BlockNumber = 1 * DAYS;// 1 * DAYS
     pub const Burn: Permill = Permill::from_percent(0); //from_percent(50)
     pub const TipCountdown: BlockNumber = 1 * DAYS;
     pub const TipFindersFee: Percent = Percent::from_percent(20);
@@ -1281,7 +1281,7 @@ impl pallet_treasury::Config for Runtime {
         pallet_collective::EnsureProportionMoreThan<AccountId, CouncilCollective, 1, 2>,
     >;
     type RuntimeEvent = RuntimeEvent;
-    type OnSlash = ();
+    type OnSlash = Treasury;//();
     type ProposalBond = ProposalBond;
     type ProposalBondMinimum = ProposalBondMinimum;
     type ProposalBondMaximum = ();
