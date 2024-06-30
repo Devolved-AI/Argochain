@@ -368,7 +368,7 @@ pub fn testnet_genesis(
 			invulnerables: initial_authorities.iter().map(|x| x.0.clone()).collect(),
 			slash_reward_fraction: Perbill::from_percent(10),
 			max_nominator_count:Some(256),
-			max_validator_count:Some(1000),
+			max_validator_count:Some(2000),
 			stakers,
 			// min_validator_bond:20_000_000_000_000_000_000_000,
 			min_validator_bond:20_000 * ARGO,

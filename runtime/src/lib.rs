@@ -628,10 +628,10 @@ impl pallet_session::historical::Config for Runtime {
 parameter_types! {
     pub const SessionsPerEra: sp_staking::SessionIndex = 1;//session 6
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
-    pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; //1/4 the bonding duration.
+    pub const SlashDeferDuration: sp_staking::EraIndex = 1; //24 * 7 1/4 the bonding duration.
     // pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
-    pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);
+    pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(1);//17
     pub OffchainRepeat: BlockNumber = 5;
     pub HistoryDepth: u32 = 84;
 }
@@ -1104,7 +1104,7 @@ parameter_types! {
     // additional data per vote is 32 bytes (account id).
     pub const VotingBondFactor: Balance = deposit(0, 32);
     pub const TermDuration: BlockNumber = 7 * DAYS;
-    pub const DesiredMembers: u32 = 13;
+    pub const DesiredMembers: u32 = 14;
     pub const DesiredRunnersUp: u32 = 7;
     pub const MaxVotesPerVoter: u32 = 16;
     pub const MaxVoters: u32 = 512;
