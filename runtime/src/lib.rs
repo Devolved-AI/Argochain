@@ -626,12 +626,12 @@ impl pallet_session::historical::Config for Runtime {
 // }
 
 parameter_types! {
-    pub const SessionsPerEra: sp_staking::SessionIndex = 1;//session 6
+    pub const SessionsPerEra: sp_staking::SessionIndex = 6;//session 6
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
-    pub const SlashDeferDuration: sp_staking::EraIndex = 1; //24 * 7 1/4 the bonding duration.
+    pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; //24 * 7 1/4 the bonding duration.
     // pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
-    pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(1);//17
+    pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);//17
     pub OffchainRepeat: BlockNumber = 5;
     pub HistoryDepth: u32 = 84;
 }
@@ -1281,7 +1281,7 @@ impl pallet_treasury::Config for Runtime {
         pallet_collective::EnsureProportionMoreThan<AccountId, CouncilCollective, 1, 2>,
     >;
     type RuntimeEvent = RuntimeEvent;
-    type OnSlash = Treasury;//();
+    type OnSlash = ();//();
     type ProposalBond = ProposalBond;
     type ProposalBondMinimum = ProposalBondMinimum;
     type ProposalBondMaximum = ();
@@ -1293,6 +1293,9 @@ impl pallet_treasury::Config for Runtime {
     type MaxApprovals = MaxApprovals;
     type SpendOrigin = EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;
 }
+
+
+
 
 impl pallet_asset_rate::Config for Runtime {
     type CreateOrigin = EnsureRoot<AccountId>;
