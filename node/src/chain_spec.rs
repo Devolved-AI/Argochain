@@ -250,7 +250,8 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 	// let endowed_accounts: Vec<AccountId> = vec![root_key.clone()];
 
 	let mut endowed_accounts: Vec<(AccountId, Balance)> = vec![
-		(root_key.clone(), 1_920_000 * ARGO),
+		(root_key.clone(), 1_880_000 * ARGO),
+		//1880000
 	];
 
 	initial_authorities.iter().for_each(|x| {
@@ -419,7 +420,8 @@ pub fn testnet_genesis(
 		},
 		staking: StakingConfig {
 			validator_count: 100,
-			minimum_validator_count: initial_authorities.len() as u32,
+			// minimum_validator_count: initial_authorities.len() as u32,
+			minimum_validator_count:4,
 			invulnerables: initial_authorities.iter().map(|x| x.0.clone()).collect(),
 			slash_reward_fraction: Perbill::from_percent(10),
 			max_nominator_count:Some(256),
