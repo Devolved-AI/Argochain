@@ -633,7 +633,7 @@ parameter_types! {
     pub const MaxNominatorRewardedPerValidator: u32 = 256;
     pub const OffendingValidatorsThreshold: Perbill = Perbill::from_percent(17);//17
     pub OffchainRepeat: BlockNumber = 5;
-    pub HistoryDepth: u32 = 84;
+    pub HistoryDepth: u32 = 84;//History
 }
 
 pub struct StakingBenchmarkingConfig;
