@@ -1,13 +1,21 @@
-# Introducing the ArgoChain-SDK
+# Argochain-SDK
 ![photo_2024-04-29 13 29 45](https://github.com/Devolved-AI/Argochain/assets/96510238/9989a2c0-dbdf-4baa-b8fc-54e3c75f7445)
 ------------------
-We are thrilled to release the ArgoChain-SDK, specifically designed for developers eager to explore and innovate within the ArgoChain ecosystem. This toolkit facilitates the development, testing, and deployment of decentralized applications, providing you a robust platform on our testnet.
+Building and compiling the node is a one-time, but very resource intensive process and we recommend the following hardware specifications:
 
-Here's the updated guide with instructions on how to check the time until the next era:
+Recommended Specifications\
+CPU: 16 cores \
+RAM: 32 GB\
+Storage: 1TB SSD\
+Network: 1 Gpbs Internet Connection
 
----
+Please click [here](https://devolved-ai.gitbook.io/argochain-validator-guide) to go right to the Validator Guide and get started.
 
-# Adding a New Validator
+[Argochain Validator Guide](https://devolved-ai.gitbook.io/argochain-validator-guide)\
+[Argoscan Explorer](https://explorer.argoscan.net)\
+[https://devolvedai.com](https://devolvedai.com)
+
+# Running a Validator
 
 ### Step 1: Install Rust
 
