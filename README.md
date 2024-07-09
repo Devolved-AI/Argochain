@@ -7,7 +7,7 @@ Recommended Specifications\
 CPU: 16 cores \
 RAM: 32 GB\
 Storage: 1TB SSD\
-Network: 1 Gpbs Internet Connection
+Network: 1 Gbps Internet Connection
 
 Please click [here](https://devolved-ai.gitbook.io/argochain-validator-guide) to go right to the Validator Guide and get started.
 
