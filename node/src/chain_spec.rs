@@ -470,7 +470,40 @@ pub fn testnet_genesis(
 		evm: EVMConfig {
 			accounts: {
 				let mut map = BTreeMap::new();
-				
+				map.insert(
+
+					H160::from_str("976EA74026E726554dB657fA54763abd0C3a0aa9")
+						.expect("internal H160 is valid; qed"),
+					GenesisAccount {
+						balance: U256::from_str("1000000000000000000")
+							.expect("internal U256 is valid; qed"),
+						code: Default::default(),
+						nonce: Default::default(),
+						storage: Default::default(),
+					},
+				);
+				map.insert(
+					H160::from_str("8eaf04151687736326c9fea17e25fc5287613693")
+						.expect("internal H160 is valid; qed"),
+					GenesisAccount {
+						balance: U256::from_str("1000000000000000000")
+							.expect("internal U256 is valid; qed"),
+						code: Default::default(),
+						nonce: Default::default(),
+						storage: Default::default(),
+					},
+				);
+				map.insert(
+					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+						.expect("internal H160 is valid; qed"),
+					GenesisAccount {
+						balance: U256::from_str("1000000000000000000")
+							.expect("internal U256 is valid; qed"),
+						code: Default::default(),
+						nonce: Default::default(),
+						storage: Default::default(),
+					},
+				);
 				map
 			},
 			_marker: Default::default(),
@@ -631,10 +664,10 @@ pub fn development_genesis(
 				let mut map = BTreeMap::new();
 				map.insert(
 
-					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+					H160::from_str("976EA74026E726554dB657fA54763abd0C3a0aa9")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
-						balance: U256::from_str("0xfffffffffffffffffffff")
+						balance: U256::from_str("1000000000000000000")
 							.expect("internal U256 is valid; qed"),
 						code: Default::default(),
 						nonce: Default::default(),
@@ -645,7 +678,7 @@ pub fn development_genesis(
 					H160::from_str("8eaf04151687736326c9fea17e25fc5287613693")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
-						balance: U256::from_str("0xfffffffffffffffffffff")
+						balance: U256::from_str("1000000000000000000")
 							.expect("internal U256 is valid; qed"),
 						code: Default::default(),
 						nonce: Default::default(),
@@ -656,7 +689,7 @@ pub fn development_genesis(
 					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
-						balance: U256::from_str("0xfffffffffffffffffffff")
+						balance: U256::from_str("1000000000000000000")
 							.expect("internal U256 is valid; qed"),
 						code: Default::default(),
 						nonce: Default::default(),
