@@ -483,7 +483,7 @@ pub fn testnet_genesis(
 					},
 				);
 				map.insert(
-					H160::from_str("8eaf04151687736326c9fea17e25fc5287613693")
+					H160::from_str("d7Bc9888A66Bf8683521d65A7938A839406C2e0E")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
 						balance: U256::from_str("1000000000000000000")
@@ -494,7 +494,7 @@ pub fn testnet_genesis(
 					},
 				);
 				map.insert(
-					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+					H160::from_str("124bc8F1DD0696Bcd38DF5d7aac4F9219F1fc8aE")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
 						balance: U256::from_str("1000000000000000000")
@@ -675,7 +675,7 @@ pub fn development_genesis(
 					},
 				);
 				map.insert(
-					H160::from_str("8eaf04151687736326c9fea17e25fc5287613693")
+					H160::from_str("d7Bc9888A66Bf8683521d65A7938A839406C2e0E")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
 						balance: U256::from_str("1000000000000000000")
@@ -686,7 +686,7 @@ pub fn development_genesis(
 					},
 				);
 				map.insert(
-					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+					H160::from_str("124bc8F1DD0696Bcd38DF5d7aac4F9219F1fc8aE")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
 						balance: U256::from_str("1000000000000000000")
