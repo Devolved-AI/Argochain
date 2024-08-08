@@ -25,7 +25,7 @@ generate_and_insert_key() {
     local name="$5"
 
     echo "Generating $key_type key..."
-    key_output=$(subkey generate --scheme "$scheme" --output-type json)
+    key_output=$(./target/release/argochain key generate --scheme "$scheme" --output-type json)
 
     # Extract secret phrase and public key from key output
     secret_phrase=$(echo "$key_output" | jq -r '.secretPhrase')
