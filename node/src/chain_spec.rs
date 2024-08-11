@@ -163,81 +163,81 @@ fn staging_testnet_config_genesis() -> RuntimeGenesisConfig {
 			array_bytes::hex2array_unchecked("fe3205c22a92b36ac37380633f5c25b540ebb58390c0e6a91f3ac2a1b8040d5f")
 				.unchecked_into(),
 		),
-		(
-			// Validator 04
-			// Stash Account
-			// 5FRQCEfqfy1KPk7sEwzvab2m91rtEWkZTguHnWyZh8GmdUM2
-			array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"),
-			// Controller account
-			// 5HbMBXtxGNKBEvaTKqaJVTVhtiQWffa3zerZdg7pjJRQHn5S
-			array_bytes::hex_n_into_unchecked("f48c2d6a3a24435117195c03fdd1dc32ca22fe133ac5d19f575d996141262828"),
-			// Grandpa account
-			// 5DFq8RqSncqJx5E1X1xnybUTUTmxAGr8jBTkMa3zKEwLww8X
-			array_bytes::hex2array_unchecked("cb889c5e38353ef45dd90da209e081cd2444548a67991a3161963d44925217ae")
-				.unchecked_into(),
-			// Babe Account
-			// 5DFq8RqSncqJx5E1X1xnybUTUTmxAGr8jBTkMa3zKEwLww8X
-			array_bytes::hex2array_unchecked("34b86966948aba8e078048ea31a31670923e2c6af70cb2b1f621fb573cfd5752")
-				.unchecked_into(),
-			// imonline Account
-			// 5FbQNWabp5o8oJEVrM4oJ7aBSHSr2NPDSFc6xNxLZvtgkSb5
-			array_bytes::hex2array_unchecked("9c1e724ed3cd87eb7a0b6124f9880fc8a3f08fe36e52983aeb36ec43598cc307")
-				.unchecked_into(),
-			// authority discovery account
-			// 5FjFSpmHEy2sBzCqhmAi67PaSURTU9Gou3kguwf49qjDFGmW
-			array_bytes::hex2array_unchecked("a21a5d08177dce2ad9d2bd38000aa1b0db6b6f7b5b30c9cf67eb7a8cb681ba30")
-				.unchecked_into(),
-		),
-		(
-			// Validator 05
-			// Stash Account
-			// 5Ff8smmDR9VV6x9MeguLZLtzQTxRSwDR1QtJbAExdsGayN7C
-			array_bytes::hex_n_into_unchecked("9ef74403465bf3b714c250b663ef2ddf759d36a5f7568dc3ad99b330365aed1b"),
-			// Controller account
-			// 5DZpWR7QgmwS5HQ5gVyf5as8Z9guoQR1owRSkZLD5ASjh7zD
-			array_bytes::hex_n_into_unchecked("4270bd2515ba814b8478cccf8183d257616d6628bb19ba82cc0863fdb38b303a"),
-			// Grandpa account
-			// 5FZ5dZQhmwocaHp137ZGt1qzj6DpVXQfHAoq7PbX3JEBP9Zv
-			array_bytes::hex2array_unchecked("9a58de930caf823b1bfc60bfd565504e685c69bf73e4b0b5ff54eb46fa57d178")
-				.unchecked_into(),
-			// Babe Account
-			// 5CtCoCfy9z7W4KS1bKMjWv7BL6JZtqhuw7JQpALWbT6DMGV2
-			array_bytes::hex2array_unchecked("2439f49bbc53dc4cb624e8496457e558270363dc3c3c5af7c28a7098650fc303")
-				.unchecked_into(),
-			// imonline Account
-			// 5G1hx6uRTW3Q97xiLmNwBL7SewkvyZgroMYaWVinbKQJjk5T
-			array_bytes::hex2array_unchecked("aea7835285329d267c63c1ba29b00c2817e15f2ba6497b5dd735d844dd49af6b")
-				.unchecked_into(),
-			// authority discovery account
-			// 5Fhgj1MbTHmJC9QQAVhxREAHUKb5TD9Swpx64uG5pLT4vJ1F
-			array_bytes::hex2array_unchecked("a0e8f82617a4efe279794e3c5112853eaa03fd9f482d9d7c5d33400bb5c11077")
-				.unchecked_into(),
-		),
-		(
-			// Validator 06
-			// Stash Account
-			// 5GjqHQUMa52tDtBuPdMg73TBJb5L5SiRgnvxX82XJ97KGUTE
-			array_bytes::hex_n_into_unchecked("cec881200692ec892a6032cabd2c27cb43f48f6a7b8c45f610cb7d8fab304370"),
-			// Controller account
-			// 5HJv9ZFkNDjQr4r9NH8YgbgVxsNDUnLHN4yJahGE3GvdN34t
-			array_bytes::hex_n_into_unchecked("e803fa8cc798c76ac82d9ca4a2277ee656887514f1a1ed6b0f95e68b3670e94a"),
-			// Grandpa account
-			// 5H2u9VtsXesUZBv43ehr6JUwhoeeuEVUmbYKSM8fceyFLa6v
-			array_bytes::hex2array_unchecked("dbccaebd776539664fc5eea115ce5e2557fe90414de059978630717e4aadd344")
-				.unchecked_into(),
-			// Babe Account
-			// 5DQ2B3n7gPtGXbdUHyYSaiWerE63nWbnB6MtsRTZfHW8jBr6
-			array_bytes::hex2array_unchecked("3af78e69eb6c75d416bc5a78ce77a9053feef4ecb2cffd5ff91b2dbb9c04525e")
-				.unchecked_into(),
-			// imonline Account
-			// 5D2n1QeJDLB1P8gbr6dUrr7fTiEiqGsE13gUzzS89jPwsX7G
-			array_bytes::hex2array_unchecked("2ac3b71065cb515acdc93175a5dd7fbe4cd9e421da90d41008c89632a48ccf1e")
-				.unchecked_into(),
-			// authority discovery account
-			// 5CtHjPsqjAPc2xpienbA9ZcZXbS3VwFRCBfDJwZWr35Cw3ve
-			array_bytes::hex2array_unchecked("244a90e9025622e1317f642b96233d51a9bd08855541e1b8b65dfa0e02b49c0c")
-				.unchecked_into(),
-		),
+		// (
+		// 	// Validator 04
+		// 	// Stash Account
+		// 	// 5FRQCEfqfy1KPk7sEwzvab2m91rtEWkZTguHnWyZh8GmdUM2
+		// 	array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"),
+		// 	// Controller account
+		// 	// 5HbMBXtxGNKBEvaTKqaJVTVhtiQWffa3zerZdg7pjJRQHn5S
+		// 	array_bytes::hex_n_into_unchecked("f48c2d6a3a24435117195c03fdd1dc32ca22fe133ac5d19f575d996141262828"),
+		// 	// Grandpa account
+		// 	// 5DFq8RqSncqJx5E1X1xnybUTUTmxAGr8jBTkMa3zKEwLww8X
+		// 	array_bytes::hex2array_unchecked("cb889c5e38353ef45dd90da209e081cd2444548a67991a3161963d44925217ae")
+		// 		.unchecked_into(),
+		// 	// Babe Account
+		// 	// 5DFq8RqSncqJx5E1X1xnybUTUTmxAGr8jBTkMa3zKEwLww8X
+		// 	array_bytes::hex2array_unchecked("34b86966948aba8e078048ea31a31670923e2c6af70cb2b1f621fb573cfd5752")
+		// 		.unchecked_into(),
+		// 	// imonline Account
+		// 	// 5FbQNWabp5o8oJEVrM4oJ7aBSHSr2NPDSFc6xNxLZvtgkSb5
+		// 	array_bytes::hex2array_unchecked("9c1e724ed3cd87eb7a0b6124f9880fc8a3f08fe36e52983aeb36ec43598cc307")
+		// 		.unchecked_into(),
+		// 	// authority discovery account
+		// 	// 5FjFSpmHEy2sBzCqhmAi67PaSURTU9Gou3kguwf49qjDFGmW
+		// 	array_bytes::hex2array_unchecked("a21a5d08177dce2ad9d2bd38000aa1b0db6b6f7b5b30c9cf67eb7a8cb681ba30")
+		// 		.unchecked_into(),
+		// ),
+		// (
+		// 	// Validator 05
+		// 	// Stash Account
+		// 	// 5Ff8smmDR9VV6x9MeguLZLtzQTxRSwDR1QtJbAExdsGayN7C
+		// 	array_bytes::hex_n_into_unchecked("9ef74403465bf3b714c250b663ef2ddf759d36a5f7568dc3ad99b330365aed1b"),
+		// 	// Controller account
+		// 	// 5DZpWR7QgmwS5HQ5gVyf5as8Z9guoQR1owRSkZLD5ASjh7zD
+		// 	array_bytes::hex_n_into_unchecked("4270bd2515ba814b8478cccf8183d257616d6628bb19ba82cc0863fdb38b303a"),
+		// 	// Grandpa account
+		// 	// 5FZ5dZQhmwocaHp137ZGt1qzj6DpVXQfHAoq7PbX3JEBP9Zv
+		// 	array_bytes::hex2array_unchecked("9a58de930caf823b1bfc60bfd565504e685c69bf73e4b0b5ff54eb46fa57d178")
+		// 		.unchecked_into(),
+		// 	// Babe Account
+		// 	// 5CtCoCfy9z7W4KS1bKMjWv7BL6JZtqhuw7JQpALWbT6DMGV2
+		// 	array_bytes::hex2array_unchecked("2439f49bbc53dc4cb624e8496457e558270363dc3c3c5af7c28a7098650fc303")
+		// 		.unchecked_into(),
+		// 	// imonline Account
+		// 	// 5G1hx6uRTW3Q97xiLmNwBL7SewkvyZgroMYaWVinbKQJjk5T
+		// 	array_bytes::hex2array_unchecked("aea7835285329d267c63c1ba29b00c2817e15f2ba6497b5dd735d844dd49af6b")
+		// 		.unchecked_into(),
+		// 	// authority discovery account
+		// 	// 5Fhgj1MbTHmJC9QQAVhxREAHUKb5TD9Swpx64uG5pLT4vJ1F
+		// 	array_bytes::hex2array_unchecked("a0e8f82617a4efe279794e3c5112853eaa03fd9f482d9d7c5d33400bb5c11077")
+		// 		.unchecked_into(),
+		// ),
+		// (
+		// 	// Validator 06
+		// 	// Stash Account
+		// 	// 5GjqHQUMa52tDtBuPdMg73TBJb5L5SiRgnvxX82XJ97KGUTE
+		// 	array_bytes::hex_n_into_unchecked("cec881200692ec892a6032cabd2c27cb43f48f6a7b8c45f610cb7d8fab304370"),
+		// 	// Controller account
+		// 	// 5HJv9ZFkNDjQr4r9NH8YgbgVxsNDUnLHN4yJahGE3GvdN34t
+		// 	array_bytes::hex_n_into_unchecked("e803fa8cc798c76ac82d9ca4a2277ee656887514f1a1ed6b0f95e68b3670e94a"),
+		// 	// Grandpa account
+		// 	// 5H2u9VtsXesUZBv43ehr6JUwhoeeuEVUmbYKSM8fceyFLa6v
+		// 	array_bytes::hex2array_unchecked("dbccaebd776539664fc5eea115ce5e2557fe90414de059978630717e4aadd344")
+		// 		.unchecked_into(),
+		// 	// Babe Account
+		// 	// 5DQ2B3n7gPtGXbdUHyYSaiWerE63nWbnB6MtsRTZfHW8jBr6
+		// 	array_bytes::hex2array_unchecked("3af78e69eb6c75d416bc5a78ce77a9053feef4ecb2cffd5ff91b2dbb9c04525e")
+		// 		.unchecked_into(),
+		// 	// imonline Account
+		// 	// 5D2n1QeJDLB1P8gbr6dUrr7fTiEiqGsE13gUzzS89jPwsX7G
+		// 	array_bytes::hex2array_unchecked("2ac3b71065cb515acdc93175a5dd7fbe4cd9e421da90d41008c89632a48ccf1e")
+		// 		.unchecked_into(),
+		// 	// authority discovery account
+		// 	// 5CtHjPsqjAPc2xpienbA9ZcZXbS3VwFRCBfDJwZWr35Cw3ve
+		// 	array_bytes::hex2array_unchecked("244a90e9025622e1317f642b96233d51a9bd08855541e1b8b65dfa0e02b49c0c")
+		// 		.unchecked_into(),
+		// ),
 	];
 
 	let root_key: AccountId = array_bytes::hex_n_into_unchecked(
@@ -378,7 +378,7 @@ pub fn testnet_genesis(
 		array_bytes::hex_n_into_unchecked("bef744b4a41a91f56bf8ca2f5dfd92e3d55f2419a620e10bbc967a703708eb5e"),
 		array_bytes::hex_n_into_unchecked("da0f205fba369ea8d1a3dc925aaba2cc7fe691e44e351854ead006b2a926545b"),
 		array_bytes::hex_n_into_unchecked("188a1afb495f13861bebbbb04ba71a22cadfab71bd79d54b848f4d71c7a6d64e"),
-		array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"),
+		// array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"),
 	];
 
 
@@ -387,7 +387,7 @@ pub fn testnet_genesis(
         (array_bytes::hex_n_into_unchecked("bef744b4a41a91f56bf8ca2f5dfd92e3d55f2419a620e10bbc967a703708eb5e"), STASH),
         (array_bytes::hex_n_into_unchecked("da0f205fba369ea8d1a3dc925aaba2cc7fe691e44e351854ead006b2a926545b"), STASH),
         (array_bytes::hex_n_into_unchecked("188a1afb495f13861bebbbb04ba71a22cadfab71bd79d54b848f4d71c7a6d64e"), STASH),
-        (array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"), STASH),
+        // (array_bytes::hex_n_into_unchecked("947d656a62e92c36c086ebc1b0f7473b1121f6cdd295cace4db7d99cdf24fc72"), STASH),
 	];
 
 
