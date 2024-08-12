@@ -119,7 +119,7 @@ frame-system = { git = "https://github.com/paritytech/polkadot-sdk.git", branch 
 pallet-transaction-payment = { version = "28.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 frame-system-rpc-runtime-api = {  git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 
-node-executor = { version = "3.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
+# node-executor = { version = "2.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 
 # Frontier
 fc-cli = { path = "../client/cli" }

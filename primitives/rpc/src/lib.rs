@@ -28,6 +28,7 @@ use sp_core::{H160, H256, U256};
 use sp_runtime::{traits::Block as BlockT, Permill, RuntimeDebug};
 use sp_state_machine::OverlayedChanges;
 use sp_std::vec::Vec;
+use sp_runtime::traits::BlakeTwo256;
 
 #[derive(Clone, Eq, PartialEq, Default, RuntimeDebug, Encode, Decode, TypeInfo)]
 pub struct TransactionStatus {
@@ -51,7 +52,7 @@ pub trait RuntimeStorageOverride<B: BlockT, C>: Send + Sync {
 
 	fn set_overlayed_changes(
 		client: &C,
-		overlayed_changes: &mut OverlayedChanges,
+		overlayed_changes: &mut OverlayedChanges<BlakeTwo256>,
 		block: B::Hash,
 		version: u32,
 		address: H160,
@@ -69,7 +70,7 @@ impl<B: BlockT, C> RuntimeStorageOverride<B, C> for () {
 
 	fn set_overlayed_changes(
 		_client: &C,
-		_overlayed_changes: &mut OverlayedChanges,
+		_overlayed_changes: &mut OverlayedChanges<BlakeTwo256>,
 		_block: B::Hash,
 		_version: u32,
 		_address: H160,

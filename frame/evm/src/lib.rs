@@ -68,11 +68,14 @@ pub mod weights;
 pub use evm::{
 	Config as EvmConfig, Context, ExitError, ExitFatal, ExitReason, ExitRevert, ExitSucceed,
 };
+use sp_core::MaxEncodedLen;
+
 use impl_trait_for_tuples::impl_for_tuples;
 use scale_info::TypeInfo;
+// use parity_scale_codec::MaxEncodedLen;
 // Substrate
 use frame_support::{
-	dispatch::{DispatchResultWithPostInfo, MaxEncodedLen, Pays, PostDispatchInfo},
+	dispatch::{DispatchResultWithPostInfo, Pays, PostDispatchInfo},
 	traits::{
 		tokens::{
 			currency::Currency,

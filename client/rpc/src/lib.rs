@@ -73,6 +73,7 @@ pub mod frontier_backend_client {
 	use sp_state_machine::OverlayedChanges;
 	// Frontier
 	use fc_rpc_core::types::BlockNumber;
+	use sp_runtime::traits::BlakeTwo256;
 
 	/// Implements a default runtime storage override.
 	/// It assumes that the balances and nonces are stored in pallet `system.account`, and
@@ -91,7 +92,7 @@ pub mod frontier_backend_client {
 
 		fn set_overlayed_changes(
 			client: &C,
-			overlayed_changes: &mut OverlayedChanges,
+			overlayed_changes: &mut OverlayedChanges<B:BlakeTwo256>,
 			block: B::Hash,
 			_version: u32,
 			address: H160,
@@ -144,7 +145,7 @@ pub mod frontier_backend_client {
 
 		fn set_overlayed_changes(
 			client: &C,
-			overlayed_changes: &mut OverlayedChanges,
+			overlayed_changes: &mut OverlayedChanges<B:BlakeTwo256>,
 			block: B::Hash,
 			_version: u32,
 			address: H160,
