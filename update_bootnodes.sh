@@ -6,6 +6,55 @@ print_message() {
     echo "${MESSAGE}"
 }
 
+# Function to install Python 3 and pip3
+install_python3() {
+    # Detect the operating system
+    OS=$(uname -s)
+    
+    if [ "$OS" == "Linux" ]; then
+        # Check if the system is using apt (Debian/Ubuntu)
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip
+        # Check if the system is using yum (CentOS/RHEL)
+        elif command -v yum &> /dev/null; then
+            sudo yum install -y python3 python3-pip
+        else
+            echo "Unsupported Linux package manager. Please install Python 3 manually."
+            exit 1
+        fi
+    elif [ "$OS" == "Darwin" ]; then
+        # macOS
+        if command -v brew &> /dev/null; then
+            brew install python3
+        else
+            echo "Homebrew not found. Please install Homebrew and try again."
+            exit 1
+        fi
+    else
+        echo "Unsupported OS. Please install Python 3 manually."
+        exit 1
+    fi
+
+    # Ensure Python 3 is usable in PATH
+    if ! command -v python3 &> /dev/null; then
+        echo "Python 3 installation failed or not found in PATH."
+        exit 1
+    else
+        echo "Python 3 is successfully installed and available in PATH."
+    fi
+
+    # Install tqdm using pip3
+    sudo -H pip3 install tqdm
+
+    if ! python3 -m pip show tqdm &> /dev/null; then
+        echo "tqdm installation failed."
+        exit 1
+    else
+        echo "tqdm is successfully installed."
+    fi
+}
+
 # Function to insert bootnodes into minervaRaw.json
 insert_bootnodes() {
     python3 <<EOF
