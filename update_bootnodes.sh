@@ -6,52 +6,36 @@ print_message() {
     echo "${MESSAGE}"
 }
 
-# Function to install Python 3 and pip3
-install_python3() {
-    # Detect the operating system
-    OS=$(uname -s)
-    
-    if [ "$OS" == "Linux" ]; then
-        # Check if the system is using apt (Debian/Ubuntu)
-        if command -v apt-get &> /dev/null; then
-            sudo apt-get update
-            sudo apt-get install -y python3 python3-pip
-        # Check if the system is using yum (CentOS/RHEL)
-        elif command -v yum &> /dev/null; then
-            sudo yum install -y python3 python3-pip
-        else
-            echo "Unsupported Linux package manager. Please install Python 3 manually."
-            exit 1
-        fi
-    elif [ "$OS" == "Darwin" ]; then
-        # macOS
-        if command -v brew &> /dev/null; then
-            brew install python3
-        else
-            echo "Homebrew not found. Please install Homebrew and try again."
-            exit 1
-        fi
-    else
-        echo "Unsupported OS. Please install Python 3 manually."
-        exit 1
+# Function to create and activate a virtual environment
+create_and_activate_venv() {
+    VENV_DIR=".venv"
+
+    # Check if the virtual environment already exists
+    if [ ! -d "$VENV_DIR" ]; then
+        echo "Creating virtual environment in ${VENV_DIR}..."
+        python3 -m venv "$VENV_DIR"
     fi
 
-    # Ensure Python 3 is usable in PATH
-    if ! command -v python3 &> /dev/null; then
-        echo "Python 3 installation failed or not found in PATH."
-        exit 1
-    else
-        echo "Python 3 is successfully installed and available in PATH."
-    fi
+    # Activate the virtual environment
+    echo "Activating virtual environment..."
+    source "${VENV_DIR}/bin/activate"
 
-    # Install tqdm using pip3
-    sudo -H pip3 install tqdm
+    # Upgrade pip within the virtual environment
+    pip install --upgrade pip
+}
 
-    if ! python3 -m pip show tqdm &> /dev/null; then
-        echo "tqdm installation failed."
-        exit 1
-    else
+# Function to install tqdm using pip
+install_tqdm() {
+    # Attempt to install tqdm
+    pip install tqdm
+
+    # Check if tqdm was successfully installed
+    if python3 -m pip show tqdm &> /dev/null; then
         echo "tqdm is successfully installed."
+        return 0
+    else
+        echo "tqdm installation failed. Falling back to ASCII progress bar."
+        return 1
     fi
 }
 
@@ -60,7 +44,22 @@ insert_bootnodes() {
     python3 <<EOF
 import re
 import time
-from tqdm import tqdm
+
+try:
+    from tqdm import tqdm
+
+    def progress_bar(iterable, desc):
+        return tqdm(iterable, desc=desc, ncols=100, ascii=True, bar_format="{l_bar}{bar} | {n_fmt}/{total_fmt}")
+
+except ImportError:
+    # Fallback ASCII progress bar
+    def progress_bar(iterable, desc):
+        total = len(iterable)
+        print(f"{desc} [{'#' * total}]")
+        for i, item in enumerate(iterable):
+            yield item
+            print(f"\r{desc} [{'#'*(i+1)}{'.'*(total-i-1)}] | {i+1}/{total}", end='')
+        print()
 
 def insert_bootnodes(original_file, bootnodes_file):
     try:
@@ -71,15 +70,15 @@ def insert_bootnodes(original_file, bootnodes_file):
             bootnodes_content = file.read().strip()
 
         # Progress bar for processing the content
-        for _ in tqdm(range(10), desc="🌟 Processing content", ncols=100, ascii=True, bar_format="{l_bar}{bar} | {n_fmt}/{total_fmt}"):
+        for _ in progress_bar(range(10), desc="🌟 Processing content"):
             time.sleep(0.1)  # Simulate work being done
 
         # Find the bootNodes section, clear its contents, and insert the new bootnodes content
-        pattern = re.compile(r'("bootNodes"\\s*:\\s*\\[)[^\\]]*?(\\])', re.DOTALL)
+        pattern = re.compile(r'("bootNodes"\\s*:\\s*\\[)[^\\]]*(\\])', re.DOTALL)
         new_content = pattern.sub(r'\\1\n' + bootnodes_content + r'\\2', original_content)
 
         # Progress bar for writing the new content
-        for _ in tqdm(range(10), desc="🌟 Writing new content", ncols=100, ascii=True, bar_format="{l_bar}{bar} | {n_fmt}/{total_fmt}"):
+        for _ in progress_bar(range(10), desc="🌟 Writing new content"):
             time.sleep(0.1)  # Simulate work being done
 
         # Write the modified content back to the original file
@@ -96,7 +95,7 @@ def main():
     bootnodes_file = 'bootnodes.txt'   # Path to the bootnodes file
 
     # Progress bar for reading files
-    for _ in tqdm(range(10), desc="📄 Reading files", ncols=100, ascii=True, bar_format="{l_bar}{bar} | {n_fmt}/{total_fmt}"):
+    for _ in progress_bar(range(10), desc="📄 Reading files"):
         time.sleep(0.1)  # Simulate work being done
 
     insert_bootnodes(original_file, bootnodes_file)
@@ -106,8 +105,8 @@ if __name__ == "__main__":
 EOF
 }
 
-
 # Main script execution
-insert_bootnodes
+create_and_activate_venv
+install_tqdm && insert_bootnodes || insert_bootnodes
 
 print_message "Boot nodes insertion complete."
