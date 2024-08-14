@@ -70,9 +70,11 @@ pub use evm::{
 };
 use impl_trait_for_tuples::impl_for_tuples;
 use scale_info::TypeInfo;
+
+use sp_core::MaxEncodedLen;
 // Substrate
 use frame_support::{
-	dispatch::{DispatchResultWithPostInfo, MaxEncodedLen, Pays, PostDispatchInfo},
+	dispatch::{DispatchResultWithPostInfo, Pays, PostDispatchInfo},
 	traits::{
 		tokens::{
 			currency::Currency,

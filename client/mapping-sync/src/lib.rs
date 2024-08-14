@@ -24,6 +24,8 @@ pub mod kv;
 pub mod sql;
 
 use sp_api::BlockT;
+use sp_runtime::traits::Block;
+
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 pub enum SyncStrategy {
