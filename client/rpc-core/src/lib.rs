@@ -30,8 +30,8 @@ mod web3;
 #[cfg(feature = "txpool")]
 pub use self::txpool::TxPoolApiServer;
 pub use self::{
-	eth::{EthApiServer, EthFilterApiServer},
-	eth_pubsub::EthPubSubApiServer,
-	net::NetApiServer,
-	web3::Web3ApiServer,
+    eth::{EthApiServer, EthFilterApiServer},
+    eth_pubsub::EthPubSubApiServer,
+    net::NetApiServer,
+    web3::Web3ApiServer,
 };

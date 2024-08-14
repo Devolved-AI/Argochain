@@ -22,41 +22,41 @@ use frame_benchmarking::{benchmarks, impl_benchmark_test_suite};
 use super::*;
 
 benchmarks! {
-	hotfix_inc_account_sufficients {
-		// This benchmark tests the resource utilization by hotfixing N number of accounts
-		// by incrementing their `sufficients` if `nonce` is > 0.
+    hotfix_inc_account_sufficients {
+        // This benchmark tests the resource utilization by hotfixing N number of accounts
+        // by incrementing their `sufficients` if `nonce` is > 0.
 
-		let n in 0 .. 1000;
+        let n in 0 .. 1000;
 
-		use frame_benchmarking::{whitelisted_caller};
-		use sp_core::H160;
-		use frame_system::RawOrigin;
+        use frame_benchmarking::{whitelisted_caller};
+        use sp_core::H160;
+        use frame_system::RawOrigin;
 
-		// The caller account is whitelisted for DB reads/write by the benchmarking macro.
-		let caller: T::AccountId = whitelisted_caller();
-		let addresses = (0..n as u64)
-							.map(H160::from_low_u64_le)
-							.collect::<Vec<H160>>();
-		let accounts = addresses
-			.iter()
-			.cloned()
-			.map(|addr| {
-				let account_id = T::AddressMapping::into_account_id(addr);
-				frame_system::Pallet::<T>::inc_account_nonce(&account_id);
-				assert_eq!(frame_system::Pallet::<T>::sufficients(&account_id), 0);
+        // The caller account is whitelisted for DB reads/write by the benchmarking macro.
+        let caller: T::AccountId = whitelisted_caller();
+        let addresses = (0..n as u64)
+                            .map(H160::from_low_u64_le)
+                            .collect::<Vec<H160>>();
+        let accounts = addresses
+            .iter()
+            .cloned()
+            .map(|addr| {
+                let account_id = T::AddressMapping::into_account_id(addr);
+                frame_system::Pallet::<T>::inc_account_nonce(&account_id);
+                assert_eq!(frame_system::Pallet::<T>::sufficients(&account_id), 0);
 
-				account_id
-			})
-			.collect::<Vec<_>>();
+                account_id
+            })
+            .collect::<Vec<_>>();
 
-	}: _(RawOrigin::Signed(caller), addresses)
-	verify {
-		accounts
-			.iter()
-			.for_each(|id| {
-				assert_eq!(frame_system::Pallet::<T>::sufficients(id), 1);
-			});
-	}
+    }: _(RawOrigin::Signed(caller), addresses)
+    verify {
+        accounts
+            .iter()
+            .for_each(|id| {
+                assert_eq!(frame_system::Pallet::<T>::sufficients(id), 1);
+            });
+    }
 }
 
 impl_benchmark_test_suite!(Pallet, crate::mock::new_test_ext(), crate::mock::Test);

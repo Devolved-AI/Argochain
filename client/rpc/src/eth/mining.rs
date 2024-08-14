@@ -27,23 +27,23 @@ use fc_rpc_core::types::*;
 use crate::eth::{Eth, EthConfig};
 
 impl<B: BlockT, C, P, CT, BE, A: ChainApi, EC: EthConfig<B, C>> Eth<B, C, P, CT, BE, A, EC> {
-	pub fn is_mining(&self) -> RpcResult<bool> {
-		Ok(self.is_authority)
-	}
+    pub fn is_mining(&self) -> RpcResult<bool> {
+        Ok(self.is_authority)
+    }
 
-	pub fn hashrate(&self) -> RpcResult<U256> {
-		Ok(U256::zero())
-	}
+    pub fn hashrate(&self) -> RpcResult<U256> {
+        Ok(U256::zero())
+    }
 
-	pub fn work(&self) -> RpcResult<Work> {
-		Ok(Work::default())
-	}
+    pub fn work(&self) -> RpcResult<Work> {
+        Ok(Work::default())
+    }
 
-	pub fn submit_hashrate(&self, _: U256, _: H256) -> RpcResult<bool> {
-		Ok(false)
-	}
+    pub fn submit_hashrate(&self, _: U256, _: H256) -> RpcResult<bool> {
+        Ok(false)
+    }
 
-	pub fn submit_work(&self, _: H64, _: H256, _: H256) -> RpcResult<bool> {
-		Ok(false)
-	}
+    pub fn submit_work(&self, _: H64, _: H256, _: H256) -> RpcResult<bool> {
+        Ok(false)
+    }
 }

@@ -19,7 +19,7 @@ scale-info = { workspace = true }
 # Substrate
 frame-support = { workspace = true }
 frame-system = { workspace = true }
-sp-io = { workspace = true }
+sp-io = { version = "30.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 sp-runtime = { workspace = true }
 sp-std = { workspace = true }
 # Frontier
@@ -35,9 +35,9 @@ hex = { workspace = true }
 libsecp256k1 = { workspace = true, features = ["static-context", "hmac"] }
 rlp = { workspace = true }
 # Substrate
-pallet-balances = { workspace = true, features = ["default"] }
-pallet-timestamp = { workspace = true, features = ["default"] }
-sp-core = { workspace = true, features = ["default"] }
+pallet-balances = { version = "28.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
+pallet-timestamp = { version = "27.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
+sp-core = { version = "28.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 # Frontier
 fp-self-contained = { workspace = true, features = ["default"] }
 

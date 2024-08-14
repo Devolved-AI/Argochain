@@ -164,7 +164,7 @@ substrate-cli-test-utils = { git = "https://github.com/paritytech/polkadot-sdk.g
 
 
 sc-client-db = { version = "0.35.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
-futures = "0.3.21"
+futures = "0.3.30"
 tempfile = "3.1.0"
 assert_cmd = "2.0.2"
 nix = { version = "0.26.1", features = ["signal"] }
@@ -174,8 +174,8 @@ platforms = "3.0"
 soketto = "0.7.1"
 criterion = { version = "0.4.0", features = ["async_tokio"] }
 tokio = { version = "1.22.0", features = ["macros", "time", "parking_lot"] }
-tokio-util = { version = "0.7.4", features = ["compat"] }
-wait-timeout = "0.2"
+tokio-util = { version = "0.7.8", features = ["compat"] }
+wait-timeout = { version = "0.2.0" }
 substrate-rpc-client = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 pallet-timestamp = { version = "27.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 

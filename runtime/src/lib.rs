@@ -51,11 +51,11 @@ use frame_support::{
 use sp_io::logging::log;
 //Hello
 use frame_system::pallet_prelude::*;
-use sp_runtime::traits::Saturating; 
 use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
 };
+use sp_runtime::traits::Saturating;
 
 pub use node_primitives::{AccountId, Signature};
 pub use node_primitives::{AccountIndex, Balance, BlockNumber, Hash, Moment, Nonce};
@@ -96,9 +96,9 @@ use pallet_dynamic_fee;
 mod precompiles;
 use precompiles::FrontierPrecompiles;
 
+use hex_literal::hex;
 ///
 use sp_core::crypto::AccountId32;
-use hex_literal::hex;
 //Hello
 parameter_types! {
     pub const PovAccount: AccountId32 = AccountId32::new(hex!("e483f6d0d4a9f04510d7506227a149579fd63b8c8b828d9d0b306c48aad99c67"));
@@ -106,7 +106,6 @@ parameter_types! {
     // pub const PovRewardPercentage: Perbill = Perbill::from_percent(55);
     // pub const TreasuryRewardPercentage: Perbill = Perbill::from_percent(1);
 }
-
 
 use sp_runtime::{
     create_runtime_str,
@@ -648,7 +647,7 @@ impl pallet_staking::Config for Runtime {
     type CurrencyBalance = Balance;
     type UnixTime = Timestamp;
     type CurrencyToVote = sp_staking::currency_to_vote::U128CurrencyToVote;
-    type RewardRemainder = Treasury;//()
+    type RewardRemainder = Treasury; //()
     type RuntimeEvent = RuntimeEvent;
     type Slash = Treasury; // send the slashed funds to the treasury.
     type Reward = (); // rewards are minted from the void
@@ -662,7 +661,7 @@ impl pallet_staking::Config for Runtime {
     >;
     type SessionInterface = Self;
     // type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
-    type EraPayout =  CustomEraPayout;//FixedReward
+    type EraPayout = CustomEraPayout; //FixedReward
     type NextNewSession = Session;
     type MaxNominatorRewardedPerValidator = MaxNominatorRewardedPerValidator;
     type OffendingValidatorsThreshold = OffendingValidatorsThreshold;
@@ -832,7 +831,7 @@ impl pallet_election_provider_multi_phase::Config for Runtime {
     type SignedMaxRefunds = ConstU32<3>;
     type SignedDepositWeight = ();
     type SignedMaxWeight = MinerMaxWeight;
-    type SlashHandler = Treasury;// (); // burn slashes
+    type SlashHandler = Treasury; // (); // burn slashes
     type RewardHandler = (); // nothing to do upon rewards
     type DataProvider = Staking;
     type Fallback = onchain::OnChainExecution<OnChainSeqPhragmen>;
@@ -849,9 +848,6 @@ impl pallet_election_provider_multi_phase::Config for Runtime {
 parameter_types! {
     pub const BagThresholds: &'static [u64] = &voter_bags::THRESHOLDS;
 }
-
-
-
 
 type VoterBagsListInstance = pallet_bags_list::Instance1;
 impl pallet_bags_list::Config<VoterBagsListInstance> for Runtime {
@@ -990,7 +986,7 @@ impl pallet_referenda::Config<pallet_referenda::Instance2> for Runtime {
     type SubmitOrigin = EnsureSigned<AccountId>;
     type CancelOrigin = EnsureRoot<AccountId>;
     type KillOrigin = EnsureRoot<AccountId>;
-    type Slash =Treasury; // ();
+    type Slash = Treasury; // ();
     type Votes = pallet_ranked_collective::Votes;
     type Tally = pallet_ranked_collective::TallyOf<Runtime>;
     type SubmissionDeposit = SubmissionDeposit;
@@ -1211,7 +1207,11 @@ impl CustomEraPayout {
 }
 
 impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
-    fn era_payout(_total_staked: Balance, _total_issuance: Balance, _era_duration: u64) -> (Balance, Balance) {
+    fn era_payout(
+        _total_staked: Balance,
+        _total_issuance: Balance,
+        _era_duration: u64,
+    ) -> (Balance, Balance) {
         let current_era = pallet_staking::CurrentEra::<Runtime>::get().unwrap_or(0) as u64;
         let halvings: u32 = CustomEraPayout::calculate_halvings(current_era, HALVING_PERIOD);
         let reward = INITIAL_REWARD.saturating_div(2u128.saturating_pow(halvings));
@@ -1229,20 +1229,29 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
         let treasury_reward_from_validator = validator_reward / 100;
         let treasury_reward_from_pov = pov_reward / 100;
 
-        frame_support::log::info!("Treasury Reward from Validator: {}", treasury_reward_from_validator);
+        frame_support::log::info!(
+            "Treasury Reward from Validator: {}",
+            treasury_reward_from_validator
+        );
         frame_support::log::info!("Treasury Reward from PoV: {}", treasury_reward_from_pov);
 
-        let final_validator_reward = validator_reward.saturating_sub(treasury_reward_from_validator);
+        let final_validator_reward =
+            validator_reward.saturating_sub(treasury_reward_from_validator);
         let final_pov_reward = pov_reward.saturating_sub(treasury_reward_from_pov);
 
         frame_support::log::info!("Final Validator Reward: {}", final_validator_reward);
         frame_support::log::info!("Final PoV Reward: {}", final_pov_reward);
 
-        let total_treasury_reward = treasury_reward_from_validator.saturating_add(treasury_reward_from_pov);
+        let total_treasury_reward =
+            treasury_reward_from_validator.saturating_add(treasury_reward_from_pov);
 
         frame_support::log::info!("Total Treasury Reward: {}", total_treasury_reward);
 
-        let fractional_part = reward.saturating_sub(final_validator_reward.saturating_add(final_pov_reward).saturating_add(total_treasury_reward));
+        let fractional_part = reward.saturating_sub(
+            final_validator_reward
+                .saturating_add(final_pov_reward)
+                .saturating_add(total_treasury_reward),
+        );
 
         frame_support::log::info!("Fractional Part: {}", fractional_part);
 
@@ -1265,12 +1274,14 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
 
         let final_validator_reward_adjusted = final_validator_reward.saturating_add(remainder);
 
-        frame_support::log::info!("Final Validator Reward Adjusted: {}", final_validator_reward_adjusted);
+        frame_support::log::info!(
+            "Final Validator Reward Adjusted: {}",
+            final_validator_reward_adjusted
+        );
 
         (final_validator_reward_adjusted, remainder)
     }
 }
-
 
 impl pallet_treasury::Config for Runtime {
     type PalletId = TreasuryPalletId;
@@ -1284,7 +1295,7 @@ impl pallet_treasury::Config for Runtime {
         pallet_collective::EnsureProportionMoreThan<AccountId, CouncilCollective, 1, 2>,
     >;
     type RuntimeEvent = RuntimeEvent;
-    type OnSlash = ();//();
+    type OnSlash = (); //();
     type ProposalBond = ProposalBond;
     type ProposalBondMinimum = ProposalBondMinimum;
     type ProposalBondMaximum = ();
@@ -1296,9 +1307,6 @@ impl pallet_treasury::Config for Runtime {
     type MaxApprovals = MaxApprovals;
     type SpendOrigin = EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;
 }
-
-
-
 
 impl pallet_asset_rate::Config for Runtime {
     type CreateOrigin = EnsureRoot<AccountId>;
@@ -2216,7 +2224,6 @@ impl pallet_counter::Config for Runtime {
     type Currency = Balances;
     // type WeightInfo = pallet_counter::weights::DefaultWeightInfo;
 }
-
 
 // All migrations executed on runtime upgrade as a nested tuple of types implementing
 // `OnRuntimeUpgrade`.

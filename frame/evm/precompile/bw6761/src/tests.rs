@@ -17,33 +17,33 @@
 
 use super::*;
 use pallet_evm_test_vector_support::{
-	test_precompile_failure_test_vectors, test_precompile_test_vectors,
+    test_precompile_failure_test_vectors, test_precompile_test_vectors,
 };
 
 #[test]
 fn process_consensus_tests() -> Result<(), String> {
-	test_precompile_test_vectors::<Bw6761G1Add>("../testdata/bw6761G1Add.json")?;
-	test_precompile_test_vectors::<Bw6761G1Mul>("../testdata/bw6761G1Mul.json")?;
-	test_precompile_test_vectors::<Bw6761G1MultiExp>("../testdata/bw6761G1MultiExp.json")?;
-	test_precompile_test_vectors::<Bw6761G2Add>("../testdata/bw6761G2Add.json")?;
-	test_precompile_test_vectors::<Bw6761G2Mul>("../testdata/bw6761G2Mul.json")?;
-	test_precompile_test_vectors::<Bw6761G2MultiExp>("../testdata/bw6761G2MultiExp.json")?;
-	test_precompile_test_vectors::<Bw6761Pairing>("../testdata/bw6761Pairing.json")?;
-	Ok(())
+    test_precompile_test_vectors::<Bw6761G1Add>("../testdata/bw6761G1Add.json")?;
+    test_precompile_test_vectors::<Bw6761G1Mul>("../testdata/bw6761G1Mul.json")?;
+    test_precompile_test_vectors::<Bw6761G1MultiExp>("../testdata/bw6761G1MultiExp.json")?;
+    test_precompile_test_vectors::<Bw6761G2Add>("../testdata/bw6761G2Add.json")?;
+    test_precompile_test_vectors::<Bw6761G2Mul>("../testdata/bw6761G2Mul.json")?;
+    test_precompile_test_vectors::<Bw6761G2MultiExp>("../testdata/bw6761G2MultiExp.json")?;
+    test_precompile_test_vectors::<Bw6761Pairing>("../testdata/bw6761Pairing.json")?;
+    Ok(())
 }
 
 #[test]
 fn process_consensus_failure_tests() -> Result<(), String> {
-	test_precompile_failure_test_vectors::<Bw6761G1Add>("../testdata/fail-bw6761G1Add.json")?;
-	test_precompile_failure_test_vectors::<Bw6761G1Mul>("../testdata/fail-bw6761G1Mul.json")?;
-	test_precompile_failure_test_vectors::<Bw6761G1MultiExp>(
-		"../testdata/fail-bw6761G1MultiExp.json",
-	)?;
-	test_precompile_failure_test_vectors::<Bw6761G2Add>("../testdata/fail-bw6761G2Add.json")?;
-	test_precompile_failure_test_vectors::<Bw6761G2Mul>("../testdata/fail-bw6761G2Mul.json")?;
-	test_precompile_failure_test_vectors::<Bw6761G2MultiExp>(
-		"../testdata/fail-bw6761G2MultiExp.json",
-	)?;
-	test_precompile_failure_test_vectors::<Bw6761Pairing>("../testdata/fail-bw6761Pairing.json")?;
-	Ok(())
+    test_precompile_failure_test_vectors::<Bw6761G1Add>("../testdata/fail-bw6761G1Add.json")?;
+    test_precompile_failure_test_vectors::<Bw6761G1Mul>("../testdata/fail-bw6761G1Mul.json")?;
+    test_precompile_failure_test_vectors::<Bw6761G1MultiExp>(
+        "../testdata/fail-bw6761G1MultiExp.json",
+    )?;
+    test_precompile_failure_test_vectors::<Bw6761G2Add>("../testdata/fail-bw6761G2Add.json")?;
+    test_precompile_failure_test_vectors::<Bw6761G2Mul>("../testdata/fail-bw6761G2Mul.json")?;
+    test_precompile_failure_test_vectors::<Bw6761G2MultiExp>(
+        "../testdata/fail-bw6761G2MultiExp.json",
+    )?;
+    test_precompile_failure_test_vectors::<Bw6761Pairing>("../testdata/fail-bw6761Pairing.json")?;
+    Ok(())
 }

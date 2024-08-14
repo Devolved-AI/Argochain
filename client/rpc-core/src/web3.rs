@@ -26,11 +26,11 @@ use crate::types::Bytes;
 /// Web3 rpc interface.
 #[rpc(server)]
 pub trait Web3Api {
-	/// Returns current client version.
-	#[method(name = "web3_clientVersion")]
-	fn client_version(&self) -> RpcResult<String>;
+    /// Returns current client version.
+    #[method(name = "web3_clientVersion")]
+    fn client_version(&self) -> RpcResult<String>;
 
-	/// Returns sha3 of the given data
-	#[method(name = "web3_sha3")]
-	fn sha3(&self, input: Bytes) -> RpcResult<H256>;
+    /// Returns sha3 of the given data
+    #[method(name = "web3_sha3")]
+    fn sha3(&self, input: Bytes) -> RpcResult<H256>;
 }

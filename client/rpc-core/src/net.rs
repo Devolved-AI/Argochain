@@ -25,16 +25,16 @@ use crate::types::PeerCount;
 /// Net rpc interface.
 #[rpc(server)]
 pub trait NetApi {
-	/// Returns protocol version.
-	#[method(name = "net_version")]
-	fn version(&self) -> RpcResult<String>;
+    /// Returns protocol version.
+    #[method(name = "net_version")]
+    fn version(&self) -> RpcResult<String>;
 
-	/// Returns number of peers connected to node.
-	#[method(name = "net_peerCount")]
-	fn peer_count(&self) -> RpcResult<PeerCount>;
+    /// Returns number of peers connected to node.
+    #[method(name = "net_peerCount")]
+    fn peer_count(&self) -> RpcResult<PeerCount>;
 
-	/// Returns true if client is actively listening for network connections.
-	/// Otherwise false.
-	#[method(name = "net_listening")]
-	fn is_listening(&self) -> RpcResult<bool>;
+    /// Returns true if client is actively listening for network connections.
+    /// Otherwise false.
+    #[method(name = "net_listening")]
+    fn is_listening(&self) -> RpcResult<bool>;
 }

@@ -26,12 +26,12 @@ use crate::types::*;
 /// TxPool rpc interface
 #[rpc(server)]
 pub trait TxPoolApi {
-	#[method(name = "txpool_content")]
-	fn content(&self) -> RpcResult<TxPoolResult<TransactionMap<TxPoolTransaction>>>;
+    #[method(name = "txpool_content")]
+    fn content(&self) -> RpcResult<TxPoolResult<TransactionMap<TxPoolTransaction>>>;
 
-	#[method(name = "txpool_inspect")]
-	fn inspect(&self) -> RpcResult<TxPoolResult<TransactionMap<Summary>>>;
+    #[method(name = "txpool_inspect")]
+    fn inspect(&self) -> RpcResult<TxPoolResult<TransactionMap<Summary>>>;
 
-	#[method(name = "txpool_status")]
-	fn status(&self) -> RpcResult<TxPoolResult<U256>>;
+    #[method(name = "txpool_status")]
+    fn status(&self) -> RpcResult<TxPoolResult<U256>>;
 }

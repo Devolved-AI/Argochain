@@ -42,50 +42,50 @@ use serde::{de::Error, Deserialize, Deserializer};
 #[cfg(feature = "txpool")]
 pub use self::txpool::{Get, Summary, TransactionMap, TxPoolResult, TxPoolTransaction};
 pub use self::{
-	account_info::{AccountInfo, EthAccount, ExtAccountInfo, RecoveredAccount, StorageProof},
-	block::{Block, BlockTransactions, Header, Rich, RichBlock, RichHeader},
-	block_number::BlockNumber,
-	bytes::Bytes,
-	call_request::{CallRequest, CallStateOverride},
-	fee::{FeeHistory, FeeHistoryCache, FeeHistoryCacheItem, FeeHistoryCacheLimit},
-	filter::{
-		Filter, FilterAddress, FilterChanges, FilterPool, FilterPoolItem, FilterType,
-		FilteredParams, Topic, VariadicValue,
-	},
-	index::Index,
-	log::Log,
-	receipt::Receipt,
-	sync::{
-		ChainStatus, EthProtocolInfo, PeerCount, PeerInfo, PeerNetworkInfo, PeerProtocolsInfo,
-		Peers, PipProtocolInfo, SyncInfo, SyncStatus, TransactionStats,
-	},
-	transaction::{LocalTransactionStatus, RichRawTransaction, Transaction},
-	transaction_request::{TransactionMessage, TransactionRequest},
-	work::Work,
+    account_info::{AccountInfo, EthAccount, ExtAccountInfo, RecoveredAccount, StorageProof},
+    block::{Block, BlockTransactions, Header, Rich, RichBlock, RichHeader},
+    block_number::BlockNumber,
+    bytes::Bytes,
+    call_request::{CallRequest, CallStateOverride},
+    fee::{FeeHistory, FeeHistoryCache, FeeHistoryCacheItem, FeeHistoryCacheLimit},
+    filter::{
+        Filter, FilterAddress, FilterChanges, FilterPool, FilterPoolItem, FilterType,
+        FilteredParams, Topic, VariadicValue,
+    },
+    index::Index,
+    log::Log,
+    receipt::Receipt,
+    sync::{
+        ChainStatus, EthProtocolInfo, PeerCount, PeerInfo, PeerNetworkInfo, PeerProtocolsInfo,
+        Peers, PipProtocolInfo, SyncInfo, SyncStatus, TransactionStats,
+    },
+    transaction::{LocalTransactionStatus, RichRawTransaction, Transaction},
+    transaction_request::{TransactionMessage, TransactionRequest},
+    work::Work,
 };
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize)]
 pub(crate) struct CallOrInputData {
-	data: Option<Bytes>,
-	input: Option<Bytes>,
+    data: Option<Bytes>,
+    input: Option<Bytes>,
 }
 
 /// Function to deserialize `data` and `input`  within `TransactionRequest` and `CallRequest`.
 /// It verifies that if both `data` and `input` are provided, they must be identical.
 pub(crate) fn deserialize_data_or_input<'d, D: Deserializer<'d>>(
-	d: D,
+    d: D,
 ) -> Result<Option<Bytes>, D::Error> {
-	let CallOrInputData { data, input } = CallOrInputData::deserialize(d)?;
-	match (&data, &input) {
-		(Some(data), Some(input)) => {
-			if data == input {
-				Ok(Some(data.clone()))
-			} else {
-				Err(D::Error::custom(
-					"Ambiguous value for `data` and `input`".to_string(),
-				))
-			}
-		}
-		(_, _) => Ok(data.or(input)),
-	}
+    let CallOrInputData { data, input } = CallOrInputData::deserialize(d)?;
+    match (&data, &input) {
+        (Some(data), Some(input)) => {
+            if data == input {
+                Ok(Some(data.clone()))
+            } else {
+                Err(D::Error::custom(
+                    "Ambiguous value for `data` and `input`".to_string(),
+                ))
+            }
+        }
+        (_, _) => Ok(data.or(input)),
+    }
 }

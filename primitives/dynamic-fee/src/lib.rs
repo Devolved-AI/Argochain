@@ -35,15 +35,15 @@ pub struct InherentDataProvider(pub InherentType);
 #[cfg(feature = "std")]
 #[async_trait::async_trait]
 impl sp_inherents::InherentDataProvider for InherentDataProvider {
-	async fn provide_inherent_data(&self, inherent_data: &mut InherentData) -> Result<(), Error> {
-		inherent_data.put_data(INHERENT_IDENTIFIER, &self.0)
-	}
+    async fn provide_inherent_data(&self, inherent_data: &mut InherentData) -> Result<(), Error> {
+        inherent_data.put_data(INHERENT_IDENTIFIER, &self.0)
+    }
 
-	async fn try_handle_error(
-		&self,
-		_identifier: &InherentIdentifier,
-		_error: &[u8],
-	) -> Option<Result<(), Error>> {
-		None
-	}
+    async fn try_handle_error(
+        &self,
+        _identifier: &InherentIdentifier,
+        _error: &[u8],
+    ) -> Option<Result<(), Error>> {
+        None
+    }
 }
