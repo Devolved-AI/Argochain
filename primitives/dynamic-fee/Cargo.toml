@@ -15,6 +15,7 @@ async-trait = { workspace = true, optional = true }
 # Substrate
 sp-core = { workspace = true }
 sp-inherents = { workspace = true }
+sp-runtime = { workspace = true}
 
 [features]
 default = ["std"]

@@ -20,6 +20,7 @@
 use frame_benchmarking::{benchmarks, impl_benchmark_test_suite};
 
 use super::*;
+use alloc::format;
 
 benchmarks! {
     hotfix_inc_account_sufficients {

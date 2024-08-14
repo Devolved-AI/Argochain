@@ -64,6 +64,8 @@ pub use ethereum::{
     TransactionAction, TransactionV2 as Transaction,
 };
 pub use fp_rpc::TransactionStatus;
+pub use parity_scale_codec::DecodeAll;
+use parity_scale_codec::DecodeAll;
 
 
 #[derive(Clone, Eq, PartialEq, RuntimeDebug, Encode, Decode, MaxEncodedLen, TypeInfo)]

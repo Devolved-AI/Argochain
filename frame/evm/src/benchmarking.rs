@@ -19,6 +19,7 @@
 
 use super::*;
 use frame_benchmarking::{benchmarks, impl_benchmark_test_suite};
+use alloc::format;
 
 type CurrencyOf<T> = <T as Config>::Currency;
 

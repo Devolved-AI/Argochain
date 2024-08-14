@@ -72,7 +72,7 @@ pub struct Transaction {
     /// The S field of the signature.
     pub s: U256,
     /// Pre-pay to warm storage access.
-    #[cfg_attr(feature = "std", serde(skip_serializing_if = "Option::is_none"))]
+    #[cfg_attr(feature = "txpool", serde(skip_serializing_if = "Option::is_none"))]
     pub access_list: Option<Vec<AccessListItem>>,
     /// EIP-2718 type
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]

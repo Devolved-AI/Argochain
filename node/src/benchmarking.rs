@@ -30,6 +30,7 @@ use sp_keyring::Sr25519Keyring;
 use sp_runtime::OpaqueExtrinsic;
 
 use std::{sync::Arc, time::Duration};
+use alloc::format;
 
 /// Generates `System::Remark` extrinsics for the benchmarks.
 ///
