@@ -14,3 +14,8 @@ Please click [here](https://devolved-ai.gitbook.io/argochain-validator-guide) to
 [Argochain Validator Guide](https://devolved-ai.gitbook.io/argochain-validator-guide)\
 [Argoscan Explorer](https://explorer.argoscan.net)\
 [https://devolvedai.com](https://devolvedai.com)
+
+![Argochain's GitHub Stats](https://github-readme-stats.vercel.app/api/pin/?username=devolved-ai&repo=argochain&show_owner=true&theme=radical)
+
+
+![Profile Views](https://komarev.com/ghpvc/?username=devolved-ai&repo=argochain)
