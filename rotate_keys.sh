@@ -32,7 +32,7 @@ generate_and_insert_key() {
     public_key=$(echo "$key_output" | jq -r '.publicKey')
 
     echo "Inserting $key_type key..."
-    ./target/release/argochain key insert --base-path "$base_path" --chain "$chain_spec" --scheme "$scheme" --suri "$secret_phrase" --key-type "$key_type"
+    sudo ./target/release/argochain key insert --base-path "$base_path" --chain "$chain_spec" --scheme "$scheme" --suri "$secret_phrase" --key-type "$key_type"
 
     if [ $? -eq 0 ]; then
         echo "$key_type key inserted. Public key: $public_key"
