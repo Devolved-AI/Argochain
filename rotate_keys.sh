@@ -9,7 +9,7 @@ prompt_for_input() {
 }
 
 # Prompt user for base path
-base_path=$(prompt_for_input "Enter the base path for the node (e.g., /tmp/node01): ")
+base_path=$(prompt_for_input "Enter the base path for the node (e.g., /var/log/argochain): ")
 
 # Prompt user for chain specification file
 chain_spec=$(prompt_for_input "Enter the chain specification file (e.g., minervaRaw.json): ")
@@ -63,4 +63,4 @@ rotate_key "imon" "Sr25519" "$base_path" "$chain_spec"
 
 
 echo "Node has now been injected with new validator keys."
-./target/release/argochain --chain $chain_spec --name $name
+./target/release/argochain --chain $chain_spec --name $name --validator --base-path $base_path
