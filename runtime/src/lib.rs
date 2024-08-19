@@ -579,6 +579,9 @@ pub mod opaque {
     pub type BlockId = generic::BlockId<Block>;
 }
 
+
+
+
 impl pallet_session::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type ValidatorId = <Self as frame_system::Config>::AccountId;
@@ -1010,6 +1013,16 @@ parameter_types! {
     pub const MaxProposals: u32 = 100;
 }
 
+
+parameter_types! {
+    pub const EvmPalletId:PalletId=PalletId(*b"shrelect");
+}
+
+impl evm::Config for Runtime{
+    type RuntimeEvent=RuntimeEvent;
+    type PalletId=EvmPalletId;
+}
+
 impl pallet_democracy::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type Currency = Balances;
@@ -1122,6 +1135,10 @@ impl pallet_elections_phragmen::Config for Runtime {
     type MaxCandidates = MaxCandidates;
     type WeightInfo = pallet_elections_phragmen::weights::SubstrateWeight<Runtime>;
 }
+
+
+
+
 
 parameter_types! {
     pub const TechnicalMotionDuration: BlockNumber = 5 * DAYS;

@@ -409,6 +409,7 @@ name = "argochain-runtime"
 version = "1.0.0"
 dependencies = [
  "array-bytes",
+ "evm 0.1.0",
  "fp-account",
  "fp-evm",
  "fp-rpc",
@@ -2586,6 +2587,19 @@ checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
 
 [[package]]
 name = "evm"
+version = "0.1.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-evm",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-runtime",
+]
+
+[[package]]
+name = "evm"
 version = "0.39.1"
 source = "git+https://github.com/rust-blockchain/evm?rev=b7b82c7e1fc57b7449d6dfa6826600de37cc1e65#b7b82c7e1fc57b7449d6dfa6826600de37cc1e65"
 dependencies = [
@@ -2801,7 +2815,7 @@ version = "2.0.0-dev"
 dependencies = [
  "ethereum",
  "ethereum-types",
- "evm",
+ "evm 0.39.1",
  "fc-db",
  "fc-mapping-sync",
  "fc-rpc-core",
@@ -3092,7 +3106,7 @@ dependencies = [
 name = "fp-evm"
 version = "3.0.0-dev"
 dependencies = [
- "evm",
+ "evm 0.39.1",
  "frame-support",
  "parity-scale-codec",
  "scale-info",
@@ -6594,7 +6608,7 @@ version = "4.0.0-dev"
 dependencies = [
  "ethereum",
  "ethereum-types",
- "evm",
+ "evm 0.39.1",
  "fp-consensus",
  "fp-ethereum",
  "fp-evm",
@@ -6622,7 +6636,7 @@ name = "pallet-evm"
 version = "6.0.0-dev"
 dependencies = [
  "environmental",
- "evm",
+ "evm 0.39.1",
  "fp-account",
  "fp-evm",
  "frame-benchmarking",
@@ -6764,7 +6778,7 @@ dependencies = [
 name = "pallet-evm-test-vector-support"
 version = "1.0.0-dev"
 dependencies = [
- "evm",
+ "evm 0.39.1",
  "fp-evm",
  "hex",
  "serde",

@@ -151,6 +151,12 @@ pallet-hotfix-sufficients = { workspace = true }
 substrate-wasm-builder = { version = "5.0.0-dev",git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0", optional = true }
 [dependencies.pallet-counter]
 path = "../pallets/pallet-counter"
+
+[dependencies.evm]
+path = "../pallets/evm"
+
+
+
 default-features = false
 [features]
 default = ["std"]
