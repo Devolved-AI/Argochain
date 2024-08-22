@@ -152,8 +152,7 @@ substrate-wasm-builder = { version = "5.0.0-dev",git = "https://github.com/parit
 [dependencies.pallet-counter]
 path = "../pallets/pallet-counter"
 
-[dependencies.evm]
-path = "../pallets/evm"
+evm = { path = "../pallets/evm", default-features = false }
 
 
 
@@ -275,6 +274,7 @@ std = [
 	'pallet-evm-precompile-sha3fips/std',
 	"pallet-evm-precompile-simple/std",
 	"pallet-counter/std",
+ 	"evm/std"
 
 ]
 runtime-benchmarks = [
