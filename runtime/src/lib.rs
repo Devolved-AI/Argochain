@@ -56,7 +56,7 @@ use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
 };
-
+use frame_support::dispatch::DispatchResult;
 pub use node_primitives::{AccountId, Signature};
 pub use node_primitives::{AccountIndex, Balance, BlockNumber, Hash, Moment, Nonce};
 use pallet_asset_conversion::{NativeOrAssetId, NativeOrAssetIdConverter};
@@ -2202,6 +2202,8 @@ construct_runtime!(
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
         PalletCounter: pallet_counter::{Pallet, Call, Storage, Event<T>},
+        palletmintburnevm: pallet_mint_burn_evm::{Pallet, Call, Storage, Event<T>},
+
 
 
 
@@ -2215,6 +2217,80 @@ impl pallet_counter::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type Currency = Balances;
     // type WeightInfo = pallet_counter::weights::DefaultWeightInfo;
+}
+pub use pallet_mint_burn_evm;
+
+
+// impl pallet_mint_burn_evm::EvmInterface for Runtime {
+//     fn get_evm_balance(evm_address: sp_core::H160) -> Option<sp_core::U256> {
+//         let account = pallet_evm::Pallet::<Runtime>::account_basic(&evm_address).0;
+//         Some(account.balance)
+//     }
+
+//     fn set_evm_balance(evm_address: sp_core::H160, balance: sp_core::U256) -> frame_support::dispatch::DispatchResult {
+//         
+//         let mut balance_bytes = [0u8; 32];
+//         balance.to_big_endian(&mut balance_bytes);
+//         let balance_h256 = H256::from(balance_bytes);
+
+//         
+//         pallet_evm::AccountStorages::<Runtime>::mutate(evm_address, H256::zero(), |stored_balance| {
+//             *stored_balance = balance_h256;
+//             Ok(())
+//         })
+//     }
+// }
+// impl pallet_mint_burn_evm::EvmInterface for Runtime {
+//     fn get_evm_balance(evm_address: sp_core::H160) -> Option<sp_core::U256> {
+//         let account = pallet_evm::Pallet::<Runtime>::account_basic(&evm_address).0;
+//         Some(account.balance)
+//     }
+
+//     fn set_evm_balance(evm_address: sp_core::H160, balance: sp_core::U256) -> frame_support::dispatch::DispatchResult {
+//       
+//         let mut balance_bytes = [0u8; 32];
+//         balance.to_big_endian(&mut balance_bytes);
+//         let balance_h256 = H256::from(balance_bytes);
+
+//        
+//         pallet_evm::AccountStorages::<Runtime>::mutate(evm_address, H256::zero(), |stored_balance| {
+//             *stored_balance = balance_h256;
+//             Ok(())
+//         })
+//     }
+// }
+use pallet_mint_burn_evm::EvmInterface;
+
+// Implement the EvmInterface for Runtime
+pub struct RuntimeEvmInterface;
+
+impl pallet_mint_burn_evm::EvmInterface<AccountId> for RuntimeEvmInterface {
+    fn get_evm_balance(evm_address: H160) -> Option<U256> {
+        let account = pallet_evm::Pallet::<Runtime>::account_basic(&evm_address).0;
+        Some(account.balance)
+    }
+
+    fn set_evm_balance(evm_address: H160, balance: U256) -> DispatchResult {
+        pallet_evm::Pallet::<Runtime>::mutate_account_balance(evm_address, |account_balance| {
+            *account_balance = balance;
+        });
+        Ok(())
+    }
+
+    fn get_corresponding_evm_address(substrate_account: &AccountId) -> H160 {
+        pallet_evm::Pallet::<Runtime>::account_to_evm_address(substrate_account)
+    }
+
+    fn get_corresponding_substrate_account(evm_address: H160) -> AccountId {
+        pallet_evm::Pallet::<Runtime>::evm_address_to_account(evm_address)
+    }
+}
+
+
+impl pallet_mint_burn_evm::Config for Runtime {
+    type Currency = Balances;
+    type EvmInterface = RuntimeEvmInterface;
+    type RuntimeEvent = RuntimeEvent;
 }
 
 
