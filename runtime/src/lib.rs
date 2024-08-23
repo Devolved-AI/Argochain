@@ -4,21 +4,30 @@
 // `construct_runtime!` does a lot of recursion and requires us to increase the limits.
 #![recursion_limit = "1024"]
 
+use sp_core::U256;
+use sp_core::H256;
+use pallet_evm::BlockHashMapping as EvmBlockHashMapping;
+
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_election_provider_support::{
     onchain, BalancingConfig, ElectionDataProvider, SequentialPhragmen, VoteWeight,
 };
+use sp_runtime::traits::{Get, BlakeTwo256};
+use pallet_evm::{
+    EnsureAddressRoot, EnsureAddressNever, HashedAddressMapping,
+    runner::stack::Runner, FeeCalculator, FixedGasWeightMapping,
+};
+
 use frame_support::{
     construct_runtime,
     dispatch::DispatchClass,
     instances::{Instance1, Instance2},
     ord_parameter_types,
-    pallet_prelude::Get,
     parameter_types,
     traits::{
         fungible::ItemOf,
         tokens::{nonfungibles_v2::Inspect, GetSalary, PayFromAccount},
-        AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Currency, EitherOfDiverse,
+        AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, ConstU64, Currency, EitherOfDiverse,
         EqualPrivilegeOnly, Everything, FindAuthor, Imbalance, InstanceFilter, KeyOwnerProofSystem,
         LockIdentifier, Nothing, OnUnbalanced, WithdrawReasons,
     },
@@ -56,7 +65,7 @@ use pallet_transaction_payment::{FeeDetails, RuntimeDispatchInfo};
 use sp_api::impl_runtime_apis;
 use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;
 use sp_consensus_grandpa::AuthorityId as GrandpaId;
-use sp_core::{crypto::KeyTypeId, OpaqueMetadata, H160, H256, U256};
+use sp_core::{crypto::KeyTypeId, OpaqueMetadata, H160};
 use sp_inherents::{CheckInherentsResult, InherentData};
 
 #[cfg(feature = "with-paritydb-weights")]
@@ -69,8 +78,7 @@ use fp_self_contained;
 //
 use pallet_ethereum::{Call::transact, PostLogContent, Transaction as EthereumTransaction};
 use pallet_evm::{
-    Account as EVMAccount, EnsureAccountId20, EnsureAddressNever, EnsureAddressRoot, FeeCalculator,
-    GasWeightMapping, HashedAddressMapping, IdentityAddressMapping, Runner,
+    Account as EVMAccount, EnsureAccountId20, GasWeightMapping, IdentityAddressMapping,
 };
 // use account::AccountId20;
 use pallet_base_fee;
@@ -95,7 +103,7 @@ use sp_runtime::{
     curve::PiecewiseLinear,
     generic, impl_opaque_keys,
     traits::{
-        self, AccountIdConversion, BlakeTwo256, Block as BlockT, Bounded, ConvertInto,
+        self, AccountIdConversion, Block as BlockT, Bounded, ConvertInto,
         DispatchInfoOf, Dispatchable, IdentifyAccount, IdentityLookup, NumberFor, One, OpaqueKeys,
         PostDispatchInfoOf, SaturatedConversion, StaticLookup, UniqueSaturatedInto, Verify,
     },
@@ -1013,14 +1021,49 @@ parameter_types! {
     pub const MaxProposals: u32 = 100;
 }
 
+pub struct FixedGasPrice;
 
-parameter_types! {
-    pub const EvmPalletId:PalletId=PalletId(*b"shrelect");
+impl pallet_evm::FeeCalculator for FixedGasPrice {
+    fn min_gas_price() -> (sp_core::U256, Weight) {
+        let gas_price = sp_core::U256::from(1); // Example gas price
+        let weight = Weight::from_parts(0, 0);  // Example weight, adjust as needed
+        (gas_price, weight)
+    }
 }
 
-impl evm::Config for Runtime{
-    type RuntimeEvent=RuntimeEvent;
-    type PalletId=EvmPalletId;
+pub struct BlockGasLimitValue;
+
+impl Get<U256> for BlockGasLimitValue {
+    fn get() -> U256 {
+        U256::from(1_000_000) // Set your desired gas limit here
+    }
+}
+
+parameter_types! {
+    pub const EvmPalletId: PalletId = PalletId(*b"shrelect");
+}
+
+impl pallet_evm::Config for Runtime {
+    type GasWeightMapping = FixedGasWeightMapping<Runtime>;
+    type CallOrigin = EnsureAddressRoot<AccountId>;
+    type WithdrawOrigin = EnsureAddressNever<AccountId>;
+    type AddressMapping = HashedAddressMapping<BlakeTwo256>;
+    type Currency = Balances;
+    type RuntimeEvent = RuntimeEvent;
+    type Runner = pallet_evm::runner::stack::Runner<Self>;
+    type BlockGasLimit = BlockGasLimitValue;
+    type PrecompilesType = ();  
+    type PrecompilesValue = (); 
+    type ChainId = ConstU64<42>;
+    type OnChargeTransaction = ();
+    type FindAuthor = ();
+    type WeightPerGas = ();
+    type OnCreate = ();
+    type GasLimitPovSizeRatio = ();
+    type WeightInfo = ();
+    type FeeCalculator = FixedGasPrice;
+    type BlockHashMapping = pallet_evm::SubstrateBlockHashMapping<Runtime>;
+    type Timestamp = pallet_timestamp::Pallet<Runtime>;
 }
 
 impl pallet_democracy::Config for Runtime {
@@ -1135,10 +1178,6 @@ impl pallet_elections_phragmen::Config for Runtime {
     type MaxCandidates = MaxCandidates;
     type WeightInfo = pallet_elections_phragmen::weights::SubstrateWeight<Runtime>;
 }
-
-
-
-
 
 parameter_types! {
     pub const TechnicalMotionDuration: BlockNumber = 5 * DAYS;
@@ -2088,28 +2127,7 @@ impl pallet_hotfix_sufficients::Config for Runtime {
     type AddressMapping = HashedAddressMapping<BlakeTwo256>;
     type WeightInfo = pallet_hotfix_sufficients::weights::SubstrateWeight<Self>;
 }
-impl pallet_evm::Config for Runtime {
-    type FeeCalculator = BaseFee;
-    type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
-    type WeightPerGas = WeightPerGas;
-    type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
-    type CallOrigin = EnsureAddressRoot<AccountId>;
-    type WithdrawOrigin = EnsureAddressNever<AccountId>;
-    type AddressMapping = HashedAddressMapping<BlakeTwo256>;
-    type Currency = Balances;
-    type RuntimeEvent = RuntimeEvent;
-    type PrecompilesType = FrontierPrecompiles<Self>;
-    type PrecompilesValue = PrecompilesValue;
-    type ChainId = ChainId;
-    type BlockGasLimit = BlockGasLimit;
-    type Runner = pallet_evm::runner::stack::Runner<Self>;
-    type OnChargeTransaction = ();
-    type OnCreate = ();
-    type FindAuthor = FindAuthorTruncated<Babe>;
-    type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
-    type Timestamp = Timestamp;
-    type WeightInfo = pallet_evm::weights::SubstrateWeight<Self>;
-}
+
 
 parameter_types! {
     pub const PostBlockAndTxnHashes: PostLogContent = PostLogContent::BlockAndTxnHashes;
@@ -2504,9 +2522,10 @@ impl_runtime_apis! {
         }
 
         fn gas_price() -> U256 {
-            let (gas_price, _) = <Runtime as pallet_evm::Config>::FeeCalculator::min_gas_price();
-            gas_price
-        }
+            let (gas_price, _) = FixedGasPrice::min_gas_price();
+    	    gas_price
+	}
+
 
         fn account_code_at(address: H160) -> Vec<u8> {
             pallet_evm::AccountCodes::<Runtime>::get(address)
