@@ -2100,7 +2100,7 @@ impl pallet_evm::Config for Runtime {
     type Currency = Balances;
     type RuntimeEvent = RuntimeEvent;
     type PrecompilesType = FrontierPrecompiles<Self>;
-    type PrecompilesValue = PrecompilesValue;
+    type PrecompilesValue = PrecompilesValue; 
     type ChainId = ChainId;
     type BlockGasLimit = BlockGasLimit;
     type Runner = pallet_evm::runner::stack::Runner<Self>;
@@ -2121,6 +2121,10 @@ impl pallet_ethereum::Config for Runtime {
     type StateRoot = pallet_ethereum::IntermediateStateRoot<Self>;
     type PostLogContent = PostBlockAndTxnHashes;
     type ExtraDataLength = ConstU32<30>;
+}
+
+impl pallet_mint::Config for Runtime {
+    type Event = Event;
 }
 
 construct_runtime!(
@@ -2202,7 +2206,7 @@ construct_runtime!(
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
         PalletCounter: pallet_counter::{Pallet, Call, Storage, Event<T>},
-
+        MintPallet: pallet_mint::{Pallet, Call, Storage, Event<T>},
 
 
     }

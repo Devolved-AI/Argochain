@@ -1,0 +1,22 @@
+[package]
+name = "pallet-mint"
+version = "1.0.0"
+authors = ["Meharab meharab@devolvedai.com"]
+edition = "2024"
+description = "A simple pallet to mint coin on evm chain and emit an event."
+license = "MIT-0"
+
+[dependencies]
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.36" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.36" }
+sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.36" }
+pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.36" }
+
+[features]
+default = ["std"]
+std = [
+    "frame-support/std",
+    "frame-system/std",
+    "sp-std/std",
+    "pallet-balances/std",
+]
