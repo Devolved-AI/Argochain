@@ -2,12 +2,14 @@
 
 ## 8-26-2024
 
-1. Make sure you are building on Rust **v1.80.0.** Attempted builds on v1.75 and 1.68 failed. To check your version, run:
+1. Make sure you are building on Rust **v1.80.0.** Attempted builds on v1.75 and v1.68 failed. 
+
+To check your version, run:
 ```
 rustc --version
 ```
 
-The version number should output 1.80.0.  If it doesn't, run the following commands to set your Rust version to v1.80.0:
+**The version number should output 1.80.0.**  If it doesn't, run the following commands to set your Rust version to v1.80.0:
 
 ```
 rustup install 1.80.0
@@ -26,10 +28,10 @@ cargo run --release -- --dev
 
 You should have a running EVM-compatible Substrate blockchain. But, let's test to see if our blockchain is indeed EVM-compatible.
 
-3. Run the following command to check EVM-compatibility. You should have block output that resembles Ethereum and has "Ethereum-like" keywords:
+3. Run the following 2 commands below to check EVM-compatibility. You should have block output that resembles Ethereum and has "Ethereum-like" keywords:
 
 ```
-# Get the Block Number by calling the eth_getBlockByNumber argument and passing the "latest" paramter.
+# Get the Block Number by calling the eth_getBlockByNumber argument and passing the "latest" parameter.
 # The output should have transactionsRoot, stateRoot, and receiptsRoot -- fields typical of an Ethereum blockchain
  
 curl -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"eth_getBlockByNumber","params":["latest", true]}' http://127.0.0.1:9944 | jq
