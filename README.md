@@ -1,3 +1,49 @@
+# Pavon EVM Updates 
+
+## 8-26-2024
+
+1. Make sure you are building on Rust **v1.80.0.** Attempted builds on v1.75 and 1.68 failed. To check your version, run:
+```
+rustc --version
+```
+
+The version number should output 1.80.0.  If it doesn't, run the following commands to set your Rust version to v1.80.0:
+
+```
+rustup install 1.80.0
+rustup default 1.80.0
+rustup set override 1.80.0
+rustc --version
+```
+
+The output should now show v1.80.0.
+
+2. Next, run the following to build the blockchain and run it in a test (dev) environment:
+
+```
+cargo run --release -- --dev
+```
+
+You should have a running EVM-compatible Substrate blockchain. But, let's test to see if our blockchain is indeed EVM-compatible.
+
+3. Run the following command to check EVM-compatibility. You should have block output that resembles Ethereum and has "Ethereum-like" keywords:
+
+```
+# Get the Block Number by calling the eth_getBlockByNumber argument and passing the "latest" paramter.
+# The output should have transactionsRoot, stateRoot, and receiptsRoot -- fields typical of an Ethereum blockchain
+ 
+curl -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"eth_getBlockByNumber","params":["latest", true]}' http://127.0.0.1:9944 | jq
+
+# Get the Chain ID for the EVM-based Substrate blockchain
+# The output should be a hexadecimal number
+
+curl -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' http://127.0.0.1:9944 | jq
+```
+
+At this point, you can deploy a smart contract against the EVM-compatible blockchain and interact with your smart contract.
+
+
+
 # Introducing the ArgoChain-SDK: Your Gateway to the ArgoChain Testnet
 ![photo_2024-04-29 13 29 45](https://github.com/Devolved-AI/Argochain/assets/96510238/9989a2c0-dbdf-4baa-b8fc-54e3c75f7445)
 ------------------
