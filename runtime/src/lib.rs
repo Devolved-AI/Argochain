@@ -1,5 +1,3 @@
-
-
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limits.
 #![recursion_limit = "1024"]
@@ -7,6 +5,8 @@
 use sp_core::U256;
 use sp_core::H256;
 use pallet_evm::BlockHashMapping as EvmBlockHashMapping;
+use pallet_evm::Runner as EvmRunner;
+use pallet_evm::runner::stack::Runner as StackRunner;
 
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_election_provider_support::{
