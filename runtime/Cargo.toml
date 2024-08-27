@@ -147,6 +147,12 @@ pallet-evm-precompile-sha3fips = { workspace = true }
 pallet-evm-precompile-simple = { workspace = true }
 pallet-hotfix-sufficients = { workspace = true }
 
+[dependencies.pallet-mint]
+path = "../pallets/mint"
+version = "1.0.0"  # You can set this based on your own versioning
+default-features = false
+
+
 [build-dependencies]
 substrate-wasm-builder = { version = "5.0.0-dev",git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0", optional = true }
 [dependencies.pallet-counter]
@@ -273,7 +279,8 @@ std = [
 	'pallet-evm-precompile-sha3fips/std',
 	"pallet-evm-precompile-simple/std",
 	"pallet-counter/std",
-	"pallet-mint-burn-evm/std",
+	"pallet-mint/std",
+
 
 ]
 runtime-benchmarks = [
