@@ -1,12 +1,13 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#[cfg(feature = "runtime-benchmarks")]
+mod benchmarking;
+
 
 use super::*;
-use frame_benchmarking::{account, benchmarks, impl_benchmark_test_suite};
+use frame_benchmarking::{benchmarks, whitelisted_caller, account};
 use frame_system::RawOrigin;
 use sp_core::H160;
 use sp_runtime::traits::Bounded;
 use sp_runtime::U256;
-
 const SEED: u32 = 0;
 
 benchmarks! {

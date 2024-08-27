@@ -66,6 +66,7 @@ use fp_account::EthereumSignature;
 use fp_evm::weight_per_gas;
 use fp_rpc::TransactionStatus;
 use fp_self_contained;
+
 //
 use pallet_ethereum::{Call::transact, PostLogContent, Transaction as EthereumTransaction};
 use pallet_evm::{
@@ -1018,10 +1019,10 @@ parameter_types! {
     pub const EvmPalletId:PalletId=PalletId(*b"shrelect");
 }
 
-impl evm::Config for Runtime{
-    type RuntimeEvent=RuntimeEvent;
-    type PalletId=EvmPalletId;
-}
+// impl evm::Config for Runtime{
+//     type RuntimeEvent=RuntimeEvent;
+//     type PalletId=EvmPalletId;
+// }
 
 impl pallet_democracy::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
@@ -2201,8 +2202,7 @@ construct_runtime!(
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
         PalletCounter: pallet_counter::{Pallet, Call, Storage, Event<T>},
-
-
+        PalletEVM:pallet_evm_final,
 
     }
 );
