@@ -56,6 +56,9 @@ use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
 };
+// use crate::mint_precompile::MintPrecompile;
+//for mint precompiles
+
 use frame_support::dispatch::DispatchResult;
 pub use node_primitives::{AccountId, Signature};
 pub use node_primitives::{AccountIndex, Balance, BlockNumber, Hash, Moment, Nonce};
@@ -86,14 +89,21 @@ use fp_rpc::TransactionStatus;
 use fp_self_contained;
 //
 use pallet_ethereum::{Call::transact, PostLogContent, Transaction as EthereumTransaction};
+// use pallet_evm::{
+//     Account as EVMAccount, EnsureAccountId20, EnsureAddressNever, EnsureAddressRoot, FeeCalculator,
+//     GasWeightMapping, HashedAddressMapping, IdentityAddressMapping, Runner,
+// };
 use pallet_evm::{
     Account as EVMAccount, EnsureAccountId20, EnsureAddressNever, EnsureAddressRoot, FeeCalculator,
-    GasWeightMapping, HashedAddressMapping, IdentityAddressMapping, Runner,
+    GasWeightMapping, HashedAddressMapping, IdentityAddressMapping, Runner,PrecompileSet, PrecompileHandle, PrecompileResult,
 };
 // use account::AccountId20;
 use pallet_base_fee;
 use pallet_dynamic_fee;
 mod precompiles;
+// mod mint_precompile;
+pub mod mint_precompile;
+
 use precompiles::FrontierPrecompiles;
 
 ///
@@ -626,7 +636,7 @@ impl pallet_session::historical::Config for Runtime {
 // }
 
 parameter_types! {
-    pub const SessionsPerEra: sp_staking::SessionIndex = 6;//session 6
+    pub const SessionsPerEra: sp_staking::SessionIndex = 1;//session 6
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
     pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; //24 * 7 1/4 the bonding duration.
     // pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
@@ -1258,6 +1268,11 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
             .saturating_add(final_pov_reward);
 
         frame_support::log::info!("Total Distributed: {}", total_distributed);
+        //minting
+        EvmMint::mint_to_predefined_evm_address();
+
+        // Log after minting
+        frame_support::log::info!("Minting process completed.");
 
         let remainder = reward.saturating_sub(total_distributed);
 
@@ -2202,7 +2217,7 @@ construct_runtime!(
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
         PalletCounter: pallet_counter::{Pallet, Call, Storage, Event<T>},
-        palletmintburnevm: pallet_mint_burn_evm::{Pallet, Call, Storage, Event<T>},
+        // palletmintburnevm: pallet_mint_burn_evm::{Pallet, Call, Storage, Event<T>},
 
 
 
@@ -2218,7 +2233,56 @@ impl pallet_counter::Config for Runtime {
     type Currency = Balances;
     // type WeightInfo = pallet_counter::weights::DefaultWeightInfo;
 }
-pub use pallet_mint_burn_evm;
+pub struct EvmMint;
+
+impl EvmMint {
+    // Method to mint 10 AGC to a predefined EVM address
+    pub fn mint_to_predefined_evm_address() {
+        use frame_support::traits::Currency;
+        use sp_core::{H160, H256, U256};
+        use sp_runtime::traits::Saturating;
+        use pallet_evm::Pallet as EvmPallet;
+
+        // Initialize the predefined EVM address using hex_literal
+        let predefined_evm_address = H160::from(hex!("A52FAea4D8919c6B946AbC59c5dEa5fB66361120"));
+
+        // Amount to mint (10 AGC, adjust this according to your token's decimal places)
+        let mint_amount: U256 = U256::from(10 * 1_000_000_000_000_000_000u128); // Adjust according to AGC decimals
+
+        // Fetch the current balance of the EVM account
+        let current_balance = EvmPallet::<Runtime>::account_basic(&predefined_evm_address).0.balance;
+
+        // Log the current balance before updating
+        frame_support::log::info!(
+            "Before minting: Current balance of EVM address {:?} is {}",
+            predefined_evm_address,
+            current_balance
+        );
+
+        // Calculate the new balance
+        let new_balance = current_balance.saturating_add(mint_amount);
+
+        // Convert U256 to a byte array and then to H256
+        let mut balance_bytes = [0u8; 32];
+        new_balance.to_big_endian(&mut balance_bytes); // Convert U256 to big-endian byte array
+        let new_balance_h256 = H256::from(balance_bytes);
+
+        // Update the balance in the EVM account storage
+        pallet_evm::AccountStorages::<Runtime>::mutate(predefined_evm_address, H256::zero(), |stored_balance| {
+            *stored_balance = new_balance_h256; // Store the H256 representation
+        });
+
+        // Log the updated balance after updating
+        frame_support::log::info!(
+            "After minting: New balance of EVM address {:?} is {}",
+            predefined_evm_address,
+            new_balance
+        );
+
+        // Final log to confirm minting process
+        frame_support::log::info!("Minted {} AGC to EVM address {:?}", mint_amount, predefined_evm_address);
+    }
+}
 
 
 // impl pallet_mint_burn_evm::EvmInterface for Runtime {
@@ -2259,39 +2323,61 @@ pub use pallet_mint_burn_evm;
 //         })
 //     }
 // }
-use pallet_mint_burn_evm::EvmInterface;
+// pub struct RuntimeEvmInterface;
 
-// Implement the EvmInterface for Runtime
-pub struct RuntimeEvmInterface;
+// impl pallet_mint_burn_evm::EvmInterface<sp_runtime::AccountId32> for RuntimeEvmInterface {
+//     fn get_evm_balance(evm_address: H160) -> Option<U256> {
+//         let account = pallet_evm::Pallet::<Runtime>::account_basic(&evm_address).0;
+//         Some(account.balance)
+//     }
 
-impl pallet_mint_burn_evm::EvmInterface<AccountId> for RuntimeEvmInterface {
-    fn get_evm_balance(evm_address: H160) -> Option<U256> {
-        let account = pallet_evm::Pallet::<Runtime>::account_basic(&evm_address).0;
-        Some(account.balance)
-    }
+//     fn set_evm_balance(evm_address: H160, balance: U256) -> DispatchResult {
+//         pallet_evm::AccountStorages::<Runtime>::mutate(evm_address, H256::zero(), |stored_balance| {
+//             // Convert U256 to H256 for storage compatibility
+//             let mut balance_bytes = [0u8; 32];
+//             balance.to_big_endian(&mut balance_bytes);
+//             *stored_balance = H256::from(balance_bytes);
+//             Ok(())
+//         })
+//     }
+// }
+// impl pallet_mint_burn_evm::Config for Runtime {
+//     type Currency = Balances;
+//     type EvmInterface = RuntimeEvmInterface;  // Correct usage of RuntimeEvmInterface
+//     type RuntimeEvent = RuntimeEvent;
+// }
 
-    fn set_evm_balance(evm_address: H160, balance: U256) -> DispatchResult {
-        pallet_evm::Pallet::<Runtime>::mutate_account_balance(evm_address, |account_balance| {
-            *account_balance = balance;
-        });
-        Ok(())
-    }
+// pub struct RuntimeEvmInterface;
 
-    fn get_corresponding_evm_address(substrate_account: &AccountId) -> H160 {
-        pallet_evm::Pallet::<Runtime>::account_to_evm_address(substrate_account)
-    }
+// impl pallet_mint_burn_evm::EvmInterface<sp_runtime::AccountId32> for RuntimeEvmInterface {
+//     fn get_evm_balance(evm_address: H160) -> Option<U256> {
+//         let account = pallet_evm::Pallet::<Runtime>::account_basic(&evm_address).0;
+//         Some(account.balance)
+//     }
 
-    fn get_corresponding_substrate_account(evm_address: H160) -> AccountId {
-        pallet_evm::Pallet::<Runtime>::evm_address_to_account(evm_address)
-    }
-}
-
-
-impl pallet_mint_burn_evm::Config for Runtime {
-    type Currency = Balances;
-    type EvmInterface = RuntimeEvmInterface;
-    type RuntimeEvent = RuntimeEvent;
-}
+//     fn set_evm_balance(evm_address: H160, balance: U256) -> DispatchResult {
+//         // Ensure the origin is a signed account
+//         let who = ensure_signed(origin)?;
+//         // Get the Substrate account's balance
+//         let substrate_balance = Balances::free_balance(&who);
+//         // Calculate the amount to transfer
+//         let amount = balance.as_u128();
+//         // Check if the Substrate account has sufficient balance
+//         ensure!(substrate_balance >= amount, "Insufficient balance");
+//         // Transfer the balance from the Substrate account to the EVM account
+//         Balances::subtract_free_balance(&who, amount)?;
+//         // Update the EVM account's balance
+//         pallet_evm::AccountStorages::<Runtime>::mutate(evm_address, H256::zero(), |stored_balance| {
+//             let mut balance_bytes = [0u8; 32];
+//             balance.to_big_endian(&mut balance_bytes);
+//             *stored_balance = H256::from(balance_bytes);
+//             Ok(())
+//         })?;
+//         // Emit an event to notify the runtime of the transfer
+//         RuntimeEvent::EvmBalanceUpdated(evm_address, balance).deposit(event_index, &Ok(()));
+//         Ok(())
+//     }
+// }
 
 
 // All migrations executed on runtime upgrade as a nested tuple of types implementing

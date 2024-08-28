@@ -7,6 +7,11 @@ use sp_std::marker::PhantomData;
 use pallet_evm_precompile_modexp::Modexp;
 use pallet_evm_precompile_sha3fips::Sha3FIPS256;
 use pallet_evm_precompile_simple::{ECRecover, ECRecoverPublicKey, Identity, Ripemd160, Sha256};
+use crate::mint_precompile::MintPrecompile; // Import the MintPrecompile
+
+// Add the missing imports for U256 and Zero
+use sp_core::U256;
+use sp_runtime::traits::Zero;
 
 pub struct FrontierPrecompiles<R>(PhantomData<R>);
 
@@ -17,7 +22,8 @@ where
     pub fn new() -> Self {
         Self(Default::default())
     }
-    pub fn used_addresses() -> [H160; 7] {
+
+    pub fn used_addresses() -> [H160; 8] {  // Updated size to 8 to include MintPrecompile
         [
             hash(1),
             hash(2),
@@ -26,12 +32,17 @@ where
             hash(5),
             hash(1024),
             hash(1025),
+            hash(1026),  // Address for MintPrecompile
         ]
     }
 }
+
 impl<R> PrecompileSet for FrontierPrecompiles<R>
 where
-    R: pallet_evm::Config,
+    R: pallet_evm::Config + pallet_balances::Config,
+    R::AccountId: From<H160>,
+    R::Balance: TryFrom<U256> + Zero,
+    <R::Balance as TryFrom<U256>>::Error: core::fmt::Debug,
 {
     fn execute(&self, handle: &mut impl PrecompileHandle) -> Option<PrecompileResult> {
         match handle.code_address() {
@@ -44,6 +55,7 @@ where
             // Non-Frontier specific nor Ethereum precompiles :
             a if a == hash(1024) => Some(Sha3FIPS256::execute(handle)),
             a if a == hash(1025) => Some(ECRecoverPublicKey::execute(handle)),
+            a if a == hash(1026) => Some(MintPrecompile::<R>::execute(handle).ok()?),
             _ => None,
         }
     }

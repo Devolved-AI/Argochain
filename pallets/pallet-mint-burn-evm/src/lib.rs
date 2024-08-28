@@ -107,9 +107,8 @@ pub mod pallet {
     pub trait EvmInterface<AccountId> {
         fn get_evm_balance(evm_address: H160) -> Option<U256>;
         fn set_evm_balance(evm_address: H160, balance: U256) -> DispatchResult;
-        fn get_corresponding_evm_address(substrate_account: &AccountId) -> H160;
-        fn get_corresponding_substrate_account(evm_address: H160) -> AccountId;
     }
+    
 
     #[pallet::pallet]
     pub struct Pallet<T>(_);
@@ -120,6 +119,7 @@ pub mod pallet {
         type EvmInterface: EvmInterface<Self::AccountId>;
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
     }
+    
 
     #[pallet::call]
     impl<T: Config> Pallet<T> {
