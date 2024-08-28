@@ -1,6 +1,5 @@
-use fp_evm::LinearCostPrecompile; // Add this line to import the trait
+use fp_evm::LinearCostPrecompile; 
 
-// The rest of your imports and code...
 use fp_evm::{
     PrecompileFailure, PrecompileHandle, PrecompileOutput, ExitRevert, ExitSucceed,
 };

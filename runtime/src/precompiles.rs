@@ -7,9 +7,8 @@ use sp_std::marker::PhantomData;
 use pallet_evm_precompile_modexp::Modexp;
 use pallet_evm_precompile_sha3fips::Sha3FIPS256;
 use pallet_evm_precompile_simple::{ECRecover, ECRecoverPublicKey, Identity, Ripemd160, Sha256};
-use crate::mint_precompile::MintPrecompile; // Import the MintPrecompile
+use crate::mint_precompile::MintPrecompile; 
 
-// Add the missing imports for U256 and Zero
 use sp_core::U256;
 use sp_runtime::traits::Zero;
 
@@ -23,7 +22,7 @@ where
         Self(Default::default())
     }
 
-    pub fn used_addresses() -> [H160; 8] {  // Updated size to 8 to include MintPrecompile
+    pub fn used_addresses() -> [H160; 8] {  
         [
             hash(1),
             hash(2),
@@ -55,7 +54,7 @@ where
             // Non-Frontier specific nor Ethereum precompiles :
             a if a == hash(1024) => Some(Sha3FIPS256::execute(handle)),
             a if a == hash(1025) => Some(ECRecoverPublicKey::execute(handle)),
-            a if a == hash(1026) => Some(MintPrecompile::<R>::execute(handle).ok()?),
+            a if a == hash(1026) => Some(MintPrecompile::<R>::execute(handle).ok()?),//its for evm
             _ => None,
         }
     }
