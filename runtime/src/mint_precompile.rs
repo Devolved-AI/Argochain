@@ -19,7 +19,7 @@ where
         if input.len() != 52 {
             return Err(PrecompileFailure::Revert {
                 exit_status: ExitRevert::Reverted,
-                output: b"Invalid input length".to_vec(),
+                output: b"length not matched".to_vec(),
             });
         }
 
