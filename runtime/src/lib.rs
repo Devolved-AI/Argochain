@@ -2123,6 +2123,26 @@ impl pallet_ethereum::Config for Runtime {
     type ExtraDataLength = ConstU32<30>;
 }
 
+// Import necessary modules
+use sp_runtime::traits::IdentifyAccount;
+use sp_core::{H160, H256};
+
+// Define how Ethereum addresses (H160) are converted to Substrate accounts (H256)
+pub struct AccountIdConverter;
+
+impl AccountIdConverter {
+    pub fn into_substrate_account(eth_address: H160) -> H256 {
+        // Convert Ethereum H160 address to H256 for Substrate compatibility
+        H256::from(eth_address)
+    }
+
+    pub fn into_eth_address(substrate_account: H256) -> H160 {
+        // Convert Substrate H256 address back to Ethereum H160 format
+        H160::from_slice(&substrate_account.as_bytes()[12..])
+    }
+}
+
+
 construct_runtime!(
     pub struct Runtime
     {
