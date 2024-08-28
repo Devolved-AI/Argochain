@@ -1,6 +1,9 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub use pallet::*;
+use frame_support::dispatch::DispatchResult;
+use frame_system::ensure_signed;
+use sp_runtime::traits::Zero;
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -90,5 +93,27 @@ pub mod pallet {
             Self::deposit_event(Event::Unlocked { who: who.clone(), amount });
             Ok(())
         }
+
+        // #[pallet::weight(10_000)]
+        // pub fn transfer_to_evm_account(
+        //     origin: OriginFor<T>,
+        //     evm_account: H160,
+        //     amount: BalanceOf<T>,
+        // ) -> DispatchResult {
+        //     let who = ensure_signed(origin)?;
+        
+        //     // Ensure the Substrate account has enough balance
+        //     ensure!(<Balances<T>>::free_balance(&who) >= amount, "Insufficient balance");
+        
+        //     // Deduct the amount from the Substrate account
+        //     <Balances<T>>::mutate(&who, |balance| *balance -= amount);
+        
+        //     // Add the amount to the EVM account
+        //     <EVMAccounts<T>>::mutate(&evm_account, |balance| *balance += amount);
+        
+        //     // Emit an event for the transfer
+        //     Self::deposit_event(Event::TransferredToEvmAccount(who, evm_account, amount));
+        //     Ok(())
+        // }
     }
 }

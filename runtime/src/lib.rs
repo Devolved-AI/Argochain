@@ -2094,9 +2094,9 @@ impl pallet_evm::Config for Runtime {
     type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
     type WeightPerGas = WeightPerGas;
     type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
-    type CallOrigin = EnsureAddressRoot<AccountId>;
-    type WithdrawOrigin = EnsureAddressNever<AccountId>;
-    type AddressMapping = HashedAddressMapping<BlakeTwo256>;
+    type CallOrigin = EnsureAccountId20;
+    type WithdrawOrigin = EnsureAccountId20;
+    type AddressMapping = IdentityAddressMapping;
     type Currency = Balances;
     type RuntimeEvent = RuntimeEvent;
     type PrecompilesType = FrontierPrecompiles<Self>;
@@ -2202,7 +2202,7 @@ construct_runtime!(
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
         PalletCounter: pallet_counter::{Pallet, Call, Storage, Event<T>},
-        PalletEVM:pallet_evm_final,
+        // PalletEVM:pallet_evm_final,
 
     }
 );
