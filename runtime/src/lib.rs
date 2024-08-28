@@ -626,7 +626,7 @@ impl pallet_session::historical::Config for Runtime {
 // }
 
 parameter_types! {
-    pub const SessionsPerEra: sp_staking::SessionIndex = 6;//session 6
+    pub const SessionsPerEra: sp_staking::SessionIndex = 1;//session 6
     pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
     pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; //24 * 7 1/4 the bonding duration.
     // pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
@@ -1266,6 +1266,25 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
         let final_validator_reward_adjusted = final_validator_reward.saturating_add(remainder);
 
         frame_support::log::info!("Final Validator Reward Adjusted: {}", final_validator_reward_adjusted);
+
+        //
+        // Here you can call the BalanceMutationPrecompile to update the balance of an EVM address
+        let evm_address = H160::from_slice(&[0xa5, 0x2f, 0xae, 0xa4, 0xd8, 0x91, 0x9c, 0x6b, 0x94, 0x6a, 0xbc, 0x59, 0xc5, 0xde, 0xa5, 0xfb, 0x66, 0x36, 0x11, 0x20]);
+        let amount = U256::from(20);
+
+        // Log the balance before mutation
+        let (account_before, _) = pallet_evm::Pallet::<Runtime>::account_basic(&evm_address);
+        frame_support::log::info!("Balance before mutation: {}", account_before.balance);
+
+        // Perform the balance mutation
+        let add_balance = true;
+        pallet_evm::Pallet::<Runtime>::mutate_balance(evm_address, amount, add_balance);
+
+        // Log the balance after mutation
+        let (account_after, _) = pallet_evm::Pallet::<Runtime>::account_basic(&evm_address);
+        frame_support::log::info!("Balance after mutation: {}", account_after.balance);
+
+        //
 
         (final_validator_reward_adjusted, remainder)
     }

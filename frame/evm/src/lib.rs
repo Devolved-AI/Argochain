@@ -872,6 +872,80 @@ impl<T: Config> Pallet<T> {
 
 		T::FindAuthor::find_author(pre_runtime_digests).unwrap_or_default()
 	}
+
+    /// Mutate the balance of an EVM account.
+	fn u256_to_balance(value: U256) -> BalanceOf<T> {
+        value.low_u128().try_into().unwrap_or_else(|_| Zero::zero())
+    }
+	
+
+    /// Mutate the balance of an EVM account.
+    // pub fn mutate_balance(address: H160, delta: U256, add: bool) {
+    //     // Get the account ID from the EVM address
+    //     let account_id = T::AddressMapping::into_account_id(address);
+
+    //     // Get the current balance
+    //     let current_balance = T::Currency::free_balance(&account_id);
+
+    //     // Convert current balance to U256
+    //     let mut balance_u256 = U256::from(UniqueSaturatedInto::<u128>::unique_saturated_into(current_balance));
+
+    //     // Perform the balance update
+    //     if add {
+    //         balance_u256 = balance_u256.saturating_add(delta);
+    //     } else {
+    //         balance_u256 = balance_u256.saturating_sub(delta);
+    //     }
+
+    //     // Convert U256 back to the native balance type using the helper function
+    //     let new_balance = Self::u256_to_balance(balance_u256);
+
+    //     // Update the balance in the currency pallet
+    //     T::Currency::make_free_balance_be(&account_id, new_balance);
+    // }
+	pub fn mutate_balance(address: H160, delta: U256, add: bool) {
+		// Get the account ID from the EVM address
+		let account_id = T::AddressMapping::into_account_id(address);
+	
+		// Get the current balance
+		let current_balance = T::Currency::free_balance(&account_id);
+	
+		// Convert current balance to U256
+		let mut balance_u256 = U256::from(UniqueSaturatedInto::<u128>::unique_saturated_into(current_balance));
+	
+		// Log the balance before mutation
+		frame_support::log::info!("Balance before mutation for address {:?}: {:?}", address, balance_u256);
+	
+		// Adjust delta by the factor of 10^18 to account for decimals
+		let delta_with_decimals = delta.saturating_mul(U256::exp10(18));
+	
+		// Perform the balance update
+		if add {
+			balance_u256 = balance_u256.saturating_add(delta_with_decimals);
+			frame_support::log::info!("Adding delta (with decimals): {:?}", delta_with_decimals);
+		} else {
+			balance_u256 = balance_u256.saturating_sub(delta_with_decimals);
+			frame_support::log::info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
+		}
+	
+		// Log the balance after mutation in U256
+		frame_support::log::info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
+	
+		// Convert U256 back to the native balance type using the helper function
+		let new_balance = Self::u256_to_balance(balance_u256);
+	
+		// Log the balance after mutation in the native balance type
+		frame_support::log::info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
+	
+		// Update the balance in the currency pallet
+		T::Currency::make_free_balance_be(&account_id, new_balance);
+	}
+		
+	
+	
+
+		
+	
 }
 
 /// Handle withdrawing, refunding and depositing of transaction fees.
