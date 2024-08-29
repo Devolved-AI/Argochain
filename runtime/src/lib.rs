@@ -642,6 +642,14 @@ impl pallet_staking::BenchmarkingConfig for StakingBenchmarkingConfig {
     type MaxValidators = ConstU32<1000>;
 }
 
+parameter_types! {
+    pub BlockGasLimit: U256 = U256::from(12_500_000); // Set your block gas limit
+}
+
+impl pallet_ethereum::Config for Runtime {
+    type Event = Event;
+}
+
 impl pallet_staking::Config for Runtime {
     type MaxNominations = MaxNominations;
     type Currency = Balances;
