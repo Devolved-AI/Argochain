@@ -152,7 +152,6 @@ substrate-wasm-builder = { version = "5.0.0-dev",git = "https://github.com/parit
 [dependencies.pallet-counter]
 path = "../pallets/pallet-counter"
 
-pallet-evm-final = { path = "../pallets/evm", default-features = false }
 
 
 

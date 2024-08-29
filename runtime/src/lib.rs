@@ -2202,7 +2202,6 @@ construct_runtime!(
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
         PalletCounter: pallet_counter::{Pallet, Call, Storage, Event<T>},
-        // PalletEVM:pallet_evm_final,
 
     }
 );

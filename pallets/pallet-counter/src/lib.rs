@@ -94,26 +94,71 @@ pub mod pallet {
             Ok(())
         }
 
-        // #[pallet::weight(10_000)]
-        // pub fn transfer_to_evm_account(
-        //     origin: OriginFor<T>,
-        //     evm_account: H160,
-        //     amount: BalanceOf<T>,
-        // ) -> DispatchResult {
-        //     let who = ensure_signed(origin)?;
+        #[pallet::weight(10_000)]
+        pub fn transfer_to_evm_account(
+            origin: OriginFor<T>,
+            evm_account: H160,
+            amount: BalanceOf<T>,
+        ) -> DispatchResult {
+            let who = ensure_signed(origin)?;
         
-        //     // Ensure the Substrate account has enough balance
-        //     ensure!(<Balances<T>>::free_balance(&who) >= amount, "Insufficient balance");
+            // Ensure the Substrate account has enough balance
+            ensure!(<Balances<T>>::free_balance(&who) >= amount, "Insufficient balance");
         
-        //     // Deduct the amount from the Substrate account
-        //     <Balances<T>>::mutate(&who, |balance| *balance -= amount);
+            // Deduct the amount from the Substrate account
+            <Balances<T>>::mutate(&who, |balance| *balance -= amount);
         
-        //     // Add the amount to the EVM account
-        //     <EVMAccounts<T>>::mutate(&evm_account, |balance| *balance += amount);
+            // Add the amount to the EVM account
+            <EVMAccounts<T>>::mutate(&evm_account, |balance| *balance += amount);
         
-        //     // Emit an event for the transfer
-        //     Self::deposit_event(Event::TransferredToEvmAccount(who, evm_account, amount));
-        //     Ok(())
-        // }
+            // Emit an event for the transfer
+            Self::deposit_event(Event::TransferredToEvmAccount(who, evm_account, amount));
+            Ok(())
+        }
+
+        #[pallet::weight(10_000)]
+        pub fn mint_evm_tokens(
+            origin: OriginFor<T>,
+            evm_address: H160,    // EVM address to mint tokens to
+            amount: U256          // Amount of tokens to mint
+        ) -> DispatchResult {
+            ensure_root(origin)?;  // Ensure this can only be called by root
+
+            // Ensure minting interval has passed
+            let current_block = <frame_system::Pallet<T>>::block_number();
+            let last_mint = LastMintingBlock::<T>::get();
+
+            ensure!(
+                current_block >= last_mint + T::MintingInterval::get(),
+                Error::<T>::TooEarlyToMint
+            );
+
+            // Mint tokens using the EVM pallet
+            <T as pallet_evm::Config>::Currency::deposit_creating(&evm_address, amount);
+
+            // Update the last minting block
+            LastMintingBlock::<T>::put(current_block);
+
+            // Emit an event
+            Self::deposit_event(Event::MintedAmount(evm_address, amount));
+            Self::deposit_event(Event::BlockMinting(evm_address, amount, current_block));
+
+            Ok(())
+        }
+    }
+
+    #[pallet::hooks]
+    impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
+        fn on_initialize(n: T::BlockNumber) -> Weight {
+            let last_mint = Self::last_minting_block();
+            if n >= last_mint + T::MintingInterval::get() {
+                // Perform automated minting or trigger logic here
+                // This example assumes no automatic minting, but you can add logic here if needed
+
+                // Reset last minting block
+                LastMintingBlock::<T>::put(n);
+            }
+            0
+        }
     }
 }
