@@ -99,6 +99,7 @@ use precompiles::FrontierPrecompiles;
 ///
 use sp_core::crypto::AccountId32;
 use hex_literal::hex;
+use sp_runtime::traits::Zero;
 //Hello
 parameter_types! {
     pub const PovAccount: AccountId32 = AccountId32::new(hex!("e483f6d0d4a9f04510d7506227a149579fd63b8c8b828d9d0b306c48aad99c67"));
@@ -597,6 +598,22 @@ pub mod opaque {
     pub type BlockId = generic::BlockId<Block>;
 }
 
+pub struct ProportionalEraPayout;
+
+impl pallet_staking::EraPayout<Balance> for ProportionalEraPayout {
+    fn era_payout(
+        total_staked: Balance,
+        _total_issuance: Balance,
+        _era_duration: u64,
+    ) -> (Balance, Balance) {
+        // Define total rewards to be distributed in the era
+        let total_reward = 1000 * ARGO; // Replace with your actual reward logic
+
+        // Distribute the entire reward to validators
+        (total_reward, Zero::zero())
+    }
+}
+
 impl pallet_session::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type ValidatorId = <Self as frame_system::Config>::AccountId;
@@ -662,7 +679,7 @@ impl pallet_staking::Config for Runtime {
     >;
     type SessionInterface = Self;
     // type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
-    type EraPayout =  CustomEraPayout;//FixedReward
+    type EraPayout = CustomEraPayout;
     type NextNewSession = Session;
     type MaxNominatorRewardedPerValidator = MaxNominatorRewardedPerValidator;
     type OffendingValidatorsThreshold = OffendingValidatorsThreshold;
@@ -1198,20 +1215,16 @@ const INITIAL_REWARD: Balance = (1369.863014 * 1_000_000_000_000_000_000f64) as 
 const HALVING_PERIOD: u64 = 17520; //17,520
 
 // use sp_runtime::traits::Zero;
+
+
 pub struct CustomEraPayout;
 
-impl CustomEraPayout {
-    fn calculate_halvings(current_era: u64, halving_period: u64) -> u32 {
-        if current_era < halving_period {
-            0
-        } else {
-            ((current_era - 1) / halving_period) as u32
-        }
-    }
-}
-
 impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
-    fn era_payout(_total_staked: Balance, _total_issuance: Balance, _era_duration: u64) -> (Balance, Balance) {
+    fn era_payout(
+        total_staked: Balance,
+        total_issuance: Balance,
+        era_duration: u64,
+    ) -> (Balance, Balance) {
         let current_era = pallet_staking::CurrentEra::<Runtime>::get().unwrap_or(0) as u64;
         let halvings: u32 = CustomEraPayout::calculate_halvings(current_era, HALVING_PERIOD);
         let reward = INITIAL_REWARD.saturating_div(2u128.saturating_pow(halvings));
@@ -1223,51 +1236,41 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
         let validator_reward = (reward * 45) / 100;
         let pov_reward = (reward * 55) / 100;
 
-        frame_support::log::info!("Validator Reward: {}", validator_reward);
-        frame_support::log::info!("PoV Reward: {}", pov_reward);
-
         let treasury_reward_from_validator = validator_reward / 100;
         let treasury_reward_from_pov = pov_reward / 100;
-
-        frame_support::log::info!("Treasury Reward from Validator: {}", treasury_reward_from_validator);
-        frame_support::log::info!("Treasury Reward from PoV: {}", treasury_reward_from_pov);
 
         let final_validator_reward = validator_reward.saturating_sub(treasury_reward_from_validator);
         let final_pov_reward = pov_reward.saturating_sub(treasury_reward_from_pov);
 
-        frame_support::log::info!("Final Validator Reward: {}", final_validator_reward);
-        frame_support::log::info!("Final PoV Reward: {}", final_pov_reward);
-
         let total_treasury_reward = treasury_reward_from_validator.saturating_add(treasury_reward_from_pov);
-
-        frame_support::log::info!("Total Treasury Reward: {}", total_treasury_reward);
 
         let fractional_part = reward.saturating_sub(final_validator_reward.saturating_add(final_pov_reward).saturating_add(total_treasury_reward));
 
-        frame_support::log::info!("Fractional Part: {}", fractional_part);
-
         let adjusted_treasury_reward = total_treasury_reward.saturating_add(fractional_part);
 
-        frame_support::log::info!("Adjusted Treasury Reward: {}", adjusted_treasury_reward);
-
+        // Send treasury reward
         Treasury::on_unbalanced(NegativeImbalance::new(adjusted_treasury_reward));
+        // Deposit PoV reward
         Balances::deposit_creating(&PovAccount::get(), final_pov_reward);
 
+        // Calculate total distributed and any remainder
         let total_distributed = final_validator_reward
             .saturating_add(adjusted_treasury_reward)
             .saturating_add(final_pov_reward);
 
-        frame_support::log::info!("Total Distributed: {}", total_distributed);
-
         let remainder = reward.saturating_sub(total_distributed);
-
-        frame_support::log::info!("Remainder: {}", remainder);
 
         let final_validator_reward_adjusted = final_validator_reward.saturating_add(remainder);
 
-        frame_support::log::info!("Final Validator Reward Adjusted: {}", final_validator_reward_adjusted);
-
         (final_validator_reward_adjusted, remainder)
+    }
+}
+
+
+impl CustomEraPayout {
+    /// Calculate the number of halvings that have occurred given the current era and halving period.
+    fn calculate_halvings(current_era: u64, halving_period: u64) -> u32 {
+        (current_era / halving_period) as u32
     }
 }
 
