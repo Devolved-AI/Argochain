@@ -1739,6 +1739,18 @@ impl pallet_asset_conversion::Config for Runtime {
     #[cfg(feature = "runtime-benchmarks")]
     type BenchmarkHelper = ();
 }
+pub struct Staker {
+    pub stake: u128,
+}
+
+pub const BASE_QUEUE_LEN: u32 = 500;
+
+fn calculate_queue_len(staker: &Staker) -> u32 {
+    let weight_factor = staker.stake as u32 / 1_000_000; // Arbitrary factor for example
+    BASE_QUEUE_LEN + weight_factor
+}
+
+
 
 parameter_types! {
     pub const QueueCount: u32 = 300;
