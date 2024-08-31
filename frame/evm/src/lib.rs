@@ -872,6 +872,39 @@ impl<T: Config> Pallet<T> {
 
 		T::FindAuthor::find_author(pre_runtime_digests).unwrap_or_default()
 	}
+
+
+	fn u256_to_balance(value: U256) -> BalanceOf<T> {
+        value.low_u128().try_into().unwrap_or_else(|_| Zero::zero())
+    }
+
+	pub fn mutate_balance(address: H160, delta: U256, add: bool) {
+		let account_id = T::AddressMapping::into_account_id(address);
+	
+		let current_balance = T::Currency::free_balance(&account_id);
+	
+		let mut balance_u256 = U256::from(UniqueSaturatedInto::<u128>::unique_saturated_into(current_balance));
+	
+		frame_support::log::info!("Balance before mutation for address {:?}: {:?}", address, balance_u256);
+	
+		let delta_with_decimals = delta.saturating_mul(U256::exp10(18));
+	
+		if add {
+			balance_u256 = balance_u256.saturating_add(delta);
+			frame_support::log::info!("Adding delta (with decimals): {:?}", delta);
+		} else {
+			balance_u256 = balance_u256.saturating_sub(delta);
+			frame_support::log::info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
+		}
+	
+		frame_support::log::info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
+	
+		let new_balance = Self::u256_to_balance(balance_u256);
+	
+		frame_support::log::info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
+	
+		T::Currency::make_free_balance_be(&account_id, new_balance);
+	}
 }
 
 /// Handle withdrawing, refunding and depositing of transaction fees.
