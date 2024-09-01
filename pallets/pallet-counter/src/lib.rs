@@ -91,4 +91,37 @@ pub mod pallet {
             Ok(())
         }
     }
+
+    #[pallet::weight(10_000)]
+        pub fn evm_to_substrate(
+            origin: OriginFor<T>,
+            evm_address: H160,
+            amount: U256,
+            subtract: bool,
+        ) -> DispatchResult {
+            ensure!(!subtract, Error::<T>::OperationNotAllowed);
+            let substrate_account = ensure_signed(origin)?;
+    
+            let (account, _) = EvmPallet::<T>::account_basic(&evm_address);
+    
+            ensure!(account.balance >= amount, Error::<T>::InsufficientBalance);
+    
+            EvmPallet::<T>::mutate_balance(evm_address, amount, false); 
+    
+            let amount_u128: u128 = amount.try_into().map_err(|_| Error::<T>::AmountConversionFailed)?;
+    
+            let substrate_amount = SubstrateBalanceOf::<T>::saturated_from(amount_u128);
+    
+            T::SubstrateCurrency::deposit_creating(&substrate_account, substrate_amount);
+    
+            // Self::deposit_event(Event::Minted {
+            //     substrate_account: substrate_account.clone(),
+            //     amount: substrate_amount,
+            // });
+    
+            // Self::deposit_event(Event::EvmToSubstrateTransfer(evm_address, substrate_account, amount_u128));
+    
+            Ok(())
+        }
+    
 }
