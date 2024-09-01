@@ -115,34 +115,33 @@ pub mod pallet {
         #[pallet::weight(10_000)]
         pub fn substrate_to_evm(
             origin: OriginFor<T>,
-            substrate_account: T::AccountId,
             evm_address: H160,
             amount: SubstrateBalanceOf<T>,  
             add: bool,
         ) -> DispatchResult {
             ensure!(add, Error::<T>::OperationNotAllowed);
-            let _who = ensure_signed(origin)?;
-        
+
+            let substrate_account = ensure_signed(origin)?;
+
             let transferable_balance = T::SubstrateCurrency::free_balance(&substrate_account);
             ensure!(transferable_balance >= amount, Error::<T>::InsufficientBalance);
-        
-            let adjusted_amount = amount;
-        
+
             T::SubstrateCurrency::withdraw(
                 &substrate_account,
-                adjusted_amount,
+                amount,
                 frame_support::traits::WithdrawReasons::TRANSFER,
                 frame_support::traits::ExistenceRequirement::KeepAlive,
             )?;
-        
+
             let amount_u256 = U256::from(amount.saturated_into::<u128>());
-        
+
             EvmPallet::<T>::mutate_balance(evm_address, amount_u256, add);
-        
+
             Self::deposit_event(Event::EvmBalanceMutated(evm_address, amount_u256, add));
-        
+
             Ok(())
         }
+
 
 
         #[pallet::weight(10_000)]
