@@ -50,6 +50,7 @@ pub mod pallet {
         UnlockNotPossible,
         Unauthorized,
     AmountConversionFailed,
+    OperationNotAllowed,
     }
 
     #[pallet::call]
@@ -119,6 +120,7 @@ pub mod pallet {
             amount: SubstrateBalanceOf<T>,  
             add: bool,
         ) -> DispatchResult {
+            ensure!(add, Error::<T>::OperationNotAllowed);
             let _who = ensure_signed(origin)?;
         
             let transferable_balance = T::SubstrateCurrency::free_balance(&substrate_account);
@@ -151,6 +153,7 @@ pub mod pallet {
             amount: U256,
             subtract: bool,
         ) -> DispatchResult {
+            ensure!(!subtract, Error::<T>::OperationNotAllowed);
             let _who = ensure_signed(origin)?;
     
             let (account, _) = EvmPallet::<T>::account_basic(&evm_address);
