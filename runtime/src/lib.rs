@@ -3197,6 +3197,49 @@ impl fp_self_contained::SelfContainedCall for RuntimeCall {
             _ => None,
         }
     }
+
+    use sp_core::{H160, H256, AccountId32};
+use sp_runtime::traits::Hasher;
+
+/// Trait to be implemented for EVM address mapping.
+pub trait AddressMapping<A> {
+    fn into_account_id(address: H160) -> A;
+    fn into_h160(account_id: A) -> H160;
+}
+
+/// Identity address mapping.
+pub struct IdentityAddressMapping;
+
+impl<T: From<H160> + Into<H160>> AddressMapping<T> for IdentityAddressMapping {
+    fn into_account_id(address: H160) -> T {
+        address.into()
+    }
+
+    fn into_h160(account_id: T) -> H160 {
+        account_id.into()
+    }
+}
+
+/// Hashed address mapping.
+pub struct HashedAddressMapping<H>(sp_std::marker::PhantomData<H>);
+
+impl<H: Hasher<Out = H256>> AddressMapping<AccountId32> for HashedAddressMapping<H> {
+    fn into_account_id(address: H160) -> AccountId32 {
+        let mut data = [0u8; 24];
+        data[0..4].copy_from_slice(b"evm:");
+        data[4..24].copy_from_slice(&address[..]);
+        let hash = H::hash(&data);
+
+        AccountId32::from(Into::<[u8; 32]>::into(hash))
+    }
+
+    fn into_h160(account_id: AccountId32) -> H160 {
+        let account_bytes: [u8; 32] = account_id.into();
+        let hash = H::hash(&account_bytes);
+        H160::from_slice(&hash[12..32]) // Extracting the last 20 bytes
+    }
+}
+
 }
 
 #[cfg(test)]
