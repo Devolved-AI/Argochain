@@ -161,7 +161,6 @@ pub mod pallet {
         pub fn evm_to_substrate(
             origin: OriginFor<T>,
             evm_address: H160,
-            // substrate_account: T::AccountId,
             amount: U256,
             subtract: bool,
             signature: ecdsa::Signature, 
