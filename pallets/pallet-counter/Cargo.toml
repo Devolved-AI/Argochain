@@ -1,0 +1,33 @@
+[package]
+name = "pallet-counter"
+version = "0.1.0"
+authors = ["Your Name <your.email@example.com>"]
+edition = "2021"
+description = "A simple pallet to increment a counter and emit an event."
+license = "MIT-0"
+
+[dependencies]
+codec = { package = "parity-scale-codec", version = "3.6.1", default-features = false, features = ["derive"] }
+scale-info = { version = "2.5.0", default-features = false, features = ["derive"] }
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
+frame-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
+sp-runtime = { version = "24.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
+pallet-evm = { workspace = true  }
+fp-evm = { workspace = true }
+sp-core = { version = "21.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0", default-features = false }
+sp-io = { version = "23.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0", default-features = false }
+hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
+sp-std = { version = "8.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
+hex-literal = "0.4.1"
+# secp256k1 = { version = "0.29.0", features = ["default", "serde"] }
+
+[features]
+default = ["std"]
+std = [
+    "codec/std",
+    "frame-support/std",
+    "frame-system/std",
+    "scale-info/std",
+    "pallet-evm/std", 
+]
