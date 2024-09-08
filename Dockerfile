@@ -27,7 +27,7 @@ EXPOSE 9944
 WORKDIR /app
 
 # Install dependecies
-RUN apt update && apt upgrade -y &&
+RUN apt update && apt upgrade -y
 RUN apt install -y build-essential clang curl git libssl-dev llvm libudev-dev python3 python3-pip make protobuf-compiler python3-tqdm jq
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN source $HOME/.cargo/env
