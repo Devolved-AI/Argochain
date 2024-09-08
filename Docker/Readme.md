@@ -9,7 +9,7 @@ git clone https://github.com/Devolved-AI/Argochain.git & cd Argochain
 ```
 
 ```
-NODE_NAME=my-node-name docker-compose up
+NODE_NAME=my-node-name docker compose up
 ```
 
 This builds the image and starts everything. It typically takes between 10-20 minutes and takes 15-20 GB disk space to build the image and start the sync process. After the build is complete, if you restart the host, the service will come up automatically.
