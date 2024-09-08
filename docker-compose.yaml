@@ -10,5 +10,5 @@ services:
     volumes:
       - ${HOME}/argochain-data/opt:/var/opt/argochain
       - ${HOME}/argochain-data/log:/var/log/argochain
-      - ${HOME}/argochain-data/session:/session_key
+      - ${HOME}/argochain-data/session:/session
     restart: unless-stopped
