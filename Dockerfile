@@ -38,10 +38,10 @@ RUN rustup default stable && \
 COPY . .
 
 # Build
-RUN cargo build --release
+# RUN cargo build --release
 
 # Prepare scripts
-ENV NODE_NAME=$NODE_NAME
+#ENV NODE_NAME=$NODE_NAME
 COPY /Docker/init-and-run.sh .
 COPY /Docker/rotate_keys_docker.sh .
 RUN chmod +x update_bootnodes.sh init-and-run.sh rotate_keys_docker.sh
