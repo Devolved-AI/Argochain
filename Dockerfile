@@ -1,26 +1,32 @@
 FROM ubuntu
+# ------------------------------------------
+# Usage:
+#
+# docker build -t agc-validator .
+# mkdir /argochain
+# docker run -d --name agc-validator -p 30333:30333 -p 9944:9944 -v /argochain/:/argochain -e NODE_NAME=my-node-name agc-validator
+# cat /argochain/.session_key
+#
+# ------------------------------------------
+
 # PolkaDot/ArgonChain Validator Node Dockerfile
 # Author: BuzaG
 # License: Apache 2
 # Description: This Dockerfile sets up the ArgonChain Validator Node application with necessary configurations and environment variables.
-
-# Usage:
-# docker run -d -p 30333:30333 -p 9944:9944 -v /argochain-host-folder/:/argochain -e NODE_NAME=my-nodename argocd-validator-node
 
 LABEL org.opencontainers.image.author="BuzaG"
 LABEL org.opencontainers.image.description="Dockerfile for ArgonChain by BuzaG"
 LABEL org.opencontainers.image.version="0.1"
 
 # Set environment variables with default values
-ENV NODE_NAME=my-nodename
+ENV NODE_NAME=default-node-name
 
 # Create directories if they don't already exist
-RUN mkdir -p /var/log/argochain /var/opt/argochain /argochain/log /argochain/opt
+RUN mkdir -p /argochain/log /argochain/opt
 
 # Create symbolic links
-RUN ln -s /var/log/argochain /argochain/log && \
-    ln -s /var/opt/argochain /argochain/opt
-
+RUN ln -s /argochain/log /var/log/argochain && \
+    ln -s /argochain/opt /var/opt/argochain
 EXPOSE 30333
 EXPOSE 9944
 
