@@ -1,7 +1,5 @@
 # Argochain validator install with docker compose
 
-This installer is for docker compose based on this guieline: https://devolved-ai.gitbook.io/argochain-validator-guide
-
 Make sure, ***docker is installed***.
 
 Clone and start the install process:
@@ -14,9 +12,9 @@ git clone https://github.com/Devolved-AI/Argochain.git & cd Argochain
 NODE_NAME=my-node-name docker-compose up
 ```
 
-This builds the image and starts everything. It typically takes between 10-20 minutes and takes 15-20 GB disk space to build the image and start the sync process. After the build is complete if you restart the host, the service will come up again automatically. The sync process ***can take hours***!
+This builds the image and starts everything. It typically takes between 10-20 minutes and takes 15-20 GB disk space to build the image and start the sync process. After the build is complete, if you restart the host, the service will come up automatically.
 
-It creates a folder `$HOME/argochain-data` and it will sync THE WHOLE BLOCKCHAIN in this folder.
+It creates a folder `$HOME/argochain-data` and will sync THE ENTIRE BLOCKCHAIN into this folder. The sync process ***can take hours***!
 
 # View logs
 You can check the progress here:
@@ -34,7 +32,11 @@ cat $HOME/argochain-data/session/.session_key
 
 Use it here: https://explorer.argoscan.net/#/staking/actions
 
-# Maintenance (later)
+Based on this guieline: https://devolved-ai.gitbook.io/argochain-validator-guide
+
+---
+
+# Maintenance/Rotate keys
 If you would like to **rotate the keys**, delete the sesion key and restart the compose.
 
 ```
