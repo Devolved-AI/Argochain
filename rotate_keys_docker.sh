@@ -73,4 +73,3 @@ rotate_key "imon" "Sr25519" "$base_path" "$chain_spec"
 
 
 echo "Node has now been injected with new validator keys."
-./target/release/argochain --chain $chain_spec --name $name --validator --base-path $base_path

@@ -43,6 +43,6 @@ COPY . .
 RUN cargo build --release
 
 # Run scripts
-RUN $SHELL ./update_bootnodes.sh
+RUN chmod +x ./update_bootnodes.sh && ./update_bootnodes.sh
 
 CMD ["/app/init-and-run.sh", "${NODE_NAME}"]
