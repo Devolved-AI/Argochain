@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # One-time initialization
-if [ ! -f /argochain/.session_key ]; then
+if [ ! -f /session_key/.session_key ]; then
   echo ".session_key not found."
 
   echo "Starting rotate_keys_docker.sh"
@@ -12,7 +12,7 @@ if [ ! -f /argochain/.session_key ]; then
         sleep 10 && \
         result=$(curl -s -H "Content-Type: application/json" --data '{"jsonrpc":"2.0", "method":"author_rotateKeys", "params":[], "id":1}' http://localhost:9944 | jq -r '.result') && \
         if [ -n "$result" ]; then
-            echo "$result" > /argochain/.session_key
+            echo "$result" > /session_key/.session_key
             echo ".session_key file created."
         fi
     ) &

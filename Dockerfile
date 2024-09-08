@@ -2,10 +2,8 @@ FROM ubuntu
 # ------------------------------------------
 # Usage:
 #
-# docker build -t agc-validator .
-# mkdir /argochain
-# docker run -d --name agc-validator -p 30333:30333 -p 9944:9944 -v /argochain/:/argochain -e NODE_NAME=my-node-name agc-validator
-# cat /argochain/.session_key
+# docker compose up -d
+# Your session key will be at /argochain/session_key/.session_key
 #
 # ------------------------------------------
 
@@ -22,11 +20,8 @@ LABEL org.opencontainers.image.version="0.1"
 ENV NODE_NAME=default-node-name
 
 # Create directories if they don't already exist
-RUN mkdir -p /argochain/log /argochain/opt
+RUN mkdir -p /session_key
 
-# Create symbolic links
-RUN ln -s /argochain/log /var/log/argochain && \
-    ln -s /argochain/opt /var/opt/argochain
 EXPOSE 30333
 EXPOSE 9944
 
