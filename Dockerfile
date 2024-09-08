@@ -38,7 +38,7 @@ RUN rustup default stable && \
 COPY . .
 
 # Build
-# RUN cargo build --release
+RUN cargo build --release
 
 # Prepare scripts
 #ENV NODE_NAME=$NODE_NAME
