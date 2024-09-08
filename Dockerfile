@@ -1,7 +1,7 @@
 FROM ubuntu
 # PolkaDot/ArgonChain Validator Node Dockerfile
 # Author: BuzaG
-# License: MIT
+# License: Apache 2
 # Description: This Dockerfile sets up the ArgonChain Validator Node application with necessary configurations and environment variables.
 
 # Usage:
