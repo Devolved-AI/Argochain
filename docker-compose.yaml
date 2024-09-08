@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   agc-validator:
     image: argochain-validator
