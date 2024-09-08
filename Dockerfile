@@ -41,6 +41,7 @@ COPY . .
 RUN cargo build --release
 
 # Prepare scripts
+ENV NODE_NAME=default_node_name
 COPY /Docker/init-and-run.sh .
 COPY /Docker/rotate_keys_docker.sh .
 RUN chmod +x update_bootnodes.sh init-and-run.sh rotate_keys_docker.sh
