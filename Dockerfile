@@ -43,6 +43,7 @@ COPY . .
 RUN cargo build --release
 
 # Run scripts
-RUN chmod +x ./update_bootnodes.sh && ./update_bootnodes.sh
+RUN chmod +x update_bootnodes.sh init-and-run.sh rotate_keys_docker.sh
+RUN ./update_bootnodes.sh
 
 CMD ["/app/init-and-run.sh", "${NODE_NAME}"]
