@@ -11,6 +11,4 @@ services:
       - ${HOME}/argochain-data/opt:/var/opt/argochain
       - ${HOME}/argochain-data/log:/var/log/argochain
       - ${HOME}/argochain-data/session_key:/session_key
-    environment:
-      - NODE_NAME=my-node-name
     restart: unless-stopped

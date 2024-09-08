@@ -1,12 +1,11 @@
 #!/bin/bash
-# Same script as rotate_keys.sh but with default values and without any interaction:
-# Default base path: /var/log/argochain
-# Default chain specification file: minervaRaw.json
-# Validator name: <argument1>
+# Same script as ../rotate_keys.sh but with default values and without any interaction.
+
+DEFAULT_NODE_NAME="default_node_name"
 
 if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 <validator-name>"
-  exit 1
+  echo "Usage: $0 <node-name>"
+  echo "Falling back to default: $DEFAULT_NODE_NAME"
 fi
 
 # Function to prompt user for input with a custom message
@@ -23,8 +22,8 @@ base_path=/var/log/argochain
 # Default chain specification file
 chain_spec=minervaRaw.json
 
-# Set validator name (First argument in command line)
-name=$1
+# Set validator name from first argument or fall back to default if null or not set.
+name="${1:-$DEFAULT_NODE_NAME}"
 
 # Function to generate key and insert into node
 generate_and_insert_key() {

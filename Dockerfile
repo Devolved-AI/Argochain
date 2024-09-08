@@ -16,11 +16,8 @@ LABEL org.opencontainers.image.author="BuzaG"
 LABEL org.opencontainers.image.description="Dockerfile for ArgonChain by BuzaG"
 LABEL org.opencontainers.image.version="0.1"
 
-# Set environment variables with default values
-ENV NODE_NAME=default-node-name
-
 # Create directories if they don't already exist
-RUN mkdir -p /session_key
+RUN mkdir -p /session
 
 EXPOSE 30333
 EXPOSE 9944
@@ -43,8 +40,12 @@ COPY . .
 # Build
 RUN cargo build --release
 
-# Run scripts
+# Prepare scripts
+COPY /Docker/init-and-run.sh .
+COPY /Docker/rotate_keys_docker.sh .
 RUN chmod +x update_bootnodes.sh init-and-run.sh rotate_keys_docker.sh
+
+# Run scripts
 RUN ./update_bootnodes.sh
 
 CMD ["/app/init-and-run.sh", "${NODE_NAME}"]
