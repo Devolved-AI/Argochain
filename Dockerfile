@@ -30,7 +30,7 @@ WORKDIR /app
 RUN apt update && apt upgrade -y
 RUN apt install -y build-essential clang curl git libssl-dev llvm libudev-dev python3 python3-pip make protobuf-compiler python3-tqdm jq
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN . $HOME/.cargo/env
+ENV PATH="/root/.cargo/env:${PATH}"
 RUN rustup default stable && \
     rustup update && \
     rustup update nightly && \
