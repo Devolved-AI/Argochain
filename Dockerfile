@@ -3,7 +3,7 @@ FROM ubuntu
 # Usage:
 #
 # docker compose up -d
-# Your session key will be at /argochain/session_key/.session_key
+# Your session key will be at /argochain/session/.session_key
 #
 # ------------------------------------------
 
