@@ -33,13 +33,13 @@ RUN cargo build --release
 RUN chmod +x ./update_bootnodes.sh
 RUN ./update_bootnodes.sh
 
-FROM ubuntu AS prod-stage
+FROM ubuntu AS prod
 LABEL org.opencontainers.image.author="BuzaG"
 LABEL org.opencontainers.image.description="Dockerfile for ArgonChain by BuzaG"
 LABEL org.opencontainers.image.version="0.1"
 
 RUN apt update && apt upgrade -y
-RUN apt install -y curl git python3-tqdm jq
+RUN apt install -y curl jq
 
 WORKDIR /app
 COPY --from=build /app/target/release/argochain /app/target/release/argochain
