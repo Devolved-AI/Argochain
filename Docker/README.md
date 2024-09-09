@@ -36,7 +36,8 @@ Based on this guieline: https://devolved-ai.gitbook.io/argochain-validator-guide
 
 ---
 
-# Maintenance/Rotate keys
+# Maintenance
+## Rotate keys
 If you would like to **rotate the keys**, delete the sesion key and restart the compose.
 
 ```
@@ -44,3 +45,27 @@ sudo rm $HOME/argochain-data/session/.session_key && docker compose down && NODE
 ```
 
 This triggers the execution of rotate_keys.sh inside the container and generates new session_key. Don't forget to re-add it here: https://explorer.argoscan.net/#/staking/actions under "Change session keys".
+
+## Update or rebuild
+Stop the container
+```
+docker compose down
+```
+
+Update the repository
+```
+git pull
+```
+
+Build or Rebuild
+```
+docker compose build
+```
+or 
+```
+docker compose build --no-cache
+```
+Start the container
+```
+NODE_NAME=my-node-name docker compose up -d
+```
