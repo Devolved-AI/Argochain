@@ -5,7 +5,7 @@ Make sure, ***docker is installed***.
 Clone and start the install process:
 
 ```
-git clone https://github.com/Devolved-AI/Argochain.git & cd Argochain
+git clone https://github.com/Devolved-AI/Argochain.git && cd Argochain
 ```
 
 ```
