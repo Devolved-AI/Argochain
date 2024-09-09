@@ -30,7 +30,7 @@ COPY . .
 RUN cargo build --release
 
 # Update minervaRaw.json
-RUN chmod +x update_bootnodes.sh
+RUN chmod +x ./update_bootnodes.sh
 RUN ./update_bootnodes.sh
 
 FROM ubuntu AS prod-stage
