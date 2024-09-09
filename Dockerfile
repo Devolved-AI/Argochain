@@ -38,6 +38,9 @@ LABEL org.opencontainers.image.author="BuzaG"
 LABEL org.opencontainers.image.description="Dockerfile for ArgonChain by BuzaG"
 LABEL org.opencontainers.image.version="0.1"
 
+RUN apt update && apt upgrade -y
+RUN apt install -y curl git python3-tqdm jq
+
 WORKDIR /app
 COPY --from=build-stage /app/target/release /app/target/release
 COPY --from=build-stage /app/minervaRaw.json /app/tminervaRaw.json
