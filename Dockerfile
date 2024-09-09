@@ -54,10 +54,6 @@ EXPOSE 9944
 # Prepare scripts
 COPY /Docker/init-and-run.sh .
 COPY /Docker/rotate_keys_docker.sh .
-
 RUN chmod +x init-and-run.sh rotate_keys_docker.sh
-
-# Run scripts
-RUN ./update_bootnodes.sh
 
 CMD ["/app/init-and-run.sh", "${NODE_NAME}"]
