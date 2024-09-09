@@ -35,7 +35,7 @@ RUN ./update_bootnodes.sh
 
 FROM ubuntu AS prod
 LABEL org.opencontainers.image.author="BuzaG"
-LABEL org.opencontainers.image.description="Dockerfile for ArgonChain by BuzaG"
+LABEL org.opencontainers.image.description="ArgonChain Validator Node"
 LABEL org.opencontainers.image.version="0.1"
 
 RUN apt update && apt upgrade -y
