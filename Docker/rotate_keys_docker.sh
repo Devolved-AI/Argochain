@@ -1,18 +1,10 @@
 #!/bin/bash
 
-# Same script as ../rotate_keys.sh but with default values and without any interaction.
+# Same script as ../rotate_keys.sh but with default values and without any interaction and node name removed, because it was not used.
 
 # Defaults
 base_path=/var/log/argochain
 chain_spec=minervaRaw.json
-DEFAULT_NODE_NAME="default_node_name"
-# Set validator name from first argument or fall back to default if null or not set.
-name="${1:-$DEFAULT_NODE_NAME}"
-
-if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 <node-name>"
-  echo "Falling back to default: $DEFAULT_NODE_NAME"
-fi
 
 # Function to generate key and insert into node
 generate_and_insert_key() {
@@ -20,7 +12,6 @@ generate_and_insert_key() {
     local scheme="$2"
     local base_path="$3"
     local chain_spec="$4"
-    local name="$5"
 
     echo "Generating $key_type key..."
     key_output=$(./target/release/argochain key generate --scheme "$scheme" --output-type json)
@@ -45,7 +36,6 @@ rotate_key() {
     local scheme="$2"
     local base_path="$3"
     local chain_spec="$4"
-    local name="$5"
 
     echo "Rotating $key_type key..."
     generate_and_insert_key "$key_type" "$scheme" "$base_path" "$chain_spec"
