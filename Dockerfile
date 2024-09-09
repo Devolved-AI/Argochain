@@ -1,4 +1,3 @@
-FROM ubuntu
 # ------------------------------------------
 # Usage:
 #
@@ -7,22 +6,13 @@ FROM ubuntu
 #
 # ------------------------------------------
 
-# PolkaDot/ArgonChain Validator Node Dockerfile
+# PolkaDot/ArgonChain Validator Node Build Dockerfile
 # Author: BuzaG
 # License: Apache 2
 # Description: This Dockerfile sets up the ArgonChain Validator Node application with necessary configurations and environment variables.
+# TODO: create a multi-stage minimal rust build
 
-LABEL org.opencontainers.image.author="BuzaG"
-LABEL org.opencontainers.image.description="Dockerfile for ArgonChain by BuzaG"
-LABEL org.opencontainers.image.version="0.1"
-
-# Create directories if they don't already exist
-RUN mkdir -p /session
-
-EXPOSE 30333
-EXPOSE 9944
-
-WORKDIR /app
+FROM ubuntu AS build-stage
 
 # Install dependecies
 RUN apt update && apt upgrade -y
@@ -34,17 +24,35 @@ RUN rustup default stable && \
     rustup update nightly && \
     rustup target add wasm32-unknown-unknown --toolchain nightly
 
-# git clone https://github.com/devolved-ai/argochain
-COPY . .
-
 # Build
+WORKDIR /app
+COPY . .
 RUN cargo build --release
 
+# Update minervaRaw.json
+RUN chmod +x update_bootnodes.sh
+RUN ./update_bootnodes.sh
+
+FROM ubuntu AS prod-stage
+LABEL org.opencontainers.image.author="BuzaG"
+LABEL org.opencontainers.image.description="Dockerfile for ArgonChain by BuzaG"
+LABEL org.opencontainers.image.version="0.1"
+
+WORKDIR /app
+COPY --from=build-stage /app/target/release /app/target/release
+COPY --from=build-stage /app/minervaRaw.json /app/tminervaRaw.json
+
+# Create directories if they don't already exist
+RUN mkdir -p /session
+
+EXPOSE 30333
+EXPOSE 9944
+
 # Prepare scripts
-#ENV NODE_NAME=$NODE_NAME
 COPY /Docker/init-and-run.sh .
 COPY /Docker/rotate_keys_docker.sh .
-RUN chmod +x update_bootnodes.sh init-and-run.sh rotate_keys_docker.sh
+
+RUN chmod +x init-and-run.sh rotate_keys_docker.sh
 
 # Run scripts
 RUN ./update_bootnodes.sh
