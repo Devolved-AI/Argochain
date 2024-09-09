@@ -12,7 +12,7 @@
 # Description: This Dockerfile sets up the ArgonChain Validator Node application with necessary configurations and environment variables.
 # TODO: create a multi-stage minimal rust build
 
-FROM ubuntu AS build-stage
+FROM ubuntu AS build
 
 # Install dependecies
 RUN apt update && apt upgrade -y
@@ -42,8 +42,8 @@ RUN apt update && apt upgrade -y
 RUN apt install -y curl git python3-tqdm jq
 
 WORKDIR /app
-COPY --from=build-stage /app/target/release /app/target/release
-COPY --from=build-stage /app/minervaRaw.json /app/tminervaRaw.json
+COPY --from=build /app/target/release /app/target/release
+COPY --from=build /app/minervaRaw.json /app/minervaRaw.json
 
 # Create directories if they don't already exist
 RUN mkdir -p /session
