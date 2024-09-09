@@ -42,7 +42,7 @@ RUN apt update && apt upgrade -y
 RUN apt install -y curl git python3-tqdm jq
 
 WORKDIR /app
-COPY --from=build /app/target/release /app/target/release
+COPY --from=build /app/target/release/argochain /app/target/releaseargochain
 COPY --from=build /app/minervaRaw.json /app/minervaRaw.json
 
 # Create directories if they don't already exist
