@@ -1,0 +1,26 @@
+[package]
+name = "pallet-storage"
+version = "0.1.0"
+authors = ["Meharab"]
+edition = "2018"
+
+[dependencies]
+frame-support = { default-features = false, version = "5.0.0" }
+frame-system = { default-features = false, version = "5.0.0" }
+sp-std = { version = "5.0.0", default-features = false }
+
+[dev-dependencies]
+frame-benchmarking = { version = "5.0.0", default-features = false }
+
+[features]
+default = ["std"]
+std = [
+    "frame-support/std",
+    "frame-system/std",
+    "sp-std/std",
+]
+no_std = [
+    "frame-support/no_std",
+    "frame-system/no_std",
+    "sp-std/no_std",
+]

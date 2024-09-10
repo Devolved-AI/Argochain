@@ -11,6 +11,7 @@ pub mod pallet {
     };
     use frame_system::pallet_prelude::*;
     use pallet_evm::Pallet as EvmPallet;
+    use pallet_evm::AddressMapping;
     use sp_core::{H160, U256};
     use sp_runtime::traits::SaturatedConversion;
 
@@ -142,43 +143,38 @@ pub mod pallet {
             Ok(())
         }
 
-
-
         #[pallet::weight(10_000)]
         pub fn evm_to_substrate(
             origin: OriginFor<T>,
-            evm_address: H160,
             substrate_account: T::AccountId,
             amount: U256,
             subtract: bool,
         ) -> DispatchResult {
             ensure!(!subtract, Error::<T>::OperationNotAllowed);
-            let _who = ensure_signed(origin)?;
-    
+
+            let substrate_account_id = ensure_signed(origin)?;
+
+            let evm_address = T::AddressMapping::into_h160(substrate_account_id.clone());
+
             let (account, _) = EvmPallet::<T>::account_basic(&evm_address);
-    
             ensure!(account.balance >= amount, Error::<T>::InsufficientBalance);
-    
-            EvmPallet::<T>::mutate_balance(evm_address, amount, false); 
-    
+
+            EvmPallet::<T>::mutate_balance(evm_address, amount, false);
+
             let amount_u128: u128 = amount.try_into().map_err(|_| Error::<T>::AmountConversionFailed)?;
-    
             let substrate_amount = SubstrateBalanceOf::<T>::saturated_from(amount_u128);
-    
+
             T::SubstrateCurrency::deposit_creating(&substrate_account, substrate_amount);
-    
+
             Self::deposit_event(Event::Minted {
                 who: substrate_account.clone(),
                 amount: substrate_amount,
             });
-    
+
             Self::deposit_event(Event::EvmToSubstrateTransfer(evm_address, substrate_account, amount_u128));
-    
+
             Ok(())
         }
-    
-        
-
 
     }
 }

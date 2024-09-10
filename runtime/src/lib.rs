@@ -2123,6 +2123,10 @@ impl pallet_ethereum::Config for Runtime {
     type ExtraDataLength = ConstU32<30>;
 }
 
+impl pallet_storage::Config for Runtime {
+    type Event = Event;
+}
+
 construct_runtime!(
     pub struct Runtime
     {
@@ -2202,7 +2206,7 @@ construct_runtime!(
         DynamicFee: pallet_dynamic_fee,
         BaseFee: pallet_base_fee,
         PalletCounter: pallet_counter::{Pallet, Call, Storage, Event<T>},
-
+        Storage: pallet_string_storage::{Pallet, Call, Storage, Event<T>},
 
 
     }

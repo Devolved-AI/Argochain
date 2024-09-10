@@ -152,6 +152,9 @@ substrate-wasm-builder = { version = "5.0.0-dev",git = "https://github.com/parit
 [dependencies.pallet-counter]
 path = "../pallets/pallet-counter"
 default-features = false
+[dependencies.pallet-storage]
+default_features = false
+version = "0.1.0"
 [features]
 default = ["std"]
 with-tracing = ["frame-executive/with-tracing"]
