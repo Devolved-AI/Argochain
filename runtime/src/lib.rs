@@ -2440,7 +2440,7 @@ impl_runtime_apis! {
                 slot_duration: Babe::slot_duration(),
                 epoch_length: EpochDuration::get(),
                 // c: epoch_config.c,
-		c:(1,10)
+		c:(1,10),
                 authorities: Babe::authorities().to_vec(),
                 randomness: Babe::randomness(),
                 allowed_slots: epoch_config.allowed_slots,
