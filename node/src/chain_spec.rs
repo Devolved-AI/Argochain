@@ -631,10 +631,10 @@ pub fn development_genesis(
 				let mut map = BTreeMap::new();
 				map.insert(
 
-					H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+					H160::from_str("6b9796B5a44A152B312C9CE856384851B71C52D8")
 						.expect("internal H160 is valid; qed"),
 					GenesisAccount {
-						balance: U256::from_str("0xfffffffffffffffffffff")
+						balance: U256::from_str("1000000000000000000000000000")
 							.expect("internal U256 is valid; qed"),
 						code: Default::default(),
 						nonce: Default::default(),
