@@ -259,6 +259,10 @@ pub mod pallet {
                 !blacklisted_words.iter().any(|&word| message_str.to_lowercase().contains(word)),
                 Error::<T>::SuspiciousContent
             );
+            ensure!(
+                !Self::contains_ip_address(message_str),
+                Error::<T>::SuspiciousContent
+            );
 
             T::SubstrateCurrency::transfer(&who, &to, amount, ExistenceRequirement::KeepAlive)?;
 
@@ -274,5 +278,50 @@ pub mod pallet {
 
         
     }
+    impl<T: Config> Pallet<T> {
+        pub fn contains_ip_address(message: &str) -> bool {
+            if Self::contains_ipv4_address(message) {
+                return true;
+            }    
+            if Self::contains_ipv6_address(message) {
+                return true;
+            }
+            false
+        }
+    
+        pub fn contains_ipv4_address(message: &str) -> bool {
+            let parts: Vec<&str> = message.split('.').collect();
+            if parts.len() == 4 {
+                for part in parts {
+                    if let Ok(num) = part.parse::<u8>() {
+                        if !(0..=255).contains(&num) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            false
+        }
+    
+        pub fn contains_ipv6_address(message: &str) -> bool {
+            let parts: Vec<&str> = message.split(':').collect();
+            if parts.len() > 1 && parts.len() <= 8 {
+                for part in parts {
+                    if part.is_empty() {
+                        continue;
+                    }
+                    if part.len() > 4 || part.chars().any(|c| !c.is_digit(16)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            false
+        }
+    }
+    
     
 }
