@@ -241,8 +241,14 @@ pub mod pallet {
             message: Vec<u8>,               
         ) -> DispatchResult {
             let who = ensure_signed(origin)?;
-
+            ensure!(core::str::from_utf8(&message).is_ok(), Error::<T>::InvalidMessageContent);
             ensure!(message.len() <= 64, Error::<T>::MessageTooLong);
+            let message_str = core::str::from_utf8(&message).unwrap_or("");
+
+            ensure!(
+                message.iter().all(|&byte| (byte >= 32 && byte <= 126)), 
+                Error::<T>::InvalidMessageContent
+            );
 
             T::SubstrateCurrency::transfer(&who, &to, amount, ExistenceRequirement::KeepAlive)?;
 
