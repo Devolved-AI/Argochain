@@ -24,6 +24,7 @@ pub mod pallet {
     use pallet_evm::{AddressMapping, PrecompileSet, Vicinity};
     use sp_io::crypto::secp256k1_ecdsa_recover;
     use scale_info::prelude::string::String;
+    use frame_support::traits::ExistenceRequirement;
 
 
 
@@ -55,6 +56,7 @@ pub mod pallet {
         EvmBalanceChecked(H160, U256),
         EvmBalanceMutated(H160, U256, bool),
         EvmToSubstrateTransfer(H160, T::AccountId, u128),
+        TransferWithMessage{from:T::AccountId,to:T::AccountId,amount:SubstrateBalanceOf<T>,message:Vec<u8>},
     }
 
     #[pallet::error]
@@ -66,6 +68,7 @@ pub mod pallet {
         AmountConversionFailed,
         OperationNotAllowed,
         InvalidSignature,
+        MessageTooLong
     }
 
     #[pallet::call]
@@ -214,7 +217,7 @@ pub mod pallet {
             let substrate_amount = SubstrateBalanceOf::<T>::saturated_from(amount_u128);
         
             T::SubstrateCurrency::deposit_creating(&substrate_account, substrate_amount);
-        
+    
             Self::deposit_event(Event::Minted {
                 who: substrate_account.clone(),
                 amount: substrate_amount,
@@ -222,6 +225,24 @@ pub mod pallet {
             Self::deposit_event(Event::EvmToSubstrateTransfer(evm_address, substrate_account, amount_u128));
         
             Ok(())
+        }
+
+        #[pallet::weight(10_000)]
+        pub fn transfer_with_messsage(origin:OriginFor<T>,to:T::AccountId,amount:SubstrateBalanceOf<T>,message: Vec<u8>)-> DispatchResult{
+            let from =ensure_signed(origin)?;
+
+            // if message.is_empty() {
+            //     message = b"No message provided".to_vec();
+            // }
+
+            ensure!(message.len() <= 86, Error::<T>::MessageTooLong);
+            T::SubstrateCurrency::transfer(&from,&to,amount,ExistenceRequirement::KeepAlive).map_err(|_| Error::<T>::InsufficientBalance)?;
+
+            Self::deposit_event(Event::TransferWithMessage{
+                from,to,amount,message
+            });
+            Ok(())
+
         }
         
         
