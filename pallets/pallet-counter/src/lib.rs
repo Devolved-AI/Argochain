@@ -24,6 +24,8 @@ pub mod pallet {
     use pallet_evm::{AddressMapping, PrecompileSet, Vicinity};
     use sp_io::crypto::secp256k1_ecdsa_recover;
     use scale_info::prelude::string::String;
+    use frame_support::traits::ExistenceRequirement;
+
 
 
 
@@ -55,6 +57,8 @@ pub mod pallet {
         EvmBalanceChecked(H160, U256),
         EvmBalanceMutated(H160, U256, bool),
         EvmToSubstrateTransfer(H160, T::AccountId, u128),
+        TransferOfBalanceNew{ from: T::AccountId, to: T::AccountId, amount: SubstrateBalanceOf<T>, message: Vec<u8> },
+
     }
 
     #[pallet::error]
@@ -66,6 +70,9 @@ pub mod pallet {
         AmountConversionFailed,
         OperationNotAllowed,
         InvalidSignature,
+        MessageTooLong,
+        InvalidMessageContent,         
+        SuspiciousContent,
     }
 
     #[pallet::call]
@@ -102,6 +109,7 @@ pub mod pallet {
             Self::deposit_event(Event::Locked { who: who.clone(), amount });
             Ok(())
         }
+        
 
         #[pallet::weight(10_000)]
         pub fn unlock(origin: OriginFor<T>, amount: SubstrateBalanceOf<T>) -> DispatchResult {
@@ -223,10 +231,32 @@ pub mod pallet {
         
             Ok(())
         }
-        
-        
+
+
+        #[pallet::weight(5_000)]
+        pub fn balance_transfer_new(
+            origin: OriginFor<T>,
+            to: T::AccountId,
+            amount: SubstrateBalanceOf<T>,  
+            message: Vec<u8>,               
+        ) -> DispatchResult {
+            let who = ensure_signed(origin)?;
+
+            ensure!(message.len() <= 64, Error::<T>::MessageTooLong);
+
+            T::SubstrateCurrency::transfer(&who, &to, amount, ExistenceRequirement::KeepAlive)?;
+
+            Self::deposit_event(Event::TransferOfBalanceNew {
+                from: who.clone(),
+                to: to.clone(),
+                amount,
+                message: message.clone(),
+            });
+
+            Ok(())
+        }
 
         
-        
     }
+    
 }

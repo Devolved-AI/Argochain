@@ -6497,6 +6497,7 @@ dependencies = [
  "hex-literal 0.4.1",
  "pallet-evm",
  "parity-scale-codec",
+ "regex",
  "scale-info",
  "sp-core",
  "sp-io",
