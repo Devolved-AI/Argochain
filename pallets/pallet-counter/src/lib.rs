@@ -249,6 +249,11 @@ pub mod pallet {
                 message.iter().all(|&byte| (byte >= 32 && byte <= 126)), 
                 Error::<T>::InvalidMessageContent
             );
+            let url_patterns = ["http://", "https://", "www.", ".com", ".net", ".org", ".xyz", ".io", ".gov", ".edu", ".mil", ".info"];
+            ensure!(
+                !url_patterns.iter().any(|&pattern| message_str.contains(pattern)),
+                Error::<T>::SuspiciousContent
+            );
 
             T::SubstrateCurrency::transfer(&who, &to, amount, ExistenceRequirement::KeepAlive)?;
 
