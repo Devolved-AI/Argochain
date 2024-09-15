@@ -254,6 +254,11 @@ pub mod pallet {
                 !url_patterns.iter().any(|&pattern| message_str.contains(pattern)),
                 Error::<T>::SuspiciousContent
             );
+            let blacklisted_words = ["scam", "fraud", "hack", "illegal", "phishing"];
+            ensure!(
+                !blacklisted_words.iter().any(|&word| message_str.to_lowercase().contains(word)),
+                Error::<T>::SuspiciousContent
+            );
 
             T::SubstrateCurrency::transfer(&who, &to, amount, ExistenceRequirement::KeepAlive)?;
 
