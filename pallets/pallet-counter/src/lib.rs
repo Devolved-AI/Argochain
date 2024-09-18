@@ -323,5 +323,138 @@ pub mod pallet {
         }
     }
     
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use frame_support::{assert_ok, assert_noop};
+        use sp_runtime::AccountId32;
+
+        // Utility function to simulate balance transfer
+        fn setup_accounts() -> (AccountId32, AccountId32) {
+            let sender = AccountId32::new([1u8; 32]);
+            let recipient = AccountId32::new([2u8; 32]);
+            (sender, recipient)
+        }
+
+        #[test]
+        fn test_balance_transfer_new_valid_message() {
+            let (sender, recipient) = setup_accounts();
+
+            // A valid message
+            let message = b"Hello, this is a valid message!".to_vec();
+
+            // Simulate a successful transfer
+            assert_ok!(Pallet::<Test>::balance_transfer_new(
+                Origin::signed(sender.clone()),
+                recipient.clone(),
+                1000,   // Example amount
+                message.clone(),
+            ));
+
+            // Check if event was emitted correctly
+            System::assert_has_event(Event::TransferOfBalanceNew {
+                from: sender.clone(),
+                to: recipient.clone(),
+                amount: 1000,
+                message: message.clone(),
+            }.into());
+        }
+
+        #[test]
+        fn test_balance_transfer_new_message_too_long() {
+            let (sender, recipient) = setup_accounts();
+
+            // A message exceeding 64 bytes in length
+            let message = vec![b'A'; 65];
+
+            // Expect an error due to message length
+            assert_noop!(
+                Pallet::<Test>::balance_transfer_new(
+                    Origin::signed(sender),
+                    recipient,
+                    1000,
+                    message,
+                ),
+                Error::<Test>::MessageTooLong
+            );
+        }
+
+        #[test]
+        fn test_balance_transfer_new_invalid_message_characters() {
+            let (sender, recipient) = setup_accounts();
+
+            // A message containing invalid UTF-8 characters
+            let message = vec![0xFF, 0xFE, 0xFD];
+
+            // Expect an error due to invalid message content
+            assert_noop!(
+                Pallet::<Test>::balance_transfer_new(
+                    Origin::signed(sender),
+                    recipient,
+                    1000,
+                    message,
+                ),
+                Error::<Test>::InvalidMessageContent
+            );
+        }
+
+        #[test]
+        fn test_balance_transfer_new_suspicious_url_content() {
+            let (sender, recipient) = setup_accounts();
+
+            // A message containing a URL pattern
+            let message = b"Check this out: http://malicious.com".to_vec();
+
+            // Expect an error due to suspicious content
+            assert_noop!(
+                Pallet::<Test>::balance_transfer_new(
+                    Origin::signed(sender),
+                    recipient,
+                    1000,
+                    message,
+                ),
+                Error::<Test>::SuspiciousContent
+            );
+        }
+
+        #[test]
+        fn test_balance_transfer_new_blacklisted_words() {
+            let (sender, recipient) = setup_accounts();
+
+            // A message containing a blacklisted word
+            let message = b"This is a scam!".to_vec();
+
+            // Expect an error due to suspicious content
+            assert_noop!(
+                Pallet::<Test>::balance_transfer_new(
+                    Origin::signed(sender),
+                    recipient,
+                    1000,
+                    message,
+                ),
+                Error::<Test>::SuspiciousContent
+            );
+        }
+
+        #[test]
+        fn test_balance_transfer_new_contains_ip_address() {
+            let (sender, recipient) = setup_accounts();
+
+            // A message containing an IP address
+            let message = b"Contact me at 192.168.0.1".to_vec();
+
+            // Expect an error due to suspicious content
+            assert_noop!(
+                Pallet::<Test>::balance_transfer_new(
+                    Origin::signed(sender),
+                    recipient,
+                    1000,
+                    message,
+                ),
+                Error::<Test>::SuspiciousContent
+            );
+        }
+    }
+
     
 }
