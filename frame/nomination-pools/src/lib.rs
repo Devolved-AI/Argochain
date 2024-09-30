@@ -560,33 +560,86 @@ impl<T: Config> PoolMember<T> {
 	/// slashing, the value of points in different pools varies.
 	///
 	/// Returns `Ok(())` and updates `unbonding_eras` and `points` if success, `Err(_)` otherwise.
+	// fn try_unbond(
+	// 	&mut self,
+	// 	points_dissolved: BalanceOf<T>,
+	// 	points_issued: BalanceOf<T>,
+	// 	unbonding_era: EraIndex,
+	// ) -> Result<(), Error<T>> {
+	// 	if let Some(new_points) = self.points.checked_sub(&points_dissolved) {
+	// 		match self.unbonding_eras.get_mut(&unbonding_era) {
+	// 			Some(already_unbonding_points) =>
+	// 				*already_unbonding_points =
+	// 					already_unbonding_points.saturating_add(points_issued),
+	// 			None => self
+	// 				.unbonding_eras
+	// 				.try_insert(unbonding_era, points_issued)
+	// 				.map(|old| {
+	// 					if old.is_some() {
+	// 						defensive!("value checked to not exist in the map; qed");
+	// 					}
+	// 				})
+	// 				.map_err(|_| Error::<T>::MaxUnbondingLimit)?,
+	// 		}
+	// 		self.points = new_points;
+	// 		Ok(())
+	// 	} else {
+	// 		Err(Error::<T>::MinimumBondNotMet)
+	// 	}
+	// }
 	fn try_unbond(
 		&mut self,
 		points_dissolved: BalanceOf<T>,
 		points_issued: BalanceOf<T>,
 		unbonding_era: EraIndex,
 	) -> Result<(), Error<T>> {
+		log::info!(
+			"Attempting to unbond: points_dissolved = {:?}, points_issued = {:?}, unbonding_era = {:?}",
+			points_dissolved, points_issued, unbonding_era
+		);
+	
 		if let Some(new_points) = self.points.checked_sub(&points_dissolved) {
+			log::info!(
+				"New points after subtraction: {:?}, Current unbonding era: {:?}",
+				new_points, unbonding_era
+			);
+	
 			match self.unbonding_eras.get_mut(&unbonding_era) {
-				Some(already_unbonding_points) =>
-					*already_unbonding_points =
-						already_unbonding_points.saturating_add(points_issued),
-				None => self
-					.unbonding_eras
-					.try_insert(unbonding_era, points_issued)
-					.map(|old| {
-						if old.is_some() {
-							defensive!("value checked to not exist in the map; qed");
-						}
-					})
-					.map_err(|_| Error::<T>::MaxUnbondingLimit)?,
+				Some(already_unbonding_points) => {
+					log::info!(
+						"Already unbonding points for era {:?}: {:?}",
+						unbonding_era, already_unbonding_points
+					);
+					*already_unbonding_points = already_unbonding_points.saturating_add(points_issued);
+					log::info!(
+						"New unbonding points for era {:?}: {:?}",
+						unbonding_era, already_unbonding_points
+					);
+				}
+				None => {
+					log::info!(
+						"No unbonding points for era {:?}. Inserting new entry with points: {:?}",
+						unbonding_era, points_issued
+					);
+					self.unbonding_eras
+						.try_insert(unbonding_era, points_issued)
+						.map(|old| {
+							if old.is_some() {
+								defensive!("value checked to not exist in the map; qed");
+							}
+						})
+						.map_err(|_| Error::<T>::MaxUnbondingLimit)?;
+				}
 			}
 			self.points = new_points;
+			log::info!("Successfully unbonded. New points: {:?}", self.points);
 			Ok(())
 		} else {
+			log::warn!("Unbonding failed: Minimum bond not met.");
 			Err(Error::<T>::MinimumBondNotMet)
 		}
 	}
+	
 
 	/// Withdraw any funds in [`Self::unbonding_eras`] who's deadline in reached and is fully
 	/// unlocked.
@@ -2117,6 +2170,109 @@ pub mod pallet {
 		#[pallet::weight(
 			T::WeightInfo::withdraw_unbonded_kill(*num_slashing_spans)
 		)]
+		// pub fn withdraw_unbonded(
+		// 	origin: OriginFor<T>,
+		// 	member_account: AccountIdLookupOf<T>,
+		// 	num_slashing_spans: u32,
+		// ) -> DispatchResultWithPostInfo {
+		// 	let caller = ensure_signed(origin)?;
+		// 	let member_account = T::Lookup::lookup(member_account)?;
+		// 	let mut member =
+		// 		PoolMembers::<T>::get(&member_account).ok_or(Error::<T>::PoolMemberNotFound)?;
+		// 	let current_era = T::Staking::current_era();
+
+		// 	let bonded_pool = BondedPool::<T>::get(member.pool_id)
+		// 		.defensive_ok_or::<Error<T>>(DefensiveError::PoolNotFound.into())?;
+		// 	let mut sub_pools =
+		// 		SubPoolsStorage::<T>::get(member.pool_id).ok_or(Error::<T>::SubPoolsNotFound)?;
+
+		// 	bonded_pool.ok_to_withdraw_unbonded_with(&caller, &member_account)?;
+
+		// 	// NOTE: must do this after we have done the `ok_to_withdraw_unbonded_other_with` check.
+		// 	let withdrawn_points = member.withdraw_unlocked(current_era);
+		// 	ensure!(!withdrawn_points.is_empty(), Error::<T>::CannotWithdrawAny);
+
+		// 	// Before calculating the `balance_to_unbond`, we call withdraw unbonded to ensure the
+		// 	// `transferrable_balance` is correct.
+		// 	let stash_killed =
+		// 		T::Staking::withdraw_unbonded(bonded_pool.bonded_account(), num_slashing_spans)?;
+
+		// 	// defensive-only: the depositor puts enough funds into the stash so that it will only
+		// 	// be destroyed when they are leaving.
+		// 	ensure!(
+		// 		!stash_killed || caller == bonded_pool.roles.depositor,
+		// 		Error::<T>::Defensive(DefensiveError::BondedStashKilledPrematurely)
+		// 	);
+
+		// 	let mut sum_unlocked_points: BalanceOf<T> = Zero::zero();
+		// 	let balance_to_unbond = withdrawn_points
+		// 		.iter()
+		// 		.fold(BalanceOf::<T>::zero(), |accumulator, (era, unlocked_points)| {
+		// 			sum_unlocked_points = sum_unlocked_points.saturating_add(*unlocked_points);
+		// 			if let Some(era_pool) = sub_pools.with_era.get_mut(era) {
+		// 				let balance_to_unbond = era_pool.dissolve(*unlocked_points);
+		// 				if era_pool.points.is_zero() {
+		// 					sub_pools.with_era.remove(era);
+		// 				}
+		// 				accumulator.saturating_add(balance_to_unbond)
+		// 			} else {
+		// 				// A pool does not belong to this era, so it must have been merged to the
+		// 				// era-less pool.
+		// 				accumulator.saturating_add(sub_pools.no_era.dissolve(*unlocked_points))
+		// 			}
+		// 		})
+		// 		// A call to this transaction may cause the pool's stash to get dusted. If this
+		// 		// happens before the last member has withdrawn, then all subsequent withdraws will
+		// 		// be 0. However the unbond pools do no get updated to reflect this. In the
+		// 		// aforementioned scenario, this check ensures we don't try to withdraw funds that
+		// 		// don't exist. This check is also defensive in cases where the unbond pool does not
+		// 		// update its balance (e.g. a bug in the slashing hook.) We gracefully proceed in
+		// 		// order to ensure members can leave the pool and it can be destroyed.
+		// 		.min(bonded_pool.transferrable_balance());
+
+		// 	T::Currency::transfer(
+		// 		&bonded_pool.bonded_account(),
+		// 		&member_account,
+		// 		balance_to_unbond,
+		// 		ExistenceRequirement::AllowDeath,
+		// 	)
+		// 	.defensive()?;
+
+		// 	Self::deposit_event(Event::<T>::Withdrawn {
+		// 		member: member_account.clone(),
+		// 		pool_id: member.pool_id,
+		// 		points: sum_unlocked_points,
+		// 		balance: balance_to_unbond,
+		// 	});
+
+		// 	let post_info_weight = if member.total_points().is_zero() {
+		// 		// remove any `ClaimPermission` associated with the member.
+		// 		ClaimPermissions::<T>::remove(&member_account);
+
+		// 		// member being reaped.
+		// 		PoolMembers::<T>::remove(&member_account);
+		// 		Self::deposit_event(Event::<T>::MemberRemoved {
+		// 			pool_id: member.pool_id,
+		// 			member: member_account.clone(),
+		// 		});
+
+		// 		if member_account == bonded_pool.roles.depositor {
+		// 			Pallet::<T>::dissolve_pool(bonded_pool);
+		// 			None
+		// 		} else {
+		// 			bonded_pool.dec_members().put();
+		// 			SubPoolsStorage::<T>::insert(member.pool_id, sub_pools);
+		// 			Some(T::WeightInfo::withdraw_unbonded_update(num_slashing_spans))
+		// 		}
+		// 	} else {
+		// 		// we certainly don't need to delete any pools, because no one is being removed.
+		// 		SubPoolsStorage::<T>::insert(member.pool_id, sub_pools);
+		// 		PoolMembers::<T>::insert(&member_account, member);
+		// 		Some(T::WeightInfo::withdraw_unbonded_update(num_slashing_spans))
+		// 	};
+
+		// 	Ok(post_info_weight.into())
+		// }
 		pub fn withdraw_unbonded(
 			origin: OriginFor<T>,
 			member_account: AccountIdLookupOf<T>,
@@ -2124,59 +2280,65 @@ pub mod pallet {
 		) -> DispatchResultWithPostInfo {
 			let caller = ensure_signed(origin)?;
 			let member_account = T::Lookup::lookup(member_account)?;
+			log::info!("Caller: {:?}, Member Account: {:?}", caller, member_account);
+		
 			let mut member =
 				PoolMembers::<T>::get(&member_account).ok_or(Error::<T>::PoolMemberNotFound)?;
+			log::info!("Member found in pool: {:?}", member.pool_id);
+		
 			let current_era = T::Staking::current_era();
-
+			log::info!("Current era: {:?}", current_era);
+		
 			let bonded_pool = BondedPool::<T>::get(member.pool_id)
 				.defensive_ok_or::<Error<T>>(DefensiveError::PoolNotFound.into())?;
+			log::info!("Bonded pool: {:?}", bonded_pool);
+		
 			let mut sub_pools =
 				SubPoolsStorage::<T>::get(member.pool_id).ok_or(Error::<T>::SubPoolsNotFound)?;
-
+			log::info!("Sub pools: {:?}", sub_pools);
+		
 			bonded_pool.ok_to_withdraw_unbonded_with(&caller, &member_account)?;
-
-			// NOTE: must do this after we have done the `ok_to_withdraw_unbonded_other_with` check.
+			log::info!("Caller authorized to withdraw unbonded funds");
+		
 			let withdrawn_points = member.withdraw_unlocked(current_era);
+			log::info!("Withdrawn points: {:?}", withdrawn_points);
 			ensure!(!withdrawn_points.is_empty(), Error::<T>::CannotWithdrawAny);
-
-			// Before calculating the `balance_to_unbond`, we call withdraw unbonded to ensure the
-			// `transferrable_balance` is correct.
+		
 			let stash_killed =
 				T::Staking::withdraw_unbonded(bonded_pool.bonded_account(), num_slashing_spans)?;
-
-			// defensive-only: the depositor puts enough funds into the stash so that it will only
-			// be destroyed when they are leaving.
+			log::info!("Stash killed: {:?}", stash_killed);
+		
 			ensure!(
 				!stash_killed || caller == bonded_pool.roles.depositor,
 				Error::<T>::Defensive(DefensiveError::BondedStashKilledPrematurely)
 			);
-
+		
 			let mut sum_unlocked_points: BalanceOf<T> = Zero::zero();
 			let balance_to_unbond = withdrawn_points
 				.iter()
 				.fold(BalanceOf::<T>::zero(), |accumulator, (era, unlocked_points)| {
 					sum_unlocked_points = sum_unlocked_points.saturating_add(*unlocked_points);
+					log::info!("Processing era: {:?}, unlocked_points: {:?}", era, unlocked_points);
+		
 					if let Some(era_pool) = sub_pools.with_era.get_mut(era) {
 						let balance_to_unbond = era_pool.dissolve(*unlocked_points);
+						log::info!("Balance to unbond for era: {:?} is {:?}", era, balance_to_unbond);
+		
 						if era_pool.points.is_zero() {
 							sub_pools.with_era.remove(era);
 						}
+		
 						accumulator.saturating_add(balance_to_unbond)
 					} else {
-						// A pool does not belong to this era, so it must have been merged to the
-						// era-less pool.
-						accumulator.saturating_add(sub_pools.no_era.dissolve(*unlocked_points))
+						let balance_to_unbond = sub_pools.no_era.dissolve(*unlocked_points);
+						log::info!("Balance to unbond from no era pool: {:?}", balance_to_unbond);
+						accumulator.saturating_add(balance_to_unbond)
 					}
 				})
-				// A call to this transaction may cause the pool's stash to get dusted. If this
-				// happens before the last member has withdrawn, then all subsequent withdraws will
-				// be 0. However the unbond pools do no get updated to reflect this. In the
-				// aforementioned scenario, this check ensures we don't try to withdraw funds that
-				// don't exist. This check is also defensive in cases where the unbond pool does not
-				// update its balance (e.g. a bug in the slashing hook.) We gracefully proceed in
-				// order to ensure members can leave the pool and it can be destroyed.
 				.min(bonded_pool.transferrable_balance());
-
+		
+			log::info!("Total balance to unbond: {:?}", balance_to_unbond);
+		
 			T::Currency::transfer(
 				&bonded_pool.bonded_account(),
 				&member_account,
@@ -2184,42 +2346,52 @@ pub mod pallet {
 				ExistenceRequirement::AllowDeath,
 			)
 			.defensive()?;
-
+		
+			log::info!(
+				"Transferred {:?} from bonded account {:?} to member account {:?}",
+				balance_to_unbond, bonded_pool.bonded_account(), member_account
+			);
+		
 			Self::deposit_event(Event::<T>::Withdrawn {
 				member: member_account.clone(),
 				pool_id: member.pool_id,
 				points: sum_unlocked_points,
 				balance: balance_to_unbond,
 			});
-
+		
 			let post_info_weight = if member.total_points().is_zero() {
-				// remove any `ClaimPermission` associated with the member.
+				log::info!("Member has no more points, proceeding to remove member.");
+		
 				ClaimPermissions::<T>::remove(&member_account);
-
-				// member being reaped.
+				log::info!("Claim permissions removed for member: {:?}", member_account);
+		
 				PoolMembers::<T>::remove(&member_account);
 				Self::deposit_event(Event::<T>::MemberRemoved {
 					pool_id: member.pool_id,
 					member: member_account.clone(),
 				});
-
+		
 				if member_account == bonded_pool.roles.depositor {
+					log::info!("Member is the depositor, dissolving pool.");
 					Pallet::<T>::dissolve_pool(bonded_pool);
 					None
 				} else {
+					log::info!("Member is not the depositor, decrementing members.");
 					bonded_pool.dec_members().put();
 					SubPoolsStorage::<T>::insert(member.pool_id, sub_pools);
 					Some(T::WeightInfo::withdraw_unbonded_update(num_slashing_spans))
 				}
 			} else {
-				// we certainly don't need to delete any pools, because no one is being removed.
+				log::info!("Member still has points, updating storage.");
 				SubPoolsStorage::<T>::insert(member.pool_id, sub_pools);
 				PoolMembers::<T>::insert(&member_account, member);
 				Some(T::WeightInfo::withdraw_unbonded_update(num_slashing_spans))
 			};
-
+		
 			Ok(post_info_weight.into())
 		}
+		
+		
 
 		/// Create a new delegation pool.
 		///
@@ -2673,48 +2845,120 @@ impl<T: Config> Pallet<T> {
 	///
 	/// Metadata and all of the sub-pools are also deleted. All accounts are dusted and the leftover
 	/// of the reward account is returned to the depositor.
+	// pub fn dissolve_pool(bonded_pool: BondedPool<T>) {
+	// 	let reward_account = bonded_pool.reward_account();
+	// 	let bonded_account = bonded_pool.bonded_account();
+
+	// 	ReversePoolIdLookup::<T>::remove(&bonded_account);
+	// 	RewardPools::<T>::remove(bonded_pool.id);
+	// 	SubPoolsStorage::<T>::remove(bonded_pool.id);
+
+	// 	// Kill accounts from storage by making their balance go below ED. We assume that the
+	// 	// accounts have no references that would prevent destruction once we get to this point. We
+	// 	// don't work with the system pallet directly, but
+	// 	// 1. we drain the reward account and kill it. This account should never have any extra
+	// 	// consumers anyway.
+	// 	// 2. the bonded account should become a 'killed stash' in the staking system, and all of
+	// 	//    its consumers removed.
+	// 	debug_assert_eq!(frame_system::Pallet::<T>::consumers(&reward_account), 0);
+	// 	debug_assert_eq!(frame_system::Pallet::<T>::consumers(&bonded_account), 0);
+	// 	debug_assert_eq!(
+	// 		T::Staking::total_stake(&bonded_account).unwrap_or_default(),
+	// 		Zero::zero()
+	// 	);
+
+	// 	// This shouldn't fail, but if it does we don't really care. Remaining balance can consist
+	// 	// of unclaimed pending commission, errorneous transfers to the reward account, etc.
+	// 	let reward_pool_remaining = T::Currency::free_balance(&reward_account);
+	// 	let _ = T::Currency::transfer(
+	// 		&reward_account,
+	// 		&bonded_pool.roles.depositor,
+	// 		reward_pool_remaining,
+	// 		ExistenceRequirement::AllowDeath,
+	// 	);
+
+	// 	// NOTE: this is purely defensive.
+	// 	T::Currency::make_free_balance_be(&reward_account, Zero::zero());
+	// 	T::Currency::make_free_balance_be(&bonded_pool.bonded_account(), Zero::zero());
+
+	// 	Self::deposit_event(Event::<T>::Destroyed { pool_id: bonded_pool.id });
+	// 	// Remove bonded pool metadata.
+	// 	Metadata::<T>::remove(bonded_pool.id);
+
+	// 	bonded_pool.remove();
+	// }
 	pub fn dissolve_pool(bonded_pool: BondedPool<T>) {
 		let reward_account = bonded_pool.reward_account();
 		let bonded_account = bonded_pool.bonded_account();
-
+	
+		// Log the pool ID and associated accounts
+		log::info!(
+			"Dissolving pool: {:?}, reward_account: {:?}, bonded_account: {:?}",
+			bonded_pool.id, reward_account, bonded_account
+		);
+	
+		// Remove ReversePoolIdLookup entry
+		log::info!("Removing ReversePoolIdLookup entry for bonded_account: {:?}", bonded_account);
 		ReversePoolIdLookup::<T>::remove(&bonded_account);
+	
+		// Remove RewardPools entry
+		log::info!("Removing RewardPools entry for pool ID: {:?}", bonded_pool.id);
 		RewardPools::<T>::remove(bonded_pool.id);
+	
+		// Remove SubPoolsStorage entry
+		log::info!("Removing SubPoolsStorage entry for pool ID: {:?}", bonded_pool.id);
 		SubPoolsStorage::<T>::remove(bonded_pool.id);
-
-		// Kill accounts from storage by making their balance go below ED. We assume that the
-		// accounts have no references that would prevent destruction once we get to this point. We
-		// don't work with the system pallet directly, but
-		// 1. we drain the reward account and kill it. This account should never have any extra
-		// consumers anyway.
-		// 2. the bonded account should become a 'killed stash' in the staking system, and all of
-		//    its consumers removed.
+	
+		// Check consumers and total stake assertions
+		log::info!("Checking assertions for consumers and total stake.");
 		debug_assert_eq!(frame_system::Pallet::<T>::consumers(&reward_account), 0);
 		debug_assert_eq!(frame_system::Pallet::<T>::consumers(&bonded_account), 0);
 		debug_assert_eq!(
 			T::Staking::total_stake(&bonded_account).unwrap_or_default(),
 			Zero::zero()
 		);
-
-		// This shouldn't fail, but if it does we don't really care. Remaining balance can consist
-		// of unclaimed pending commission, errorneous transfers to the reward account, etc.
+	
+		// Transfer remaining balance from reward account to depositor
 		let reward_pool_remaining = T::Currency::free_balance(&reward_account);
-		let _ = T::Currency::transfer(
+		log::info!(
+			"Transferring remaining reward pool balance ({:?}) from reward_account {:?} to depositor {:?}",
+			reward_pool_remaining, reward_account, bonded_pool.roles.depositor
+		);
+	
+		let transfer_result = T::Currency::transfer(
 			&reward_account,
 			&bonded_pool.roles.depositor,
 			reward_pool_remaining,
 			ExistenceRequirement::AllowDeath,
 		);
-
-		// NOTE: this is purely defensive.
+	
+		// Log the result of the transfer
+		match transfer_result {
+			Ok(_) => log::info!("Transfer succeeded."),
+			Err(e) => log::warn!("Transfer failed: {:?}", e),
+		}
+	
+		// Set balance of reward and bonded accounts to zero
+		log::info!("Setting reward_account balance to zero: {:?}", reward_account);
 		T::Currency::make_free_balance_be(&reward_account, Zero::zero());
+	
+		log::info!("Setting bonded_account balance to zero: {:?}", bonded_account);
 		T::Currency::make_free_balance_be(&bonded_pool.bonded_account(), Zero::zero());
-
+	
+		// Deposit event
+		log::info!("Depositing Destroyed event for pool ID: {:?}", bonded_pool.id);
 		Self::deposit_event(Event::<T>::Destroyed { pool_id: bonded_pool.id });
-		// Remove bonded pool metadata.
+	
+		// Remove pool metadata
+		log::info!("Removing metadata for pool ID: {:?}", bonded_pool.id);
 		Metadata::<T>::remove(bonded_pool.id);
-
+	
+		// Finally, remove the bonded pool itself
+		log::info!("Removing bonded pool entry for pool ID: {:?}", bonded_pool.id);
 		bonded_pool.remove();
 	}
+	
+	
 
 	/// Create the main, bonded account of a pool with the given id.
 	pub fn create_bonded_account(id: PoolId) -> T::AccountId {
@@ -2755,6 +2999,31 @@ impl<T: Config> Pallet<T> {
 
 	/// Calculate the equivalent point of `new_funds` in a pool with `current_balance` and
 	/// `current_points`.
+	// fn balance_to_point(
+	// 	current_balance: BalanceOf<T>,
+	// 	current_points: BalanceOf<T>,
+	// 	new_funds: BalanceOf<T>,
+	// ) -> BalanceOf<T> {
+	// 	let u256 = T::BalanceToU256::convert;
+	// 	let balance = T::U256ToBalance::convert;
+	// 	match (current_balance.is_zero(), current_points.is_zero()) {
+	// 		(_, true) => new_funds.saturating_mul(POINTS_TO_BALANCE_INIT_RATIO.into()),
+	// 		(true, false) => {
+	// 			// The pool was totally slashed.
+	// 			// This is the equivalent of `(current_points / 1) * new_funds`.
+	// 			new_funds.saturating_mul(current_points)
+	// 		},
+	// 		(false, false) => {
+	// 			// Equivalent to (current_points / current_balance) * new_funds
+	// 			balance(
+	// 				u256(current_points)
+	// 					.saturating_mul(u256(new_funds))
+	// 					// We check for zero above
+	// 					.div(u256(current_balance)),
+	// 			)
+	// 		},
+	// 	}
+	// }
 	fn balance_to_point(
 		current_balance: BalanceOf<T>,
 		current_points: BalanceOf<T>,
@@ -2762,27 +3031,75 @@ impl<T: Config> Pallet<T> {
 	) -> BalanceOf<T> {
 		let u256 = T::BalanceToU256::convert;
 		let balance = T::U256ToBalance::convert;
+	
+		// Log the inputs
+		log::info!(
+			"balance_to_point called with: current_balance: {:?}, current_points: {:?}, new_funds: {:?}",
+			current_balance, current_points, new_funds
+		);
+	
 		match (current_balance.is_zero(), current_points.is_zero()) {
-			(_, true) => new_funds.saturating_mul(POINTS_TO_BALANCE_INIT_RATIO.into()),
+			(_, true) => {
+				// Log case when current_points is zero
+				log::info!(
+					"current_points is zero, returning: {:?}",
+					new_funds.saturating_mul(POINTS_TO_BALANCE_INIT_RATIO.into())
+				);
+				new_funds.saturating_mul(POINTS_TO_BALANCE_INIT_RATIO.into())
+			},
 			(true, false) => {
-				// The pool was totally slashed.
-				// This is the equivalent of `(current_points / 1) * new_funds`.
+				// Log case when current_balance is zero and points exist (totally slashed case)
+				log::info!(
+					"current_balance is zero but points exist, calculating as current_points * new_funds: {:?}",
+					new_funds.saturating_mul(current_points)
+				);
 				new_funds.saturating_mul(current_points)
 			},
 			(false, false) => {
-				// Equivalent to (current_points / current_balance) * new_funds
-				balance(
-					u256(current_points)
-						.saturating_mul(u256(new_funds))
-						// We check for zero above
-						.div(u256(current_balance)),
-				)
+				// Log case when both balance and points are non-zero
+				let result_u256 = u256(current_points)
+					.saturating_mul(u256(new_funds))
+					.div(u256(current_balance));
+	
+				log::info!(
+					"balance_to_point calculation: u256(current_points): {:?}, u256(new_funds): {:?}, u256(current_balance): {:?}, result_u256: {:?}",
+					u256(current_points), u256(new_funds), u256(current_balance), result_u256
+				);
+	
+				let result_balance = balance(result_u256);
+	
+				// Log the final balance result
+				log::info!(
+					"Final result after conversion to balance: {:?}",
+					result_balance
+				);
+	
+				result_balance
 			},
 		}
 	}
+	
+	
 
 	/// Calculate the equivalent balance of `points` in a pool with `current_balance` and
 	/// `current_points`.
+	// fn point_to_balance(
+	// 	current_balance: BalanceOf<T>,
+	// 	current_points: BalanceOf<T>,
+	// 	points: BalanceOf<T>,
+	// ) -> BalanceOf<T> {
+	// 	let u256 = T::BalanceToU256::convert;
+	// 	let balance = T::U256ToBalance::convert;
+	// 	if current_balance.is_zero() || current_points.is_zero() || points.is_zero() {
+	// 		// There is nothing to unbond
+	// 		return Zero::zero()
+	// 	}
+
+	// 	// Equivalent of (current_balance / current_points) * points
+	// 	balance(u256(current_balance).saturating_mul(u256(points)))
+	// 		// We check for zero above
+	// 		.div(current_points)
+	// }
 	fn point_to_balance(
 		current_balance: BalanceOf<T>,
 		current_points: BalanceOf<T>,
@@ -2790,16 +3107,46 @@ impl<T: Config> Pallet<T> {
 	) -> BalanceOf<T> {
 		let u256 = T::BalanceToU256::convert;
 		let balance = T::U256ToBalance::convert;
+	
+		// Log the inputs
+		log::info!(
+			"point_to_balance called with: current_balance: {:?}, current_points: {:?}, points: {:?}",
+			current_balance, current_points, points
+		);
+	
 		if current_balance.is_zero() || current_points.is_zero() || points.is_zero() {
-			// There is nothing to unbond
-			return Zero::zero()
+			// Log case where there is nothing to unbond
+			log::info!(
+				"Either current_balance, current_points, or points is zero, returning: Zero"
+			);
+			return Zero::zero();
 		}
-
-		// Equivalent of (current_balance / current_points) * points
-		balance(u256(current_balance).saturating_mul(u256(points)))
-			// We check for zero above
-			.div(current_points)
+	
+		// Log the balance-to-points conversion details
+		let balance_u256 = u256(current_balance);
+		let points_u256 = u256(points);
+		let current_points_u256 = u256(current_points);
+	
+		log::info!(
+			"Calculating: u256(current_balance): {:?}, u256(points): {:?}, u256(current_points): {:?}",
+			balance_u256, points_u256, current_points_u256
+		);
+	
+		let result_u256 = balance_u256
+			.saturating_mul(points_u256)
+			.div(current_points_u256);
+	
+		let result_balance = balance(result_u256);
+	
+		// Log the final result after conversion
+		log::info!(
+			"Final result after conversion to balance: {:?}",
+			result_balance
+		);
+	
+		result_balance
 	}
+	
 
 	/// If the member has some rewards, transfer a payout from the reward pool to the member.
 	// Emits events and potentially modifies pool state if any arithmetic saturates, but does
