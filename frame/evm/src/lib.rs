@@ -770,6 +770,93 @@ impl<T: Config> GasWeightMapping for FixedGasWeightMapping<T> {
 		weight.div(T::WeightPerGas::get().ref_time()).ref_time()
 	}
 }
+// pub struct DynamicGasWeightMapping<T>(sp_std::marker::PhantomData<T>);
+
+// impl<T: Config> GasWeightMapping for DynamicGasWeightMapping<T> {
+//     fn gas_to_weight(gas: u64, without_base_weight: bool) -> Weight {
+//         log::info!("Starting gas_to_weight conversion with gas: {}", gas);
+        
+//         // Start by calculating the weight based on the gas and the runtime's WeightPerGas configuration
+//         let mut weight = (T::WeightPerGas::get()).saturating_mul(gas);
+//         log::info!("Initial weight (WeightPerGas * gas): {}", weight);
+
+//         // Handle the base extrinsic weight if required
+//         if without_base_weight {
+//             let base_weight = T::BlockWeights::get()
+//                 .get(frame_support::dispatch::DispatchClass::Normal)
+//                 .base_extrinsic;
+//             log::info!("Base extrinsic weight to subtract: {}", base_weight);
+//             weight = weight.saturating_sub(base_weight);
+//         }
+
+//         log::info!("Weight after adjusting base extrinsic weight: {}", weight);
+
+//         // Optionally handle PoV size ratio if needed
+//         let ratio = T::GasLimitPovSizeRatio::get();
+//         if ratio > 0 {
+//             let proof_size = gas.saturating_div(ratio);
+//             *weight.proof_size_mut() = proof_size;
+//             log::info!("Proof size calculated: {}", proof_size);
+//         }
+
+//         log::info!("Final weight after gas_to_weight conversion: {}", weight);
+//         weight
+//     }
+
+//     fn weight_to_gas(weight: Weight) -> u64 {
+//         log::info!("Starting weight_to_gas conversion with weight: {}", weight);
+
+//         // Convert weight back to gas units
+//         let gas = weight.div(T::WeightPerGas::get().ref_time()).ref_time();
+//         log::info!("Converted gas from weight: {}", gas);
+
+//         gas
+//     }
+// }
+
+
+
+// Example implementation for storage-heavy transaction detection
+fn is_storage_heavy_transaction(gas: u64) -> bool {
+    let is_heavy = gas > 500_000; // Placeholder threshold
+    log::info!("is_storage_heavy_transaction: {}, gas: {}", is_heavy, gas);
+    is_heavy
+}
+
+// Example implementation for contract-to-contract call detection
+fn involves_external_contract_call(gas: u64) -> bool {
+    let involves_call = gas > 250_000; // Placeholder threshold
+    log::info!("involves_external_contract_call: {}, gas: {}", involves_call, gas);
+    involves_call
+}
+
+// Example placeholder function to get the current block fullness
+fn get_block_fullness() -> f64 {
+    // This would return the ratio of block space used (e.g., 0.7 for 70%).
+    let fullness = 0.7;
+    log::info!("get_block_fullness: {}", fullness);
+    fullness
+}
+
+// Example function to calculate congestion factor
+fn calculate_congestion_factor(block_fullness: f64) -> u64 {
+    let factor = if block_fullness > 0.9 { 2 } else { 1 };
+    log::info!("calculate_congestion_factor: {}, block_fullness: {}", factor, block_fullness);
+    factor
+}
+
+// New function to calculate a gas buffer dynamically
+fn calculate_gas_buffer(gas: u64) -> u64 {
+    if gas < 500_000 {
+        gas / 20 // Apply a 5% buffer for smaller transactions
+    } else if gas < 1_000_000 {
+        gas / 10 // Apply a 10% buffer for mid-sized transactions
+    } else {
+        gas / 5 // Apply a 20% buffer for larger transactions
+    }
+}
+
+
 
 static SHANGHAI_CONFIG: EvmConfig = EvmConfig::shanghai();
 
