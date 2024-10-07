@@ -176,6 +176,7 @@ pub mod pallet {
 		/// EVM config used in the module.
 		fn config() -> &'static EvmConfig {
 			&SHANGHAI_CONFIG
+			// &DEFAULT_CONFIG
 		}
 	}
 
@@ -859,6 +860,8 @@ fn calculate_gas_buffer(gas: u64) -> u64 {
 
 
 static SHANGHAI_CONFIG: EvmConfig = EvmConfig::shanghai();
+// static DEFAULT_CONFIG: EvmConfig = EvmConfig::default();
+
 
 impl<T: Config> Pallet<T> {
 	/// Check whether an account is empty.

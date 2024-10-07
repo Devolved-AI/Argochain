@@ -186,7 +186,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // and set impl_version to 0. If only runtime
     // implementation changes and behavior does not, then leave spec_version as
     // is and increment impl_version.
-    spec_version: 49,
+    spec_version: 68,
     impl_version: 0,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 2,
@@ -2564,7 +2564,10 @@ impl_runtime_apis! {
 						// value: 32
 						// access_list: 1 (empty vec size)
 						// 65 bytes signature
-						258;
+						150058;
+                    
+                    frame_support::log::info!("Base estimated length: {}", estimated_transaction_len);
+
 
 					if access_list.is_some() {
 						estimated_transaction_len += access_list.encoded_size();
@@ -2577,10 +2580,11 @@ impl_runtime_apis! {
 					// } else {
 					// 	gas_limit.low_u64()
 					// };
+                    let multiplied_gas_limit = gas_limit * U256::from(5);
                     let gas_limit = if gas_limit > U256::from(BLOCK_GAS_LIMIT) {
                         BLOCK_GAS_LIMIT
                     } else {
-                        gas_limit.low_u64()
+                        multiplied_gas_limit.low_u64()
                     };
                     
                 frame_support::log::info!("Gas limit in call: {}", gas_limit);
@@ -2616,6 +2620,12 @@ impl_runtime_apis! {
 			).map_err(|err| err.error.into())
 		}
         
+        
+        
+        
+        
+        
+        
 
         fn create(
             from: H160,
@@ -2641,13 +2651,14 @@ impl_runtime_apis! {
             let evm_config = config.as_ref().unwrap_or(<Runtime as pallet_evm::Config>::config());
 
             let mut estimated_transaction_len = data.len() +
-                20 + // from
-                32 + // value
-                32 + // gas_limit
-                32 + // nonce
-                1 + // TransactionAction
-                8 + // chain id
-                65; // signature
+                // 20 + // from
+                // 32 + // value
+                // 32 + // gas_limit
+                // 32 + // nonce
+                // 1 + // TransactionAction
+                // 8 + // chain id
+                // 65; // signature
+                120058;
 
             if max_fee_per_gas.is_some() {
                 estimated_transaction_len += 32;
