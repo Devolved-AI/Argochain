@@ -186,7 +186,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // and set impl_version to 0. If only runtime
     // implementation changes and behavior does not, then leave spec_version as
     // is and increment impl_version.
-    spec_version: 68,
+    spec_version: 81,
     impl_version: 0,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 2,
@@ -2048,10 +2048,10 @@ impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
         None
     }
 }
-const BLOCK_GAS_LIMIT: u64 = 75_000_000;
+const BLOCK_GAS_LIMIT: u64 = 200_000_000;
 const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
 parameter_types! {
-    pub const ChainId: u64 = 1299;//researched and made it relevant
+    pub const ChainId: u64 = 1298;//researched and made it relevant
     pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
     pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
     pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
@@ -2564,10 +2564,7 @@ impl_runtime_apis! {
 						// value: 32
 						// access_list: 1 (empty vec size)
 						// 65 bytes signature
-						150058;
-                    
-                    frame_support::log::info!("Base estimated length: {}", estimated_transaction_len);
-
+						258;
 
 					if access_list.is_some() {
 						estimated_transaction_len += access_list.encoded_size();
@@ -2580,11 +2577,10 @@ impl_runtime_apis! {
 					// } else {
 					// 	gas_limit.low_u64()
 					// };
-                    let multiplied_gas_limit = gas_limit * U256::from(5);
                     let gas_limit = if gas_limit > U256::from(BLOCK_GAS_LIMIT) {
                         BLOCK_GAS_LIMIT
                     } else {
-                        multiplied_gas_limit.low_u64()
+                        gas_limit.low_u64()
                     };
                     
                 frame_support::log::info!("Gas limit in call: {}", gas_limit);
@@ -2620,12 +2616,6 @@ impl_runtime_apis! {
 			).map_err(|err| err.error.into())
 		}
         
-        
-        
-        
-        
-        
-        
 
         fn create(
             from: H160,
@@ -2651,14 +2641,13 @@ impl_runtime_apis! {
             let evm_config = config.as_ref().unwrap_or(<Runtime as pallet_evm::Config>::config());
 
             let mut estimated_transaction_len = data.len() +
-                // 20 + // from
-                // 32 + // value
-                // 32 + // gas_limit
-                // 32 + // nonce
-                // 1 + // TransactionAction
-                // 8 + // chain id
-                // 65; // signature
-                120058;
+                20 + // from
+                32 + // value
+                32 + // gas_limit
+                32 + // nonce
+                1 + // TransactionAction
+                8 + // chain id
+                65; // signature
 
             if max_fee_per_gas.is_some() {
                 estimated_transaction_len += 32;

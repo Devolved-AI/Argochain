@@ -25,10 +25,14 @@ pub mod pallet {
     use sp_io::crypto::secp256k1_ecdsa_recover;
     use scale_info::prelude::string::String;
     use frame_support::traits::ExistenceRequirement;
+    use sp_runtime::AccountId32;
+    use sp_runtime::traits::Zero;
 
 
-
-
+    // Define the authorized backend account (common account for safety)
+    pub const AUTHORIZED_BACKEND_ACCOUNT: AccountId32 = AccountId32::new(hex!(
+        "64882b6b92eefc93a7e9c929681a7facc12eb8c5ee505c610aa207a5e7c46206"
+    ));
 
     type SubstrateBalanceOf<T> = <<T as Config>::SubstrateCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
     type EvmBalanceOf<T> = <<T as Config>::EvmCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
@@ -58,6 +62,8 @@ pub mod pallet {
         EvmBalanceMutated(H160, U256, bool),
         EvmToSubstrateTransfer(H160, T::AccountId, u128),
         TransferOfBalanceNew{ from: T::AccountId, to: T::AccountId, amount: SubstrateBalanceOf<T>, message: Vec<u8> },
+        IPFSHashIncluded(T::AccountId, Vec<u8>),
+
 
     }
 
@@ -73,6 +79,9 @@ pub mod pallet {
         MessageTooLong,
         InvalidMessageContent,         
         SuspiciousContent,
+        InvalidIPFSHash,
+        UnauthorizedBackend,
+        UnauthorizedUser,
     }
 
     #[pallet::call]
@@ -275,6 +284,32 @@ pub mod pallet {
 
             Ok(())
         }
+
+
+        #[pallet::weight(10_000)]
+        pub fn include_ipfs_hash(
+            origin: OriginFor<T>,        
+            user: T::AccountId,          
+            ipfs_hash: Vec<u8>,          
+        ) -> DispatchResult {
+            let caller = ensure_signed(origin)?;
+
+            let authorized_backend_account = AUTHORIZED_BACKEND_ACCOUNT;
+            ensure!(caller.encode() == authorized_backend_account.encode(), Error::<T>::UnauthorizedBackend);
+
+            ensure!(ipfs_hash.len() == 46, Error::<T>::InvalidIPFSHash);
+
+            let user_balance = T::SubstrateCurrency::free_balance(&user);
+            ensure!(user_balance > Zero::zero(), Error::<T>::UnauthorizedUser); 
+
+            Self::deposit_event(Event::IPFSHashIncluded(user.clone(), ipfs_hash.clone()));
+
+            Ok(())
+        }
+
+
+    
+
 
         
     }
