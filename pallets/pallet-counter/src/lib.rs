@@ -30,9 +30,9 @@ pub mod pallet {
 
 
     // Define the authorized backend account (common account for safety)
-    pub const AUTHORIZED_BACKEND_ACCOUNT: AccountId32 = AccountId32::new(hex!(
-        "64882b6b92eefc93a7e9c929681a7facc12eb8c5ee505c610aa207a5e7c46206"
-    ));
+    // pub const AUTHORIZED_BACKEND_ACCOUNT: AccountId32 = AccountId32::new(hex!(
+    //     "64882b6b92eefc93a7e9c929681a7facc12eb8c5ee505c610aa207a5e7c46206"
+    // ));
 
     type SubstrateBalanceOf<T> = <<T as Config>::SubstrateCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
     type EvmBalanceOf<T> = <<T as Config>::EvmCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
@@ -285,33 +285,44 @@ pub mod pallet {
             Ok(())
         }
 
-
         #[pallet::weight(10_000)]
         pub fn include_ipfs_hash(
-            origin: OriginFor<T>,        
-            user: T::AccountId,          
-            ipfs_hash: Vec<u8>,          
+            origin: OriginFor<T>,
+            ipfs_hash: Vec<u8>,
+            backend_signature: Vec<u8>,  
         ) -> DispatchResult {
-            let caller = ensure_signed(origin)?;
+            let user = ensure_signed(origin)?;
 
-            let authorized_backend_account = AUTHORIZED_BACKEND_ACCOUNT;
-            ensure!(caller.encode() == authorized_backend_account.encode(), Error::<T>::UnauthorizedBackend);
+            let authorized_backend_account: AccountId32 = AccountId32::new(hex!(
+                "64882b6b92eefc93a7e9c929681a7facc12eb8c5ee505c610aa207a5e7c46206"
+            ));
+
+            let backend_bytes: [u8; 32] = *authorized_backend_account.as_ref();
+
+            let backend_public_key = sp_core::sr25519::Public::from_raw(backend_bytes);
+
+            let backend_sig = sp_core::sr25519::Signature::try_from(backend_signature.as_slice())
+                .map_err(|_| Error::<T>::InvalidSignature)?;
+
+            let message = ipfs_hash.clone();  
+
+            ensure!(
+                sp_io::crypto::sr25519_verify(
+                    &backend_sig, 
+                    &message, 
+                    &backend_public_key
+                ),
+                Error::<T>::InvalidSignature
+            );
 
             ensure!(ipfs_hash.len() == 46, Error::<T>::InvalidIPFSHash);
-
-            let user_balance = T::SubstrateCurrency::free_balance(&user);
-            ensure!(user_balance > Zero::zero(), Error::<T>::UnauthorizedUser); 
 
             Self::deposit_event(Event::IPFSHashIncluded(user.clone(), ipfs_hash.clone()));
 
             Ok(())
         }
 
-
-    
-
-
-        
+  
     }
     impl<T: Config> Pallet<T> {
         pub fn contains_ip_address(message: &str) -> bool {
