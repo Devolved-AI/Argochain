@@ -22,7 +22,11 @@ extern crate alloc;
 
 use alloc::vec::Vec;
 use core::convert::TryFrom;
-use ed25519_dalek::{PublicKey, Signature, Verifier};
+
+// use ed25519_dalek::{PublicKey, Signature, Verifier};
+use ed25519_dalek::{Signature, VerifyingKey as PublicKey};
+use ed25519_dalek::ed25519::signature::Verifier;
+
 use fp_evm::{ExitError, ExitSucceed, LinearCostPrecompile, PrecompileFailure};
 
 pub struct Ed25519Verify;
@@ -44,9 +48,17 @@ impl LinearCostPrecompile for Ed25519Verify {
 		let mut buf = [0u8; 4];
 
 		let msg = &i[0..32];
-		let pk = PublicKey::from_bytes(&i[32..64]).map_err(|_| PrecompileFailure::Error {
-			exit_status: ExitError::Other("Public key recover failed".into()),
-		})?;
+		// let pk = PublicKey::from_bytes(&i[32..64]).map_err(|_| PrecompileFailure::Error {
+		// 	exit_status: ExitError::Other("Public key recover failed".into()),
+		// })?;
+		use std::convert::TryInto;
+
+let pk = PublicKey::from_bytes(&i[32..64].try_into().map_err(|_| PrecompileFailure::Error {
+    exit_status: ExitError::Other("Public key recovery failed".into()),
+})?).map_err(|_| PrecompileFailure::Error {
+    exit_status: ExitError::Other("Public key recovery failed".into()),
+})?;
+
 		let sig = Signature::try_from(&i[64..128]).map_err(|_| PrecompileFailure::Error {
 			exit_status: ExitError::Other("Signature recover failed".into()),
 		})?;

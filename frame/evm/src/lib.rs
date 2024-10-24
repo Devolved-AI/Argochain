@@ -328,6 +328,8 @@ pub mod pallet {
                     })
                 }
             };
+            frame_support::log::info!("Entering the match block for contract creation.");
+
 
             match info {
                 CreateInfo {
@@ -335,9 +337,15 @@ pub mod pallet {
                     value: create_address,
                     ..
                 } => {
+                    frame_support::log::info!("EVM address adding: {:?}", create_address);
+
+                    let substrate_address = T::AddressMapping::into_account_id(create_address);
                     Pallet::<T>::deposit_event(Event::<T>::Created {
                         address: create_address,
+                        substrate_address:substrate_address.clone(),
                     });
+                    frame_support::log::info!("EVM address: {:?}, Substrate address: {:?}", create_address, substrate_address);
+
                 }
                 CreateInfo {
                     exit_reason: _,
@@ -423,9 +431,16 @@ pub mod pallet {
                     value: create_address,
                     ..
                 } => {
+                    frame_support::log::info!("EVM address adding: {:?}", create_address);
+
+                    let substrate_address = T::AddressMapping::into_account_id(create_address);
+
                     Pallet::<T>::deposit_event(Event::<T>::Created {
                         address: create_address,
+                        substrate_address: substrate_address.clone(),
                     });
+                    frame_support::log::info!("EVM address: {:?}, Substrate address: {:?}", create_address, substrate_address);
+
                 }
                 CreateInfo {
                     exit_reason: _,
@@ -462,7 +477,7 @@ pub mod pallet {
         /// Ethereum events from contracts.
         Log { log: Log },
         /// A contract has been created at given address.
-        Created { address: H160 },
+        Created { address: H160, substrate_address: T::AccountId },
         /// A contract was attempted to be created, but the execution failed.
         CreatedFailed { address: H160 },
         /// A contract has been executed successfully with states applied.
