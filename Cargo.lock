@@ -414,7 +414,6 @@ dependencies = [
  "fp-rpc",
  "fp-self-contained",
  "frame-benchmarking",
- "frame-benchmarking-pallet-pov",
  "frame-election-provider-support",
  "frame-executive",
  "frame-support",

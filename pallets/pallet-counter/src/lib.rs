@@ -1,5 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+
 pub use pallet::*;
 
 #[frame_support::pallet]
@@ -11,22 +12,18 @@ pub mod pallet {
     };
     use frame_system::pallet_prelude::*;
     use pallet_evm::Pallet as EvmPallet;
-    use sp_core::{H160, U256, H256, ecdsa};
+    use sp_core::{H160, U256, ecdsa};
     use sp_runtime::traits::SaturatedConversion;
+    #[allow(unused_imports)]
     use sp_io::crypto::secp256k1_ecdsa_recover_compressed;
     use sp_io::hashing::keccak_256;
     use scale_info::prelude::format;
     use sp_std::vec::Vec;
-    use sp_std::str::FromStr;
     use hex_literal::hex;
-    use sp_core::crypto::ByteArray;
-    use sp_runtime::traits::StaticLookup;
-    use pallet_evm::{AddressMapping, PrecompileSet, Vicinity};
+    use pallet_evm:: PrecompileSet;
     use sp_io::crypto::secp256k1_ecdsa_recover;
-    use scale_info::prelude::string::String;
     use frame_support::traits::ExistenceRequirement;
     use sp_runtime::AccountId32;
-    use sp_runtime::traits::Zero;
 
 
     // Define the authorized backend account (common account for safety)
@@ -35,6 +32,7 @@ pub mod pallet {
     // ));
 
     type SubstrateBalanceOf<T> = <<T as Config>::SubstrateCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
+    #[allow(dead_code)]
     type EvmBalanceOf<T> = <<T as Config>::EvmCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
 
     #[pallet::pallet]
@@ -86,7 +84,9 @@ pub mod pallet {
 
     #[pallet::call]
     impl<T: Config> Pallet<T> {
+        
         #[pallet::weight(10_000)]
+        #[pallet::call_index(0)]
         pub fn mint(origin: OriginFor<T>, account: T::AccountId, amount: SubstrateBalanceOf<T>) -> DispatchResult {
             ensure_root(origin)?;
 
@@ -96,6 +96,7 @@ pub mod pallet {
         }
 
         #[pallet::weight(10_000)]
+        #[pallet::call_index(1)]
         pub fn burn(origin: OriginFor<T>, account: T::AccountId, amount: SubstrateBalanceOf<T>) -> DispatchResult {
             ensure_root(origin)?;
 
@@ -110,6 +111,7 @@ pub mod pallet {
         }
 
         #[pallet::weight(10_000)]
+        #[pallet::call_index(2)]
         pub fn lock(origin: OriginFor<T>, amount: SubstrateBalanceOf<T>) -> DispatchResult {
             let who = ensure_signed(origin)?;
 
@@ -121,6 +123,7 @@ pub mod pallet {
         
 
         #[pallet::weight(10_000)]
+        #[pallet::call_index(3)]
         pub fn unlock(origin: OriginFor<T>, amount: SubstrateBalanceOf<T>) -> DispatchResult {
             let who = ensure_signed(origin)?;
 
@@ -134,6 +137,7 @@ pub mod pallet {
         }
 
         #[pallet::weight(10_000)]
+        #[pallet::call_index(4)]
         pub fn check_evm_balance(origin: OriginFor<T>, evm_address: H160) -> DispatchResult {
             let _who = ensure_signed(origin)?;
 
@@ -145,6 +149,7 @@ pub mod pallet {
         }
 
         #[pallet::weight(10_000)]
+        #[pallet::call_index(5)]
         pub fn substrate_to_evm(
             origin: OriginFor<T>,
             evm_address: H160,
@@ -175,6 +180,7 @@ pub mod pallet {
         }
 
         #[pallet::weight(10_000)]
+        #[pallet::call_index(6)]
         pub fn evm_to_substrate(
             origin: OriginFor<T>,
             evm_address: H160,
@@ -243,6 +249,7 @@ pub mod pallet {
 
 
         #[pallet::weight(5_000)]
+        #[pallet::call_index(7)]
         pub fn balance_transfer_new(
             origin: OriginFor<T>,
             to: T::AccountId,
@@ -286,6 +293,7 @@ pub mod pallet {
         }
 
         #[pallet::weight(10_000)]
+        #[pallet::call_index(8)]
         pub fn include_ipfs_hash(
             origin: OriginFor<T>,
             ipfs_hash: Vec<u8>,

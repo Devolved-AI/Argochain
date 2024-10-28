@@ -2009,9 +2009,9 @@ impl pallet_alliance::Config for Runtime {
     type RetirementPeriod = RetirementPeriod;
 }
 
-impl frame_benchmarking_pallet_pov::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-}
+// impl frame_benchmarking_pallet_pov::Config for Runtime {
+//     type RuntimeEvent = RuntimeEvent;
+// }
 
 parameter_types! {
     pub StatementCost: Balance = 1 * ARGO;
@@ -2196,7 +2196,7 @@ construct_runtime!(
         AssetConversion: pallet_asset_conversion,
         FastUnstake: pallet_fast_unstake,
         MessageQueue: pallet_message_queue,
-        Pov: frame_benchmarking_pallet_pov,
+        // Pov: frame_benchmarking_pallet_pov,
         Statement: pallet_statement,
 
         Ethereum: pallet_ethereum,
@@ -2247,7 +2247,7 @@ mod mmr {
 mod benches {
     frame_benchmarking::define_benchmarks!(
         [frame_benchmarking, BaselineBench::<Runtime>]
-        [frame_benchmarking_pallet_pov, Pov]
+        // [frame_benchmarking_pallet_pov, Pov]
         [pallet_alliance, Alliance]
         [pallet_assets, Assets]
         [pallet_babe, Babe]
