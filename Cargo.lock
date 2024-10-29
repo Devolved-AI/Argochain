@@ -473,7 +473,7 @@ dependencies = [
  "pallet-nfts-runtime-api",
  "pallet-nis",
  "pallet-nomination-pools 1.0.0",
- "pallet-nomination-pools-benchmarking",
+ "pallet-nomination-pools-benchmarking 1.0.0",
  "pallet-nomination-pools-runtime-api",
  "pallet-offences",
  "pallet-offences-benchmarking",
@@ -4580,7 +4580,7 @@ dependencies = [
  "pallet-nfts-runtime-api",
  "pallet-nis",
  "pallet-nomination-pools 1.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
- "pallet-nomination-pools-benchmarking",
+ "pallet-nomination-pools-benchmarking 1.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "pallet-nomination-pools-runtime-api",
  "pallet-offences",
  "pallet-offences-benchmarking",
@@ -7097,6 +7097,30 @@ dependencies = [
  "sp-core",
  "sp-io",
  "sp-runtime",
+ "sp-staking",
+ "sp-std",
+]
+
+[[package]]
+name = "pallet-nomination-pools-benchmarking"
+version = "1.0.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-election-provider-support",
+ "frame-support",
+ "frame-system",
+ "pallet-bags-list",
+ "pallet-balances",
+ "pallet-nomination-pools 1.0.0",
+ "pallet-staking",
+ "pallet-staking-reward-curve",
+ "pallet-timestamp",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-runtime-interface",
  "sp-staking",
  "sp-std",
 ]
