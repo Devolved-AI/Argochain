@@ -186,7 +186,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // and set impl_version to 0. If only runtime
     // implementation changes and behavior does not, then leave spec_version as
     // is and increment impl_version.
-    spec_version: 84,
+    spec_version: 89,
     impl_version: 0,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 2,
@@ -498,7 +498,7 @@ impl pallet_indices::Config for Runtime {
 }
 
 parameter_types! {
-    pub const ExistentialDeposit: Balance = 1 * ARGO;
+    pub const ExistentialDeposit: Balance = 1_000_000_000_000_000 ;
     // For weight estimation, we assume that the most locks on an individual account will be 50.
     // This number may need to be adjusted in the future if this assumption no longer holds true.
     pub const MaxLocks: u32 = 50;
@@ -2051,7 +2051,7 @@ impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
 const BLOCK_GAS_LIMIT: u64 = 200_000_000;
 const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
 parameter_types! {
-    pub const ChainId: u64 = 1299;//researched and made it relevant
+    pub const ChainId: u64 = 1298;//researched and made it relevant
     pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
     pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
     pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
