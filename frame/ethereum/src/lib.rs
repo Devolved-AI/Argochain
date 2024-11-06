@@ -520,6 +520,10 @@ impl<T: Config> Pallet<T> {
 		.and_then(|v| v.with_balance_for(&who))
 		.map_err(|e| e.0)?;
 
+		if !pallet_evm::AccountCodes::<T>::get(origin).is_empty() {
+			return Err(InvalidTransaction::BadSigner.into());
+		}
+		
 		let priority = match (
 			transaction_data.gas_price,
 			transaction_data.max_fee_per_gas,

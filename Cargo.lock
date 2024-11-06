@@ -388,7 +388,7 @@ dependencies = [
  "sp-session",
  "sp-statement-store",
  "sp-timestamp",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "sp-transaction-pool",
  "sp-transaction-storage-proof",
  "substrate-build-script-utils",
@@ -414,7 +414,6 @@ dependencies = [
  "fp-rpc",
  "fp-self-contained",
  "frame-benchmarking",
- "frame-benchmarking-pallet-pov",
  "frame-election-provider-support",
  "frame-executive",
  "frame-support",
@@ -473,8 +472,8 @@ dependencies = [
  "pallet-nfts",
  "pallet-nfts-runtime-api",
  "pallet-nis",
- "pallet-nomination-pools",
- "pallet-nomination-pools-benchmarking",
+ "pallet-nomination-pools 1.0.0",
+ "pallet-nomination-pools-benchmarking 1.0.0",
  "pallet-nomination-pools-runtime-api",
  "pallet-offences",
  "pallet-offences-benchmarking",
@@ -3273,7 +3272,7 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
 ]
 
 [[package]]
@@ -3338,7 +3337,7 @@ dependencies = [
  "sp-staking",
  "sp-state-machine",
  "sp-std",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "sp-weights",
  "tt-call",
 ]
@@ -4580,8 +4579,8 @@ dependencies = [
  "pallet-nfts",
  "pallet-nfts-runtime-api",
  "pallet-nis",
- "pallet-nomination-pools",
- "pallet-nomination-pools-benchmarking",
+ "pallet-nomination-pools 1.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
+ "pallet-nomination-pools-benchmarking 1.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "pallet-nomination-pools-runtime-api",
  "pallet-offences",
  "pallet-offences-benchmarking",
@@ -5822,7 +5821,7 @@ dependencies = [
  "sp-keystore",
  "sp-state-machine",
  "sp-statement-store",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "sp-trie",
 ]
 
@@ -6312,7 +6311,7 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
 ]
 
 [[package]]
@@ -6489,12 +6488,19 @@ dependencies = [
 name = "pallet-counter"
 version = "0.1.0"
 dependencies = [
+ "fp-evm",
  "frame-benchmarking",
  "frame-support",
  "frame-system",
+ "hex",
+ "hex-literal 0.4.1",
+ "pallet-evm",
  "parity-scale-codec",
  "scale-info",
+ "sp-core",
+ "sp-io",
  "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]
@@ -7063,6 +7069,24 @@ dependencies = [
 [[package]]
 name = "pallet-nomination-pools"
 version = "1.0.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-balances",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-staking",
+ "sp-std",
+ "sp-tracing 10.0.0",
+]
+
+[[package]]
+name = "pallet-nomination-pools"
+version = "1.0.0"
 source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0#948fbd2fd1233dc26dbb9f9bbc1d2cca2c03945d"
 dependencies = [
  "frame-support",
@@ -7080,6 +7104,30 @@ dependencies = [
 [[package]]
 name = "pallet-nomination-pools-benchmarking"
 version = "1.0.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-election-provider-support",
+ "frame-support",
+ "frame-system",
+ "pallet-bags-list",
+ "pallet-balances",
+ "pallet-nomination-pools 1.0.0",
+ "pallet-staking",
+ "pallet-staking-reward-curve",
+ "pallet-timestamp",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-runtime-interface",
+ "sp-staking",
+ "sp-std",
+]
+
+[[package]]
+name = "pallet-nomination-pools-benchmarking"
+version = "1.0.0"
 source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0#948fbd2fd1233dc26dbb9f9bbc1d2cca2c03945d"
 dependencies = [
  "frame-benchmarking",
@@ -7087,7 +7135,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "pallet-bags-list",
- "pallet-nomination-pools",
+ "pallet-nomination-pools 1.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "pallet-staking",
  "parity-scale-codec",
  "scale-info",
@@ -7102,7 +7150,7 @@ name = "pallet-nomination-pools-runtime-api"
 version = "1.0.0-dev"
 source = "git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0#948fbd2fd1233dc26dbb9f9bbc1d2cca2c03945d"
 dependencies = [
- "pallet-nomination-pools",
+ "pallet-nomination-pools 1.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "parity-scale-codec",
  "sp-api",
  "sp-std",
@@ -9789,7 +9837,7 @@ dependencies = [
  "sp-runtime",
  "sp-state-machine",
  "sp-storage",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "sp-trie",
  "substrate-test-runtime",
  "substrate-test-runtime-client",
@@ -9919,7 +9967,7 @@ dependencies = [
  "sp-core",
  "sp-rpc",
  "sp-runtime",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "thiserror",
  "tracing",
  "tracing-log",
@@ -9957,7 +10005,7 @@ dependencies = [
  "sp-blockchain",
  "sp-core",
  "sp-runtime",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "sp-transaction-pool",
  "substrate-prometheus-endpoint",
  "thiserror",
@@ -10783,7 +10831,7 @@ dependencies = [
  "sp-runtime-interface",
  "sp-state-machine",
  "sp-std",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "sp-trie",
  "tracing",
  "tracing-core",
@@ -10929,7 +10977,7 @@ dependencies = [
  "sp-runtime-interface-proc-macro",
  "sp-std",
  "sp-storage",
- "sp-tracing",
+ "sp-tracing 10.0.0 (git+https://github.com/paritytech/substrate.git?branch=polkadot-v1.0.0)",
  "sp-wasm-interface",
  "static_assertions",
 ]
@@ -11042,6 +11090,17 @@ dependencies = [
  "sp-runtime",
  "sp-std",
  "thiserror",
+]
+
+[[package]]
+name = "sp-tracing"
+version = "10.0.0"
+dependencies = [
+ "parity-scale-codec",
+ "sp-std",
+ "tracing",
+ "tracing-core",
+ "tracing-subscriber",
 ]
 
 [[package]]

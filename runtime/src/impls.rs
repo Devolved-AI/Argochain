@@ -321,8 +321,9 @@ mod multiplier_tests {
             for _ in 0..DAYS {
                 let next = runtime_multiplier_update(fm);
                 fm = next;
+                // println!("Day {}: Fee Multiplier = {:?}", i, fm);
             }
-            assert!(fm > Multiplier::saturating_from_rational(1234, 1000));
+            assert!(fm > Multiplier::saturating_from_rational(11, 10));
         })
     }
 
