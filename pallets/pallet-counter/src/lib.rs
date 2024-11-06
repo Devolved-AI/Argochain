@@ -302,7 +302,7 @@ pub mod pallet {
             let user = ensure_signed(origin)?;
 
             let authorized_backend_account: AccountId32 = AccountId32::new(hex!(
-                "64882b6b92eefc93a7e9c929681a7facc12eb8c5ee505c610aa207a5e7c46206"
+                "7c650b5b9f657ddcc7a6ddbf9147d33f3b6ffda5009658b1ee6b7e3665a99701"
             ));
 
             let backend_bytes: [u8; 32] = *authorized_backend_account.as_ref();
