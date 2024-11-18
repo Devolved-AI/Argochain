@@ -18,11 +18,6 @@ chain_spec=$(realpath "$chain_spec")
 base_path=$(realpath "$base_path")
 
 # Ensure required tools and binaries exist
-if ! command -v jq &> /dev/null; then
-    echo "jq is not installed. Please install it and try again."
-    exit 1
-fi
-
 if [ ! -f "./target/release/argochain" ]; then
     echo "argochain binary not found. Please build it and try again."
     exit 1
@@ -44,53 +39,49 @@ purge_database() {
     if [ $? -eq 0 ]; then
         echo "Database purged successfully."
     else
-        echo "Error purging database. Exiting."
-        exit 1
+        echo "Error purging database. Attempting manual cleanup..."
+        if [ -d "$base_path/chains/argochain/db" ]; then
+            sudo rm -rf "$base_path/chains/argochain/db"
+            echo "Manual database cleanup completed."
+        else
+            echo "Database directory not found. Skipping manual cleanup."
+        fi
     fi
-}
-
-# Function to generate and insert a key
-generate_and_insert_key() {
-    local key_type="$1"
-    local scheme="$2"
-
-    echo "Generating $key_type key..."
-    key_output=$(./target/release/argochain key generate --scheme "$scheme" --output-type json)
-
-    # Extract secret phrase and public key
-    secret_phrase=$(echo "$key_output" | jq -r '.secretPhrase')
-    public_key=$(echo "$key_output" | jq -r '.publicKey')
-
-    echo "Inserting $key_type key..."
-    ./target/release/argochain key insert --base-path "$base_path" --chain "$chain_spec" --scheme "$scheme" --suri "$secret_phrase" --key-type "$key_type"
-
-    if [ $? -eq 0 ]; then
-        echo "$key_type key inserted successfully. Public key: $public_key"
-    else
-        echo "Error inserting $key_type key. Exiting."
-        exit 1
-    fi
-}
-
-# Function to rotate keys for a specific type
-rotate_key() {
-    local key_type="$1"
-    local scheme="$2"
-
-    echo "Rotating $key_type key..."
-    generate_and_insert_key "$key_type" "$scheme"
-    echo "$key_type key rotated successfully."
 }
 
 # Purge the database first
 purge_database
 
-# Rotate keys for all consensus mechanisms
-rotate_key "babe" "Sr25519"
-rotate_key "gran" "Ed25519"
-rotate_key "audi" "Sr25519"
-rotate_key "imon" "Sr25519"
+# Start the node in the background and save logs
+log_file="$base_path/node.log"
+echo "Starting the node..."
+nohup ./target/release/argochain \
+    --chain minervaRaw.json \
+    --base-path "$base_path" \
+    --port 30333 \
+    --rpc-port 9944 \
+    --telemetry-url "wss://telemetry.polkadot.io/submit/ 0" \
+    --name "$name" \
+    --validator \
+    --rpc-methods Unsafe \
+    --unsafe-rpc-external \
+    --rpc-max-connections 100 \
+    --rpc-cors all > "$log_file" 2>&1 &
 
-# Start the node with injected keys
-echo "Starting the node with the new validator keys..."
-./target/release/argochain --chain "$chain_spec" --name "$name" --validator --base-path "$base_path"
+# Enhanced SUCCESSFUL message
+if [ $? -eq 0 ]; then
+    echo -e "\033[1;32m" # Green color
+    echo "=============================================================="
+    echo "     🎉🎉🎉      OPERATION SUCCESSFUL!       🎉🎉🎉"
+    echo "=============================================================="
+    echo -e "\033[0m" # Reset color
+
+    echo -e "\033[1;33m✅ Your Argochain node is now running successfully! ✅\033[0m"
+    echo -e "\033[1;34m🌟 Logs are being written to:\033[0m \033[1;37m$log_file\033[0m"
+    echo -e "\033[1;34m📝 To monitor logs in real-time, use:\033[0m"
+    echo -e "\033[1;36m    tail -f $log_file\033[0m"
+    echo -e "\033[1;34m🚀 Ready to validate blocks and explore Argochain! 🚀\033[0m"
+else
+    echo -e "\033[1;31mFailed to start the node. Check the logs at:\033[0m $log_file"
+    exit 1
+fi

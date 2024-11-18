@@ -1,0 +1,20 @@
+2024-11-18 13:43:40 Argo Chain Node    
+2024-11-18 13:43:40 ✌️  version 1.0.0-9ad87ceb0f3    
+2024-11-18 13:43:40 ❤️  by argochain, 2023-2024    
+2024-11-18 13:43:40 📋 Chain specification: ArgoChain    
+2024-11-18 13:43:40 🏷  Node name: REPLACEME    
+2024-11-18 13:43:40 👤 Role: AUTHORITY    
+2024-11-18 13:43:40 💾 Database: RocksDb at /var/opt/argochain/chains/argochain/db/full    
+2024-11-18 13:43:40 Failed to run the sequential write disk benchmark: failed to create a test file: No such file or directory (os error 2)    
+Error: Service(Client(Backend("Failed to create RocksDB directory: `Os { code: 13, kind: PermissionDenied, message: \"Permission denied\" }`.")))
+2024-11-18 13:43:40 Failed to run the random write disk benchmark: failed to create a test file: No such file or directory (os error 2)    
+2024-11-18 14:11:59 Argo Chain Node    
+2024-11-18 14:11:59 ✌️  version 1.0.0-9ad87ceb0f3    
+2024-11-18 14:11:59 ❤️  by argochain, 2023-2024    
+2024-11-18 14:11:59 📋 Chain specification: ArgoChain    
+2024-11-18 14:11:59 🏷  Node name: REPLACEME    
+2024-11-18 14:11:59 👤 Role: AUTHORITY    
+2024-11-18 14:11:59 💾 Database: RocksDb at /var/opt/argochain/chains/argochain/db/full    
+Error: Service(Client(Backend("Failed to create RocksDB directory: `Os { code: 13, kind: PermissionDenied, message: \"Permission denied\" }`.")))
+2024-11-18 14:11:59 Failed to run the sequential write disk benchmark: failed to create a test file: No such file or directory (os error 2)    
+2024-11-18 14:11:59 Failed to run the random write disk benchmark: failed to create a test file: No such file or directory (os error 2)    
