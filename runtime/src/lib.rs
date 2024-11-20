@@ -22,23 +22,43 @@
 // `construct_runtime!` does a lot of recursion and requires us to increase the limits.
 #![recursion_limit = "1024"]
 
+extern crate alloc;
+#[cfg(feature = "runtime-benchmarks")]
+use pallet_asset_rate::AssetKindFactory;
+#[cfg(feature = "runtime-benchmarks")]
+use pallet_treasury::ArgumentsFactory;
+#[cfg(feature = "runtime-benchmarks")]
+use polkadot_sdk::sp_core::crypto::FromEntropy;
+
+use polkadot_sdk::*;
+
+use alloc::{vec, vec::Vec};
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_election_provider_support::{
+    bounds::{ElectionBounds, ElectionBoundsBuilder},
     onchain, BalancingConfig, ElectionDataProvider, SequentialPhragmen, VoteWeight,
 };
 use frame_support::{
-    construct_runtime,
+    derive_impl,
     dispatch::DispatchClass,
+    dynamic_params::{dynamic_pallet_params, dynamic_params},
+    genesis_builder_helper::{build_state, get_preset},
     instances::{Instance1, Instance2},
     ord_parameter_types,
     pallet_prelude::Get,
     parameter_types,
     traits::{
-        fungible::ItemOf,
-        tokens::{nonfungibles_v2::Inspect, GetSalary, PayFromAccount},
-        AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Currency, EitherOfDiverse,
-        EqualPrivilegeOnly, Everything, FindAuthor, Imbalance, InstanceFilter, KeyOwnerProofSystem,
-        LockIdentifier, Nothing, OnUnbalanced, WithdrawReasons,
+        fungible::{
+            Balanced, Credit, HoldConsideration, ItemOf, NativeFromLeft, NativeOrWithId, UnionOf,
+        },
+        tokens::{
+            imbalance::ResolveAssetTo, nonfungibles_v2::Inspect, pay::PayAssetFromAccount,
+            GetSalary, PayFromAccount,
+        },
+        ConstBool, ConstU128, ConstU16, ConstU32, ConstU64, Contains, Currency,
+        EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, Imbalance, InsideBoth,
+        InstanceFilter, KeyOwnerProofSystem, LinearStoragePrice, LockIdentifier, Nothing,
+        OnUnbalanced, VariantCountOf, WithdrawReasons,
     },
     weights::{
         constants::{
@@ -46,12 +66,15 @@ use frame_support::{
         },
         ConstantMultiplier, IdentityFee, Weight,
     },
-    BoundedVec, PalletId, RuntimeDebug,
+    BoundedVec, PalletId,
 };
 use sp_io::logging::log;
 //Hello
-use frame_system::pallet_prelude::*;
-use sp_runtime::traits::Saturating; 
+use frame_system::{
+    limits::{BlockLength, BlockWeights},
+    EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
+};
+use sp_runtime::traits::Saturating; //remaining
 use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
@@ -59,25 +82,44 @@ use frame_system::{
 
 pub use node_primitives::{AccountId, Signature};
 pub use node_primitives::{AccountIndex, Balance, BlockNumber, Hash, Moment, Nonce};
-use pallet_asset_conversion::{NativeOrAssetId, NativeOrAssetIdConverter};
-#[cfg(feature = "runtime-benchmarks")]
-use pallet_contracts::NoopMigration;
-use pallet_election_provider_multi_phase::SolutionAccuracyOf;
+use pallet_asset_conversion::{AccountIdConverter, Ascending, Chain, WithFirstAsset};
+use pallet_asset_conversion_tx_payment::SwapAssetAdapter;
+use pallet_contracts::NoopMigration; //remaining
+use pallet_asset_conversion_tx_payment::SwapAssetAdapter;
+use pallet_broker::{CoreAssignment, CoreIndex, CoretimeInterface, PartsOf57600};
+use pallet_election_provider_multi_phase::{GeometricDepositBase, SolutionAccuracyOf};
+use pallet_identity::legacy::IdentityInfo;
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use pallet_nfts::PalletFeatures;
 use pallet_nis::WithMaximumOf;
 use pallet_session::historical as pallet_session_historical;
-pub use pallet_transaction_payment::{
-    ConstFeeMultiplier, CurrencyAdapter, Multiplier, TargetedFeeAdjustment,
-};
+use pallet_nomination_pools::PoolId;
+use pallet_revive::{evm::runtime::EthExtra, AddressMapper};
+use pallet_broker::TaskId;
+
+pub use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
 use pallet_transaction_payment::{FeeDetails, RuntimeDispatchInfo};
+use pallet_tx_pause::RuntimeCallNameOf;
 use sp_api::impl_runtime_apis;
 use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;
+use sp_consensus_beefy::{
+    ecdsa_crypto::{AuthorityId as BeefyId, Signature as BeefySignature},
+    mmr::MmrLeafVersion,
+};
 use sp_consensus_grandpa::AuthorityId as GrandpaId;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata, H160, H256, U256};
 use sp_inherents::{CheckInherentsResult, InherentData};
-
-#[cfg(feature = "with-paritydb-weights")]
+use sp_runtime::{
+    curve::PiecewiseLinear,
+    generic, impl_opaque_keys,
+    traits::{
+        self, AccountIdConversion, BlakeTwo256, Block as BlockT, Bounded, ConvertInto,
+        MaybeConvert, NumberFor, OpaqueKeys, SaturatedConversion, StaticLookup,
+    },
+    transaction_validity::{TransactionPriority, TransactionSource, TransactionValidity},
+    ApplyExtrinsicResult, FixedPointNumber, FixedU128, MultiSignature, MultiSigner, Perbill,
+    Percent, Permill, Perquintill, RuntimeDebug,
+};
 use frame_support::weights::constants::ParityDbWeight as RuntimeDbWeight;
 // Frontier
 use fp_account::EthereumSignature;
@@ -90,7 +132,6 @@ use pallet_evm::{
     Account as EVMAccount, EnsureAccountId20, EnsureAddressNever, EnsureAddressRoot, FeeCalculator,
     GasWeightMapping, HashedAddressMapping, IdentityAddressMapping, Runner,
 };
-// use account::AccountId20;
 use pallet_base_fee;
 use pallet_dynamic_fee;
 mod precompiles;
@@ -102,9 +143,6 @@ use hex_literal::hex;
 //Hello
 parameter_types! {
     pub const PovAccount: AccountId32 = AccountId32::new(hex!("e483f6d0d4a9f04510d7506227a149579fd63b8c8b828d9d0b306c48aad99c67"));
-    // pub const ValidatorRewardPercentage: Perbill = Perbill::from_percent(45);
-    // pub const PovRewardPercentage: Perbill = Perbill::from_percent(55);
-    // pub const TreasuryRewardPercentage: Perbill = Perbill::from_percent(1);
 }
 
 
@@ -171,8 +209,8 @@ pub const CALL_PARAMS_MAX_SIZE: usize = 312;
 pub fn wasm_binary_unwrap() -> &'static [u8] {
     WASM_BINARY.expect(
         "Development wasm binary is not available. This means the client is built with \
-		 `SKIP_WASM_BUILD` flag and it is only usable for production chains. Please rebuild with \
-		 the flag disabled.",
+         `SKIP_WASM_BUILD` flag and it is only usable for production chains. Please rebuild with \
+         the flag disabled.",
     )
 }
 
@@ -182,16 +220,13 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     spec_name: create_runtime_str!("argo"),
     impl_name: create_runtime_str!("argochain-node"),
     authoring_version: 1,
-    // Per convention: if the runtime behavior changes, increment spec_version
-    // and set impl_version to 0. If only runtime
-    // implementation changes and behavior does not, then leave spec_version as
-    // is and increment impl_version.
     spec_version: 2,
     impl_version: 0,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 2,
     state_version: 1,
 };
+
 
 /// The BABE epoch configuration at genesis.
 pub const BABE_GENESIS_EPOCH_CONFIG: sp_consensus_babe::BabeEpochConfiguration =
@@ -241,7 +276,7 @@ const AVERAGE_ON_INITIALIZE_RATIO: Perbill = Perbill::from_percent(10);
 const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 /// We allow for 2 seconds of compute with a 6 second average block time, with maximum proof size.
 const MAXIMUM_BLOCK_WEIGHT: Weight =
-    Weight::from_parts(WEIGHT_REF_TIME_PER_SECOND.saturating_mul(1), u64::MAX);
+    Weight::from_parts(WEIGHT_REF_TIME_PER_SECOND.saturating_mul(2), u64::MAX);
 
 /// Current approximation of the gas/s consumption considering
 /// EVM execution over compiled WASM (on 4.4Ghz CPU).
