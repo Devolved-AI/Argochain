@@ -17,6 +17,7 @@ targets = ["x86_64-unknown-linux-gnu"]
 array-bytes = "6.1"
 # clap = { version = "3.1.18", features = ["derive"] }
 clap = { version = "4.2.5", features = ["derive"], optional = true }
+# node-inspect = { version = "0.14.0", optional = true, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 
 #clap_complete = { version = "4.0.2", optional = true }
 hex-literal = "0.3.4"
@@ -87,8 +88,8 @@ sp-tracing = { version = "16.0.0", git = "https://github.com/paritytech/polkadot
 sp-blockchain = { version = "28.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 sp-block-builder = { version = "26.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 sc-basic-authorship = { version = "0.34.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
-sc-consensus-babe-rpc = { version = "0.10.0-dev", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
-sc-consensus-grandpa-rpc = { version = "0.34.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
+sc-consensus-babe-rpc = { version = "0.34.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
+sc-consensus-grandpa-rpc = { version = "0.19.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 # substrate-frame-rpc-system = { version = "4.0.0-dev", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 pallet-transaction-payment-rpc = { version = "30.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 pallet-transaction-payment-rpc-runtime-api = { workspace = true }
@@ -173,22 +174,22 @@ tokio = { version = "1.22.0", features = ["macros", "time", "parking_lot"] }
 tokio-util = { version = "0.7.4", features = ["compat"] }
 wait-timeout = "0.2"
 substrate-rpc-client = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
-pallet-timestamp = { version = "4.0.0-dev", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
+pallet-timestamp = { version = "27.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 
 
 
 [features]
 default = ["cli"]
 cli = [
-	"node-inspect",
+	# "node-inspect",
 	"sc-cli",
 	"frame-benchmarking-cli",
-	"substrate-frame-cli",
+	# "substrate-frame-cli",
 	"sc-service/rocksdb",
 	"clap",
 	"clap_complete",
 	"substrate-build-script-utils",
-	"try-runtime-cli",
+	# "try-runtime-cli",
 ]
 # Dependencies that are only required if runtime benchmarking should be build.
 runtime-benchmarks = [
@@ -198,4 +199,4 @@ runtime-benchmarks = [
 ]
 # Enable features that allow the runtime to be tried and debugged. Name might be subject to change
 # in the near future.
-try-runtime = ["argochain-runtime/try-runtime", "try-runtime-cli/try-runtime"]
+# try-runtime = ["argochain-runtime/try-runtime", "try-runtime-cli/try-runtime"]

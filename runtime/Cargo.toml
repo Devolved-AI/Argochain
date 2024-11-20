@@ -71,7 +71,7 @@ pallet-bags-list = { version = "27.0.0", default-features = false, git = "https:
 pallet-balances = { version = "28.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 pallet-bounties = { version = "27.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 pallet-child-bounties = { version = "27.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
-pallet-collective = { version = "27.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
+pallet-collective = { version = "28.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 pallet-contracts = { version = "27.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0"}
 # pallet-contracts-primitives = { version = "24.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0"}
 pallet-conviction-voting = { version = "28.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
@@ -96,9 +96,10 @@ pallet-nfts = { version = "22.0.0", default-features = false, git = "https://git
 pallet-nfts-runtime-api = { version = "14.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0"}
 pallet-nft-fractionalization = { version = "10.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 # pallet-nomination-pools = { version = "1.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0"}
-pallet-nomination-pools = { version = "25.0.0", default-features = false, path = "../frame/nomination-pools"}
+# pallet-nomination-pools = { version = "25.0.0", default-features = false, path = "../frame/nomination-pools"}
+pallet-nomination-pools = { version = "25.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0"}
 
-pallet-nomination-pools-benchmarking = { version = "26.0.0", default-features = false, optional = true, path = "../frame/nomination-pools/benchmarking" }
+pallet-nomination-pools-benchmarking = { version = "26.0.0", default-features = false, optional = true, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0"}
 pallet-nomination-pools-runtime-api = { version = "23.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 pallet-offences = { version = "27.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 pallet-offences-benchmarking = { version = "28.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0", default-features = false, optional = true }
@@ -184,7 +185,7 @@ std = [
 	"scale-info/std",
 	"pallet-collective/std",
 	"pallet-contracts/std",
-	"pallet-contracts-primitives/std",
+	# "pallet-contracts-primitives/std",
 	"pallet-conviction-voting/std",
 	"pallet-core-fellowship/std",
 	"pallet-democracy/std",
@@ -199,7 +200,7 @@ std = [
 	"pallet-lottery/std",
 	"pallet-membership/std",
 	"pallet-message-queue/std",
-	"pallet-mmr/std",
+	# "pallet-mmr/std",
 	"pallet-multisig/std",
 	"pallet-nomination-pools/std",
 	"pallet-nomination-pools-runtime-api/std",
@@ -309,7 +310,7 @@ runtime-benchmarks = [
 	"pallet-lottery/runtime-benchmarks",
 	"pallet-membership/runtime-benchmarks",
 	"pallet-message-queue/runtime-benchmarks",
-	"pallet-mmr/runtime-benchmarks",
+	# "pallet-mmr/runtime-benchmarks",
 	"pallet-multisig/runtime-benchmarks",
 	"pallet-nomination-pools-benchmarking/runtime-benchmarks",
 	"pallet-offences-benchmarking/runtime-benchmarks",
@@ -372,7 +373,7 @@ try-runtime = [
 	"pallet-lottery/try-runtime",
 	"pallet-membership/try-runtime",
 	"pallet-message-queue/try-runtime",
-	"pallet-mmr/try-runtime",
+	# "pallet-mmr/try-runtime",
 	"pallet-multisig/try-runtime",
 	"pallet-nomination-pools/try-runtime",
 	"pallet-offences/try-runtime",
