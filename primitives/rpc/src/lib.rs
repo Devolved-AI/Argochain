@@ -46,12 +46,12 @@ pub struct TxPoolResponse {
 	pub future: Vec<ethereum::TransactionV2>,
 }
 
-pub trait RuntimeStorageOverride<B: BlockT, C>: Send + Sync {
+pub trait RuntimeStorageOverride<B: BlockT, C, H: sp_core::Hasher>: Send + Sync {
 	fn is_enabled() -> bool;
 
 	fn set_overlayed_changes(
 		client: &C,
-		overlayed_changes: &mut OverlayedChanges,
+		overlayed_changes: &mut OverlayedChanges<H>,
 		block: B::Hash,
 		version: u32,
 		address: H160,
@@ -62,14 +62,14 @@ pub trait RuntimeStorageOverride<B: BlockT, C>: Send + Sync {
 	fn into_account_id_bytes(address: H160) -> Vec<u8>;
 }
 
-impl<B: BlockT, C> RuntimeStorageOverride<B, C> for () {
+impl<B: BlockT, C, H: sp_core::Hasher> RuntimeStorageOverride<B, C, H> for () {
 	fn is_enabled() -> bool {
 		false
 	}
 
 	fn set_overlayed_changes(
 		_client: &C,
-		_overlayed_changes: &mut OverlayedChanges,
+		_overlayed_changes: &mut OverlayedChanges<H>,
 		_block: B::Hash,
 		_version: u32,
 		_address: H160,
