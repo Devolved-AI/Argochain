@@ -41,26 +41,26 @@ pub mod pallet {
     #[pallet::config]
     pub trait Config: frame_system::Config + pallet_evm::Config {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
-        type SubstrateCurrency: Currency<Self::AccountId> + ReservableCurrency<Self::AccountId>;
-        type EvmCurrency: Currency<Self::AccountId>;
+        type SubstrateCurrency: Currency<<Self as frame_system::Config>::AccountId> + ReservableCurrency<<Self as frame_system::Config>::AccountId>;
+        type EvmCurrency: Currency<<Self as frame_system::Config>::AccountId>;
     }
 
     #[pallet::storage]
     #[pallet::getter(fn locked_balance)]
-    pub type LockedBalance<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, SubstrateBalanceOf<T>, ValueQuery>;
+    pub type LockedBalance<T: Config> = StorageMap<_, Blake2_128Concat, <T as frame_system::Config>::AccountId, SubstrateBalanceOf<T>, ValueQuery>;
 
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
-        Minted { who: T::AccountId, amount: SubstrateBalanceOf<T> },
-        Burned { who: T::AccountId, amount: SubstrateBalanceOf<T> },
-        Locked { who: T::AccountId, amount: SubstrateBalanceOf<T> },
-        Unlocked { who: T::AccountId, amount: SubstrateBalanceOf<T> },
+        Minted { who: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T> },
+        Burned { who: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T> },
+        Locked { who: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T> },
+        Unlocked { who: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T> },
         EvmBalanceChecked(H160, U256),
         EvmBalanceMutated(H160, U256, bool),
-        EvmToSubstrateTransfer(H160, T::AccountId, u128),
-        TransferOfBalanceNew{ from: T::AccountId, to: T::AccountId, amount: SubstrateBalanceOf<T>, message: Vec<u8> },
-        IPFSHashIncluded(T::AccountId, Vec<u8>),
+        EvmToSubstrateTransfer(H160, <T as frame_system::Config>::AccountId, u128),
+        TransferOfBalanceNew{ from: <T as frame_system::Config>::AccountId, to: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T>, message: Vec<u8> },
+        IPFSHashIncluded(<T as frame_system::Config>::AccountId, Vec<u8>),
 
 
     }
@@ -87,7 +87,7 @@ pub mod pallet {
         
         #[pallet::weight(10_000)]
         #[pallet::call_index(0)]
-        pub fn mint(origin: OriginFor<T>, account: T::AccountId, amount: SubstrateBalanceOf<T>) -> DispatchResult {
+        pub fn mint(origin: OriginFor<T>, account: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T>) -> DispatchResult {
             ensure_root(origin)?;
 
             T::SubstrateCurrency::deposit_creating(&account, amount);
@@ -97,7 +97,7 @@ pub mod pallet {
 
         #[pallet::weight(10_000)]
         #[pallet::call_index(1)]
-        pub fn burn(origin: OriginFor<T>, account: T::AccountId, amount: SubstrateBalanceOf<T>) -> DispatchResult {
+        pub fn burn(origin: OriginFor<T>, account: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T>) -> DispatchResult {
             ensure_root(origin)?;
 
             T::SubstrateCurrency::withdraw(
@@ -252,7 +252,7 @@ pub mod pallet {
         #[pallet::call_index(7)]
         pub fn balance_transfer_new(
             origin: OriginFor<T>,
-            to: T::AccountId,
+            to: <T as frame_system::Config>::AccountId,
             amount: SubstrateBalanceOf<T>,  
             message: Vec<u8>,               
         ) -> DispatchResult {
