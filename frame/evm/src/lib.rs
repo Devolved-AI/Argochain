@@ -73,7 +73,7 @@ use impl_trait_for_tuples::impl_for_tuples;
 use scale_info::TypeInfo;
 // Substrate
 use frame_support::{
-    dispatch::{DispatchResultWithPostInfo, MaxEncodedLen, Pays, PostDispatchInfo},
+    dispatch::{DispatchResultWithPostInfo, Pays, PostDispatchInfo},
     traits::{
         tokens::{
             currency::Currency,
@@ -87,6 +87,8 @@ use frame_support::{
 };
 use frame_system::RawOrigin;
 use sp_core::{Decode, Encode, Hasher, H160, H256, U256};
+
+use log::info; 
 use sp_runtime::{
     traits::{BadOrigin, NumberFor, Saturating, UniqueSaturatedInto, Zero},
     AccountId32, DispatchErrorWithPostInfo,
@@ -95,6 +97,8 @@ use sp_std::{cmp::min, collections::btree_map::BTreeMap, vec::Vec};
 // Frontier
 use fp_account::AccountId20;
 use fp_evm::GenesisAccount;
+use frame_support::pallet_prelude::MaxEncodedLen;
+
 pub use fp_evm::{
     Account, CallInfo, CreateInfo, ExecutionInfoV2 as ExecutionInfo, FeeCalculator,
     InvalidEvmTransactionError, IsPrecompileResult, LinearCostPrecompile, Log, Precompile,
@@ -976,23 +980,23 @@ impl<T: Config> Pallet<T> {
     
         let mut balance_u256 = U256::from(UniqueSaturatedInto::<u128>::unique_saturated_into(current_balance));
     
-        frame_support::log::info!("Balance before mutation for address {:?}: {:?}", address, balance_u256);
+        info!("Balance before mutation for address {:?}: {:?}", address, balance_u256);
     
         let delta_with_decimals = delta.saturating_mul(U256::exp10(18));
     
         if add {
             balance_u256 = balance_u256.saturating_add(delta);
-            frame_support::log::info!("Adding delta (with decimals): {:?}", delta);
+            info!("Adding delta (with decimals): {:?}", delta);
         } else {
             balance_u256 = balance_u256.saturating_sub(delta);
-            frame_support::log::info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
+            info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
         }
     
-        frame_support::log::info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
+        info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
     
         let new_balance = Self::u256_to_balance(balance_u256);
     
-        frame_support::log::info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
+        info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
     
         T::Currency::make_free_balance_be(&account_id, new_balance);
     }

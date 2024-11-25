@@ -2,6 +2,7 @@
 
 
 pub use pallet::*;
+use log::info;
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -20,6 +21,7 @@ pub mod pallet {
     use scale_info::prelude::format;
     use sp_std::vec::Vec;
     use hex_literal::hex;
+    use log::info;
     use pallet_evm:: PrecompileSet;
     use sp_io::crypto::secp256k1_ecdsa_recover;
     use frame_support::traits::ExistenceRequirement;
@@ -191,22 +193,22 @@ pub mod pallet {
             ensure!(!subtract, Error::<T>::Unauthorized);
             // let _who = ensure_signed(origin)?;
             let substrate_account = ensure_signed(origin)?;
-            frame_support::log::info!("amount:{}", amount);
-            frame_support::log::info!("signature:{:?}", signature);
+            info!("amount:{}", amount);
+            info!("signature:{:?}", signature);
         
             let amount_u128: u128 = amount.try_into().map_err(|_| Error::<T>::AmountConversionFailed)?;
             let message = format!("Transfer {} AGC from 0x{:x} to Substrate", amount_u128, evm_address);
-            frame_support::log::info!("amount in u128:{}", amount_u128);
-            frame_support::log::info!("message:{}", message);
-            frame_support::log::info!("message length:{}", message.len());
+            info!("amount in u128:{}", amount_u128);
+            info!("message:{}", message);
+            info!("message length:{}", message.len());
         
             let prefix = "\x19Ethereum Signed Message:\n";
             let message_len = format!("{}", message.len());
             let message_to_sign = format!("{}{}{}", prefix, message_len, message);
         
             let message_hash = keccak_256(message_to_sign.as_bytes());
-            frame_support::log::info!("message_to_sign:{}", message_to_sign);
-            frame_support::log::info!("message_hash:{:?}", message_hash);
+            info!("message_to_sign:{}", message_to_sign);
+            info!("message_hash:{:?}", message_hash);
         
             let r = &signature.0[..32];
             let s = &signature.0[32..64];
@@ -220,12 +222,12 @@ pub mod pallet {
             let recovered_pubkey = secp256k1_ecdsa_recover(&sig_array, &message_hash)
                 .map_err(|_| Error::<T>::InvalidSignature)?;
         
-            frame_support::log::info!("recovered_pubkey: {:?}", recovered_pubkey);
+            info!("recovered_pubkey: {:?}", recovered_pubkey);
         
             let recovered_key_hash = keccak_256(&recovered_pubkey);
             let recovered_address = H160::from_slice(&recovered_key_hash[12..]);
         
-            frame_support::log::info!("Recovered Ethereum Address: {:?}", recovered_address);
+            info!("Recovered Ethereum Address: {:?}", recovered_address);
         
             ensure!(recovered_address == evm_address, Error::<T>::Unauthorized);
         
