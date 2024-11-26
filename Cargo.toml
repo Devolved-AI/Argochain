@@ -90,7 +90,7 @@ sc-transaction-pool = { version = "35.0.0" }
 sc-transaction-pool-api = { version = "35.0.0" }
 sc-utils = { version = "17.0.0" }
 # Substrate Primitive
-sp-api = { version = "33.0.0", default-features = false }
+sp-api = { version = "33.0.0", default-features = false, features = ["std"] }
 sp-block-builder = { version = "33.0.0", default-features = false }
 sp-blockchain = { version = "35.1.0" }
 sp-consensus = { version = "0.39.1" }
@@ -126,7 +126,7 @@ pallet-sudo = { version = "36.0.0", default-features = false }
 pallet-timestamp = { version = "35.0.0", default-features = false }
 pallet-transaction-payment = { version = "36.0.0", default-features = false }
 pallet-transaction-payment-rpc = { version = "38.0.0" }
-pallet-transaction-payment-rpc-runtime-api = { version = "36.0.0", default-features = false }
+pallet-transaction-payment-rpc-runtime-api = { version = "36.0.0", default-features = false, features = ["std"] }
 pallet-utility = { version = "36.0.0", default-features = false }
 # Substrate Utility
 frame-benchmarking-cli = { version = "40.0.0" }

@@ -8908,6 +8908,7 @@ dependencies = [
  "frame-system 36.1.0",
  "parity-scale-codec",
  "scale-info",
+ "serde",
  "sp-core 34.0.0",
  "sp-io 37.0.0",
  "sp-runtime 38.0.1",
