@@ -27,7 +27,7 @@ pallet-staking = { version = "4.0.0-dev", default-features = false, git = "https
 pallet-nomination-pools = { version = "1.0.0", default-features = false, path = "../" }
 
 # Substrate Primitives
-sp-runtime = { version = "24.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
+sp-runtime = { version = "31.0.1", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 sp-runtime-interface = { version = "17.0.0", default-features = false,git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 sp-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 sp-std = { version = "8.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }

@@ -1,20 +1,3 @@
-// SPDX-License-Identifier: Apache-2.0
-// This file is part of Frontier.
-//
-// Copyright (c) 2020-2022 Parity Technologies (UK) Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(unused_crate_dependencies)]
 
@@ -22,19 +5,20 @@ extern crate alloc;
 
 use alloc::format;
 use core::marker::PhantomData;
+
 use fp_evm::{
     ExitError, ExitSucceed, Precompile, PrecompileFailure, PrecompileHandle, PrecompileOutput,
     PrecompileResult,
 };
+use parity_scale_codec::{Decode, DecodeLimit as _};
 use frame_support::{
-    dispatch::{DispatchClass, Dispatchable, GetDispatchInfo, Pays, PostDispatchInfo},
+    dispatch::{DispatchClass, GetDispatchInfo, Pays, PostDispatchInfo},
     traits::{ConstU32, Get},
 };
-use parity_scale_codec::{Decode, Encode};
+use sp_runtime::traits::Dispatchable;
 use pallet_evm::{AddressMapping, GasWeightMapping};
 
-// `DecodeLimit` specifies the max depth a call can use when decoding, as unbounded depth
-// can be used to overflow the stack. Default value is 8, which is the same as in XCM call decoding.
+// Limit for decoding call depth, defaulting to 8 for safety.
 pub struct Dispatch<T, DispatchValidator = (), DecodeLimit = ConstU32<8>> {
     _marker: PhantomData<(T, DispatchValidator, DecodeLimit)>,
 }
@@ -122,7 +106,7 @@ pub trait DispatchValidateT<AccountId, RuntimeCall> {
     ) -> Option<PrecompileFailure>;
 }
 
-/// The default implementation of `DispatchValidateT`.
+/// Default implementation of `DispatchValidateT`.
 impl<AccountId, RuntimeCall> DispatchValidateT<AccountId, RuntimeCall> for ()
 where
     RuntimeCall: GetDispatchInfo,
