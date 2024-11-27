@@ -98,13 +98,13 @@ where
 impl<B, I, C> BlockImport<B> for FrontierBlockImport<B, I, C>
 where
 	B: BlockT,
-	I: BlockImport<B, Transaction = sp_api::TransactionFor<C, B>> + Send + Sync,
+	I: BlockImport<B, sc_transaction_pool_api::InPoolTransaction::Transaction = sp_api::TransactionFor<C, B>> + Send + Sync,
 	I::Error: Into<ConsensusError>,
 	C: ProvideRuntimeApi<B> + Send + Sync,
 	C::Api: BlockBuilderApi<B> + EthereumRuntimeRPCApi<B>,
 {
 	type Error = ConsensusError;
-	type Transaction = sp_api::TransactionFor<C, B>;
+	// type Transaction = sp_api::TransactionFor<C, B>;
 
 	async fn check_block(
 		&mut self,
