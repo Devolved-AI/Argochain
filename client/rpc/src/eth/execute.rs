@@ -27,7 +27,6 @@ use sc_client_api::backend::{Backend, StorageProvider};
 use sc_transaction_pool::ChainApi;
 use sp_api::{
 	ApiExt, CallApiAt, CallApiAtParams, CallContext, Extensions, ProvideRuntimeApi,
-	StorageTransactionCache,
 };
 use sp_block_builder::BlockBuilder as BlockBuilderApi;
 use sp_blockchain::HeaderBackend;
@@ -238,7 +237,7 @@ where
 						state_overrides,
 					)?;
 					let storage_transaction_cache =
-						RefCell::<StorageTransactionCache<B, C::StateBackend>>::default();
+						RefCell::<B, C::StateBackend>::default();
 					let params = CallApiAtParams {
 						at: substrate_hash,
 						function: "EthereumRuntimeRPCApi_call",
