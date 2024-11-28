@@ -38,11 +38,11 @@ use sc_client_api::backend::{Backend, StorageProvider};
 use sc_network_sync::SyncingService;
 use sc_transaction_pool::{ChainApi, Pool};
 use sc_transaction_pool_api::{InPoolTransaction, TransactionPool};
-use sp_api::{ApiRef, CallApiAt, Core, HeaderT, ProvideRuntimeApi};
+use sp_api::{ApiRef, CallApiAt, Core, ProvideRuntimeApi};
 use sp_block_builder::BlockBuilder as BlockBuilderApi;
 use sp_blockchain::HeaderBackend;
 use sp_core::hashing::keccak_256;
-use sp_runtime::traits::{Block as BlockT, UniqueSaturatedInto};
+use sp_runtime::traits::{Block as BlockT, Header as HeaderT, UniqueSaturatedInto, BlakeTwo256};
 // Frontier
 use fc_rpc_core::{types::*, EthApiServer};
 use fc_storage::OverrideHandle;
@@ -62,7 +62,7 @@ pub use self::{
 // Configuration trait for RPC configuration.
 pub trait EthConfig<B: BlockT, C>: Send + Sync + 'static {
 	type EstimateGasAdapter: EstimateGasAdapter + Send + Sync;
-	type RuntimeStorageOverride: RuntimeStorageOverride<B, C>;
+	type RuntimeStorageOverride: RuntimeStorageOverride<B, C, BlakeTwo256>;
 }
 
 impl<B: BlockT, C> EthConfig<B, C> for () {
