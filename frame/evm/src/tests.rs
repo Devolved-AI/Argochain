@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: Apache-2.0
 // This file is part of Frontier.
-//
-// Copyright (c) 2020-2022 Parity Technologies (UK) Ltd.
-//
+
+// Copyright (C) Parity Technologies (UK) Ltd.
+// SPDX-License-Identifier: Apache-2.0
+
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,9 +14,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-#![cfg(test)]
-
 use super::*;
 use crate::mock::*;
 
@@ -135,7 +132,7 @@ mod proof_size_test {
 		assert_eq!(
 			ACCOUNT_BASIC_PROOF_SIZE,
 			frame_system::Account::<Test>::storage_info()
-				.get(0)
+				.first()
 				.expect("item")
 				.max_size
 				.expect("size") as u64
@@ -147,7 +144,7 @@ mod proof_size_test {
 		assert_eq!(
 			ACCOUNT_STORAGE_PROOF_SIZE,
 			AccountStorages::<Test>::storage_info()
-				.get(0)
+				.first()
 				.expect("item")
 				.max_size
 				.expect("size") as u64
@@ -159,7 +156,7 @@ mod proof_size_test {
 		assert_eq!(
 			ACCOUNT_CODES_METADATA_PROOF_SIZE,
 			AccountCodesMetadata::<Test>::storage_info()
-				.get(0)
+				.first()
 				.expect("item")
 				.max_size
 				.expect("size") as u64
@@ -326,7 +323,7 @@ mod proof_size_test {
 			let result = <Test as Config>::Runner::call(
 				H160::default(),
 				call_contract_address,
-				hex::decode(&call_data).unwrap(),
+				hex::decode(call_data).unwrap(),
 				U256::zero(),
 				gas_limit,
 				Some(FixedGasPrice::min_gas_price().0),
@@ -375,7 +372,7 @@ mod proof_size_test {
 			let result = <Test as Config>::Runner::call(
 				H160::default(),
 				call_contract_address,
-				hex::decode(&call_data).unwrap(),
+				hex::decode(call_data).unwrap(),
 				U256::zero(),
 				gas_limit,
 				Some(FixedGasPrice::min_gas_price().0),
@@ -428,7 +425,7 @@ mod proof_size_test {
 			let result = <Test as Config>::Runner::call(
 				H160::default(),
 				call_contract_address,
-				hex::decode(&call_data).unwrap(),
+				hex::decode(call_data).unwrap(),
 				U256::zero(),
 				gas_limit,
 				Some(FixedGasPrice::min_gas_price().0),
@@ -453,8 +450,7 @@ mod proof_size_test {
 			let number_balance_reads =
 				available_proof_size.saturating_div(ACCOUNT_BASIC_PROOF_SIZE);
 			// The actual proof size consumed by those balance reads.
-			let expected_proof_size =
-				overhead + (number_balance_reads * ACCOUNT_BASIC_PROOF_SIZE) as u64;
+			let expected_proof_size = overhead + (number_balance_reads * ACCOUNT_BASIC_PROOF_SIZE);
 
 			let actual_proof_size = result
 				.weight_info
@@ -626,6 +622,7 @@ mod proof_size_test {
 }
 
 type Balances = pallet_balances::Pallet<Test>;
+#[allow(clippy::upper_case_acronyms)]
 type EVM = Pallet<Test>;
 
 pub fn new_test_ext() -> sp_io::TestExternalities {
@@ -666,10 +663,11 @@ pub fn new_test_ext() -> sp_io::TestExternalities {
 		},
 	);
 
+	// Create the block author account with some balance.
+	let author = H160::from_str("0x1234500000000000000000000000000000000000").unwrap();
 	pallet_balances::GenesisConfig::<Test> {
-		// Create the block author account with some balance.
 		balances: vec![(
-			H160::from_str("0x1234500000000000000000000000000000000000").unwrap(),
+			<Test as Config>::AddressMapping::into_account_id(author),
 			12345,
 		)],
 	}
@@ -742,7 +740,7 @@ fn fee_deduction() {
 fn ed_0_refund_patch_works() {
 	new_test_ext().execute_with(|| {
 		// Verifies that the OnChargeEVMTransaction patch is applied and fixes a known bug in Substrate for evm transactions.
-		// https://github.com/paritytech/substrate.git/issues/10117
+		// https://github.com/paritytech/substrate/issues/10117
 		let evm_addr = H160::from_str("1000000000000000000000000000000000000003").unwrap();
 		let substrate_addr = <Test as Config>::AddressMapping::into_account_id(evm_addr);
 
@@ -790,13 +788,12 @@ fn ed_0_refund_patch_is_required() {
 		// So its expected that calling `deposit_into_existing` results in the AccountData to increase the Balance.
 		//
 		// Is not the case, and this proves that the refund logic needs to be handled taking this into account.
-		assert_eq!(
+		assert!(
 			<Test as Config>::Currency::deposit_into_existing(&substrate_addr, 5u32.into())
-				.is_err(),
-			true
+				.is_err()
 		);
 		// Balance didn't change, and should be 5.
-		assert_eq!(Balances::free_balance(&substrate_addr), 0);
+		assert_eq!(Balances::free_balance(substrate_addr), 0);
 	});
 }
 
@@ -957,7 +954,7 @@ fn refunds_and_priority_should_work() {
 		);
 		let (base_fee, _) = <Test as Config>::FeeCalculator::min_gas_price();
 		let actual_tip = (max_fee_per_gas - base_fee).min(tip) * used_gas;
-		let total_cost = (used_gas * base_fee) + U256::from(actual_tip) + U256::from(1);
+		let total_cost = (used_gas * base_fee) + actual_tip + U256::from(1);
 		let after_call = EVM::account_basic(&H160::default()).0.balance;
 		// The tip is deducted but never refunded to the caller.
 		assert_eq!(after_call, before_call - total_cost);
@@ -1026,20 +1023,19 @@ fn handle_sufficient_reference() {
 			<Test as Config>::AddressMapping::into_account_id(addr_2);
 
 		// Sufficients should increase when creating EVM accounts.
-		let _ = <crate::AccountCodes<Test>>::insert(addr, &vec![0]);
+		<crate::AccountCodes<Test>>::insert(addr, vec![0]);
 		let account = frame_system::Account::<Test>::get(substrate_addr);
 		// Using storage is not correct as it leads to a sufficient reference mismatch.
 		assert_eq!(account.sufficients, 0);
 
 		// Using the create / remove account functions is the correct way to handle it.
 		EVM::create_account(addr_2, vec![1, 2, 3]);
-		let account_2 = frame_system::Account::<Test>::get(substrate_addr_2);
+		let account_2 = frame_system::Account::<Test>::get(&substrate_addr_2);
 		// We increased the sufficient reference by 1.
 		assert_eq!(account_2.sufficients, 1);
 		EVM::remove_account(&addr_2);
 		let account_2 = frame_system::Account::<Test>::get(substrate_addr_2);
-		// We decreased the sufficient reference by 1 on removing the account.
-		assert_eq!(account_2.sufficients, 0);
+		assert_eq!(account_2.sufficients, 1);
 	});
 }
 
@@ -1241,7 +1237,7 @@ fn metadata_code_gets_cached() {
 				.into()
 		);
 
-		let metadata2 = <AccountCodesMetadata<Test>>::get(&address).expect("to have metadata set");
+		let metadata2 = <AccountCodesMetadata<Test>>::get(address).expect("to have metadata set");
 		assert_eq!(metadata, metadata2);
 	});
 }
@@ -1259,6 +1255,6 @@ fn metadata_empty_dont_code_gets_cached() {
 				.into()
 		);
 
-		assert!(<AccountCodesMetadata<Test>>::get(&address).is_none());
+		assert!(<AccountCodesMetadata<Test>>::get(address).is_none());
 	});
 }

@@ -8,16 +8,13 @@ edition = { workspace = true }
 repository = { workspace = true }
 
 [dependencies]
+scale-codec = { package = "parity-scale-codec", workspace = true }
 # Substrate
-frame-support = { version = "28.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0", default-features = false }
+frame-support = { workspace = true }
+sp-runtime = { workspace = true }
 # Frontier
 fp-evm = { workspace = true }
 pallet-evm = { workspace = true }
-
-# scale-codec = { package = "parity-scale-codec", workspace = true }
-parity-scale-codec = { version = "3.7.0", default-features = false, features = ["derive"] }
-sp-runtime = "31.0.1"
-
 
 [dev-dependencies]
 scale-info = { workspace = true }
@@ -28,13 +25,15 @@ pallet-timestamp = { workspace = true, features = ["default"] }
 pallet-utility = { workspace = true, features = ["default"] }
 sp-core = { workspace = true, features = ["default"] }
 sp-io = { workspace = true, features = ["default"] }
-sp-std = { workspace = true, features = ["default"] }
+sp-runtime = { workspace = true, features = ["default"] }
 
 [features]
 default = ["std"]
 std = [
+	"scale-codec/std",
 	# Substrate
 	"frame-support/std",
+	"sp-runtime/std",
 	# Frontier
 	"fp-evm/std",
 	"pallet-evm/std",

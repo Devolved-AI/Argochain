@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: Apache-2.0
 // This file is part of Frontier.
-//
-// Copyright (c) 2020-2022 Parity Technologies (UK) Ltd.
-//
+
+// Copyright (C) Parity Technologies (UK) Ltd.
+// SPDX-License-Identifier: Apache-2.0
+
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,38 +16,25 @@
 // limitations under the License.
 
 #![cfg_attr(not(feature = "std"), no_std)]
-#![deny(unused_crate_dependencies)]
+#![warn(unused_crate_dependencies)]
 
+extern crate alloc;
+
+use alloc::vec::Vec;
 pub use ethereum::{
 	AccessListItem, BlockV2 as Block, LegacyTransactionMessage, Log, ReceiptV3 as Receipt,
 	TransactionAction, TransactionV2 as Transaction,
 };
 use ethereum_types::{H160, H256, U256};
+use fp_evm::{CallOrCreateInfo, CheckEvmTransactionInput};
 use frame_support::dispatch::{DispatchErrorWithPostInfo, PostDispatchInfo};
-use fp_evm::CheckEvmTransactionInput;
 use scale_codec::{Decode, Encode};
-use sp_std::{result::Result, vec::Vec};
-
-
-
-#[repr(u8)]
-#[derive(num_enum::FromPrimitive, num_enum::IntoPrimitive)]
-pub enum TransactionValidationError {
-	#[allow(dead_code)]
-	#[num_enum(default)]
-	UnknownError,
-	InvalidChainId,
-	InvalidSignature,
-	GasLimitTooLow,
-	GasLimitTooHigh,
-	MaxFeePerGasTooLow,
-}
 
 pub trait ValidatedTransaction {
 	fn apply(
 		source: H160,
 		transaction: Transaction,
-	) -> frame_support::dispatch::DispatchResultWithPostInfo;
+	) -> Result<(PostDispatchInfo, CallOrCreateInfo), DispatchErrorWithPostInfo>;
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Encode, Decode)]
@@ -63,7 +50,6 @@ pub struct TransactionData {
 	pub chain_id: Option<u64>,
 	pub access_list: Vec<(H160, Vec<H256>)>,
 }
-
 
 impl TransactionData {
 	#[allow(clippy::too_many_arguments)]
@@ -90,7 +76,6 @@ impl TransactionData {
 			value,
 			chain_id,
 			access_list,
-			
 		}
 	}
 
