@@ -26,13 +26,16 @@ use scale_codec::{Decode, Encode};
 use sc_client_api::backend::{Backend, StorageProvider};
 use sc_transaction_pool::ChainApi;
 use sp_api::{
-	ApiExt, CallApiAt, CallApiAtParams, CallContext, ProvideRuntimeApi,
+	ApiExt, CallApiAt, CallApiAtParams, CallContext, ProvideRuntimeApi, // Extensions,
 };
+use sp_core::Extensions;
+// use sp_io::Extensions;
+// use sp_externalities::Extensions;
 // use sp_runtime::extensions::Extensions;
 use sp_block_builder::BlockBuilder as BlockBuilderApi;
 use sp_blockchain::HeaderBackend;
 use sp_io::hashing::{blake2_128, twox_128};
-use sp_runtime::{traits::{Block as BlockT, BlakeTwo256}, DispatchError, SaturatedConversion};
+use sp_runtime::{traits::{BlakeTwo256, Block as BlockT, Hash, Header}, DispatchError, SaturatedConversion};
 use sp_state_machine::OverlayedChanges;
 // Frontier
 use fc_rpc_core::types::*;
@@ -66,12 +69,25 @@ impl EstimateGasAdapter for () {
 	}
 }
 
+pub trait UsesBlakeTwo256: BlockT {
+    type Header: Header<Hashing = BlakeTwo256>;
+}
+
+impl<B: BlockT> UsesBlakeTwo256 for B
+where
+    B::Header: Header<Hashing = BlakeTwo256>,
+{
+    type Header = B::Header;
+}
+
 impl<B, C, P, CT, BE, A: ChainApi, EC: EthConfig<B, C>> Eth<B, C, P, CT, BE, A, EC>
 where
-	B: BlockT,
+	B: BlockT + std::default::Default,
+	B::Header: Header<Hashing = BlakeTwo256>,
 	C: CallApiAt<B> + ProvideRuntimeApi<B>,
 	C::Api: BlockBuilderApi<B> + EthereumRuntimeRPCApi<B>,
 	C: HeaderBackend<B> + StorageProvider<B, BE> + 'static,
+	C::StateBackend: std::default::Default,
 	BE: Backend<B> + 'static,
 	A: ChainApi<Block = B> + 'static,
 {
@@ -238,16 +254,17 @@ where
 						state_overrides,
 					)?;
 					let storage_transaction_cache =
-						RefCell::<B, C::StateBackend>::default();
+						// RefCell::new((B::default(), C::StateBackend::default()))
+						RefCell::new((B::default(), C::StateBackend::default()));
 					let params = CallApiAtParams {
 						at: substrate_hash,
 						function: "EthereumRuntimeRPCApi_call",
 						arguments: encoded_params,
 						overlayed_changes: &RefCell::new(overlayed_changes),
-						storage_transaction_cache: &storage_transaction_cache,
+						// storage_transaction_cache: &storage_transaction_cache,
 						call_context: CallContext::Offchain,
 						recorder: &None,
-						// extensions: &RefCell::new(Extensions::new()),
+						extensions: &RefCell::new(Extensions::new()),
 					};
 
 					let value = if api_version == 4 {
@@ -258,6 +275,7 @@ where
 								Result::map_err(
 									<Result<ExecutionInfo::<Vec<u8>>, DispatchError> as Decode>::decode(&mut &r[..]),
 									|error| sp_api::ApiError::FailedToDecodeReturnValue {
+										raw: Vec::new(),
 										function: "EthereumRuntimeRPCApi_call",
 										error,
 									},
@@ -276,6 +294,7 @@ where
 								Result::map_err(
 									<Result<ExecutionInfoV2::<Vec<u8>>, DispatchError> as Decode>::decode(&mut &r[..]),
 									|error| sp_api::ApiError::FailedToDecodeReturnValue {
+										raw: Vec::new(),
 										function: "EthereumRuntimeRPCApi_call",
 										error,
 									},
