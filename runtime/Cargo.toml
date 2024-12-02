@@ -18,7 +18,7 @@ array-bytes = "6.1"
 hex-literal = "0.4.1"
 
 # third-party dependencies
-codec = { package = "parity-scale-codec", version = "3.7.0", default-features = false, features = [
+codec = { package = "parity-scale-codec",version = "3.6.12", default-features = false, features = [
 	"derive",
 	"max-encoded-len",
 ] }
