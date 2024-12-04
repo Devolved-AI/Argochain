@@ -186,7 +186,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // and set impl_version to 0. If only runtime
     // implementation changes and behavior does not, then leave spec_version as
     // is and increment impl_version.
-    spec_version: 2,
+    spec_version: 94,
     impl_version: 0,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 2,
@@ -1181,7 +1181,7 @@ impl pallet_membership::Config<pallet_membership::Instance1> for Runtime {
 parameter_types! {
     pub const ProposalBond: Permill = Permill::from_percent(5);
     pub const ProposalBondMinimum: Balance = 1 * ARGO;
-    pub const SpendPeriod: BlockNumber = 1 * DAYS;// 1 * DAYS
+    pub const SpendPeriod: BlockNumber = 1 * MINUTES;// 1 * DAYS
     pub const Burn: Permill = Permill::from_percent(0); //from_percent(50)
     pub const TipCountdown: BlockNumber = 1 * DAYS;
     pub const TipFindersFee: Percent = Percent::from_percent(20);
@@ -2051,7 +2051,7 @@ impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
 const BLOCK_GAS_LIMIT: u64 = 200_000_000;
 const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
 parameter_types! {
-    pub const ChainId: u64 = 1299;//researched and made it relevant
+    pub const ChainId: u64 = 1298;//researched and made it relevant
     pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
     pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
     pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();

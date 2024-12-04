@@ -22,7 +22,7 @@ sp-std = { version = "8.0.0", path = "../../../primitives/std" }
 sp-staking = { version = "4.0.0-dev", path = "../../../primitives/staking" }
 sp-core = { version = "21.0.0", path = "../../../primitives/core" }
 
-frame-system = { version = "4.0.0-dev", path = "../../system" }
+frame-system = { version = "37.0.0", path = "../../system" }
 frame-support = { version = "4.0.0-dev", path = "../../support" }
 frame-election-provider-support = { version = "4.0.0-dev", path = "../../election-provider-support" }
 

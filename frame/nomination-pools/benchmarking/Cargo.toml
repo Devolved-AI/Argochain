@@ -18,26 +18,26 @@ codec = { package = "parity-scale-codec", version = "3.6.1", default-features = 
 scale-info = { version = "2.5.0", default-features = false, features = ["derive"] }
 
 # FRAME
-frame-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-frame-election-provider-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0", features = ["tuples-96"] }
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-pallet-bags-list = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-pallet-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0"}
+frame-benchmarking = { version = "37.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+frame-election-provider-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407", features = ["tuples-96"] }
+frame-system = { version = "37.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+pallet-bags-list = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+pallet-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407"}
 pallet-nomination-pools = { version = "1.0.0", default-features = false, path = "../" }
 
 # Substrate Primitives
-sp-runtime = { version = "24.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-sp-runtime-interface = { version = "17.0.0", default-features = false,git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-sp-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-sp-std = { version = "8.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
+sp-runtime = { version = "24.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+sp-runtime-interface = { version = "17.0.0", default-features = false,git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+sp-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+sp-std = { version = "8.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
 
 [dev-dependencies]
-pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-pallet-staking-reward-curve = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-sp-core = { version = "21.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
-sp-io = { version = "23.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.0.0" }
+pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+pallet-staking-reward-curve = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+sp-core = { version = "21.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
+sp-io = { version = "23.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-stable2407" }
 
 [features]
 default = ["std"]
