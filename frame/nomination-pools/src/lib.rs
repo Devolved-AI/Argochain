@@ -3611,12 +3611,11 @@ impl<T: Config> Pallet<T> {
 
 impl<T: Config> sp_staking::OnStakingUpdate<T::AccountId, BalanceOf<T>> for Pallet<T> {
 	fn on_slash(
-		pool_account: &T::AccountId,
-		// Bonded balance is always read directly from staking, therefore we don't need to update
-		// anything here.
-		slashed_bonded: BalanceOf<T>,
-		slashed_unlocking: &BTreeMap<EraIndex, BalanceOf<T>>,
-	) {
+            pool_account: &T::AccountId,
+            slashed_bonded: BalanceOf<T>,
+            slashed_unlocking: &BTreeMap<EraIndex, BalanceOf<T>>,
+            missing_parameter: BalanceOf<T>, // Add this parameter
+        ) {
 		if let Some(pool_id) = ReversePoolIdLookup::<T>::get(pool_account) {
 			let mut sub_pools = match SubPoolsStorage::<T>::get(pool_id).defensive() {
 				Some(sub_pools) => sub_pools,

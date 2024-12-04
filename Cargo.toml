@@ -177,3 +177,6 @@ gtrandom = { version = "0.2.10", features = ["js"] }
 
 [profile.release]
 panic = "unwind"
+
+[patch.crates-io]
+frame-metadata = { git = "https://github.com/paritytech/frame-metadata", tag = "v18.0.0" }
