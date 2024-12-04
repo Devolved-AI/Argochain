@@ -20,21 +20,21 @@ codec = { package = "parity-scale-codec", version = "3.6.1", default-features = 
 scale-info = { version = "2.5.0", default-features = false, features = ["derive"] }
 
 # FRAME
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0", features = ["tuples-96"] }
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
-sp-runtime = { version = "24.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
-sp-std = { version = "8.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
-sp-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
-sp-core = { version = "21.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
-sp-io = { version = "23.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
+frame-support = { version = "36.0.0", default-features = false, features = ["tuples-96"] }
+frame-system = { version = "36.1.0", default-features = false }
+sp-runtime = { version = "38.0.0", default-features = false }
+sp-std = { version = "14.0.0", default-features = false }
+sp-staking = { version = "33.0.0", default-features = false }
+sp-core = { version = "34.0.0", default-features = false }
+sp-io = { version = "37.0.0", default-features = false }
 log = { version = "0.4.17", default-features = false }
 
 # Optional: use for testing and/or fuzzing
-pallet-balances = { version = "4.0.0-dev", default-features = false,optional = true, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
+pallet-balances = { version = "37.0.0", default-features = false, optional = true }
 sp-tracing = { version = "10.0.0", path = "../../primitives/tracing", optional = true }
 
 [dev-dependencies]
-pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
+pallet-balances = { version = "37.0.0", default-features = false }
 sp-tracing = { version = "10.0.0", path = "../../primitives/tracing" }
 
 [features]

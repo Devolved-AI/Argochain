@@ -133,8 +133,8 @@ frame-benchmarking-cli = { version = "40.0.0" }
 prometheus-endpoint = { version = "0.17.0", package = "substrate-prometheus-endpoint" }
 substrate-build-script-utils = { version = "11.0.0" }
 substrate-frame-rpc-system = { version = "36.0.0" }
-# substrate-test-runtime-client = { version = "2.0.0" }
-substrate-test-runtime-client = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
+substrate-test-runtime-client = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
+### substrate-test-runtime-client = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
 substrate-wasm-builder = { version = "23.0.0" }
 # Frontier Client
 fc-cli = { version = "1.0.0-dev", path = "client/cli", default-features = false }
