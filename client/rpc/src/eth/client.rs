@@ -49,10 +49,9 @@ where
 			let current_number = self.client.info().best_number;
 			let highest_number = self
 				.sync
-				.status()
+				.best_seen_block()
 				.await
 				.map_err(|_| internal_err("fetch best_seen_block failed"))?
-				.best_seen_block
 				.unwrap_or(current_number);
 
 			let current_number = UniqueSaturatedInto::<u128>::unique_saturated_into(current_number);
