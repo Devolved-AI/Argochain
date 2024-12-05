@@ -45,14 +45,14 @@ pub const BASE_FEE_ELASTICITY: &[u8] = b"Elasticity";
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Encode, Decode)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum EthereumStorageSchema {
-	Undefined,
-	V1,
-	V2,
-	V3,
+    Undefined,
+    V1,
+    V2,
+    V3,
 }
 
 impl Default for EthereumStorageSchema {
-	fn default() -> Self {
-		Self::Undefined
-	}
+    fn default() -> Self {
+        Self::Undefined
+    }
 }

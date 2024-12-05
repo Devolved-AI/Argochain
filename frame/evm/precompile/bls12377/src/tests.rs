@@ -17,35 +17,35 @@
 
 use super::*;
 use pallet_evm_test_vector_support::{
-	test_precompile_failure_test_vectors, test_precompile_test_vectors,
+    test_precompile_failure_test_vectors, test_precompile_test_vectors,
 };
 
 #[test]
 fn process_consensus_tests() -> Result<(), String> {
-	test_precompile_test_vectors::<Bls12377G1Add>("../testdata/bls12377G1Add.json")?;
-	test_precompile_test_vectors::<Bls12377G1Mul>("../testdata/bls12377G1Mul.json")?;
-	test_precompile_test_vectors::<Bls12377G1MultiExp>("../testdata/bls12377G1MultiExp.json")?;
-	test_precompile_test_vectors::<Bls12377G2Add>("../testdata/bls12377G2Add.json")?;
-	test_precompile_test_vectors::<Bls12377G2Mul>("../testdata/bls12377G2Mul.json")?;
-	test_precompile_test_vectors::<Bls12377G2MultiExp>("../testdata/bls12377G2MultiExp.json")?;
-	test_precompile_test_vectors::<Bls12377Pairing>("../testdata/bls12377Pairing.json")?;
-	Ok(())
+    test_precompile_test_vectors::<Bls12377G1Add>("../testdata/bls12377G1Add.json")?;
+    test_precompile_test_vectors::<Bls12377G1Mul>("../testdata/bls12377G1Mul.json")?;
+    test_precompile_test_vectors::<Bls12377G1MultiExp>("../testdata/bls12377G1MultiExp.json")?;
+    test_precompile_test_vectors::<Bls12377G2Add>("../testdata/bls12377G2Add.json")?;
+    test_precompile_test_vectors::<Bls12377G2Mul>("../testdata/bls12377G2Mul.json")?;
+    test_precompile_test_vectors::<Bls12377G2MultiExp>("../testdata/bls12377G2MultiExp.json")?;
+    test_precompile_test_vectors::<Bls12377Pairing>("../testdata/bls12377Pairing.json")?;
+    Ok(())
 }
 
 #[test]
 fn process_consensus_failure_tests() -> Result<(), String> {
-	test_precompile_failure_test_vectors::<Bls12377G1Add>("../testdata/fail-bls12377G1Add.json")?;
-	test_precompile_failure_test_vectors::<Bls12377G1Mul>("../testdata/fail-bls12377G1Mul.json")?;
-	test_precompile_failure_test_vectors::<Bls12377G1MultiExp>(
-		"../testdata/fail-bls12377G1MultiExp.json",
-	)?;
-	test_precompile_failure_test_vectors::<Bls12377G2Add>("../testdata/fail-bls12377G2Add.json")?;
-	test_precompile_failure_test_vectors::<Bls12377G2Mul>("../testdata/fail-bls12377G2Mul.json")?;
-	test_precompile_failure_test_vectors::<Bls12377G2MultiExp>(
-		"../testdata/fail-bls12377G2MultiExp.json",
-	)?;
-	test_precompile_failure_test_vectors::<Bls12377Pairing>(
-		"../testdata/fail-bls12377Pairing.json",
-	)?;
-	Ok(())
+    test_precompile_failure_test_vectors::<Bls12377G1Add>("../testdata/fail-bls12377G1Add.json")?;
+    test_precompile_failure_test_vectors::<Bls12377G1Mul>("../testdata/fail-bls12377G1Mul.json")?;
+    test_precompile_failure_test_vectors::<Bls12377G1MultiExp>(
+        "../testdata/fail-bls12377G1MultiExp.json",
+    )?;
+    test_precompile_failure_test_vectors::<Bls12377G2Add>("../testdata/fail-bls12377G2Add.json")?;
+    test_precompile_failure_test_vectors::<Bls12377G2Mul>("../testdata/fail-bls12377G2Mul.json")?;
+    test_precompile_failure_test_vectors::<Bls12377G2MultiExp>(
+        "../testdata/fail-bls12377G2MultiExp.json",
+    )?;
+    test_precompile_failure_test_vectors::<Bls12377Pairing>(
+        "../testdata/fail-bls12377Pairing.json",
+    )?;
+    Ok(())
 }

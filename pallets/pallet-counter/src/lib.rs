@@ -6,35 +6,37 @@ pub use pallet::*;
 
 #[frame_support::pallet]
 pub mod pallet {
+    use frame_support::traits::ExistenceRequirement;
     use frame_support::{
         dispatch::DispatchResult,
         pallet_prelude::*,
         traits::{Currency, ReservableCurrency},
     };
     use frame_system::pallet_prelude::*;
+    use hex_literal::hex;
     use pallet_evm::Pallet as EvmPallet;
-    use sp_core::{H160, U256, ecdsa};
-    use sp_runtime::traits::SaturatedConversion;
+    use pallet_evm::PrecompileSet;
+    use scale_info::prelude::format;
+    use sp_core::{ecdsa, H160, U256};
+    use sp_io::crypto::secp256k1_ecdsa_recover;
     #[allow(unused_imports)]
     use sp_io::crypto::secp256k1_ecdsa_recover_compressed;
     use sp_io::hashing::keccak_256;
-    use scale_info::prelude::format;
-    use sp_std::vec::Vec;
-    use hex_literal::hex;
-    use pallet_evm:: PrecompileSet;
-    use sp_io::crypto::secp256k1_ecdsa_recover;
-    use frame_support::traits::ExistenceRequirement;
+    use sp_runtime::traits::SaturatedConversion;
     use sp_runtime::AccountId32;
-
+    use sp_std::vec::Vec;
 
     // Define the authorized backend account (common account for safety)
     // pub const AUTHORIZED_BACKEND_ACCOUNT: AccountId32 = AccountId32::new(hex!(
     //     "64882b6b92eefc93a7e9c929681a7facc12eb8c5ee505c610aa207a5e7c46206"
     // ));
 
-    type SubstrateBalanceOf<T> = <<T as Config>::SubstrateCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
+    type SubstrateBalanceOf<T> = <<T as Config>::SubstrateCurrency as Currency<
+        <T as frame_system::Config>::AccountId,
+    >>::Balance;
     #[allow(dead_code)]
-    type EvmBalanceOf<T> = <<T as Config>::EvmCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
+    type EvmBalanceOf<T> =
+        <<T as Config>::EvmCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
 
     #[pallet::pallet]
     pub struct Pallet<T>(_);
@@ -42,28 +44,50 @@ pub mod pallet {
     #[pallet::config]
     pub trait Config: frame_system::Config + pallet_evm::Config {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
-        type SubstrateCurrency: Currency<<Self as frame_system::Config>::AccountId> + ReservableCurrency<<Self as frame_system::Config>::AccountId>;
+        type SubstrateCurrency: Currency<<Self as frame_system::Config>::AccountId>
+            + ReservableCurrency<<Self as frame_system::Config>::AccountId>;
         type EvmCurrency: Currency<<Self as frame_system::Config>::AccountId>;
     }
 
     #[pallet::storage]
     #[pallet::getter(fn locked_balance)]
-    pub type LockedBalance<T: Config> = StorageMap<_, Blake2_128Concat, <T as frame_system::Config>::AccountId, SubstrateBalanceOf<T>, ValueQuery>;
+    pub type LockedBalance<T: Config> = StorageMap<
+        _,
+        Blake2_128Concat,
+        <T as frame_system::Config>::AccountId,
+        SubstrateBalanceOf<T>,
+        ValueQuery,
+    >;
 
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
-        Minted { who: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T> },
-        Burned { who: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T> },
-        Locked { who: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T> },
-        Unlocked { who: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T> },
+        Minted {
+            who: <T as frame_system::Config>::AccountId,
+            amount: SubstrateBalanceOf<T>,
+        },
+        Burned {
+            who: <T as frame_system::Config>::AccountId,
+            amount: SubstrateBalanceOf<T>,
+        },
+        Locked {
+            who: <T as frame_system::Config>::AccountId,
+            amount: SubstrateBalanceOf<T>,
+        },
+        Unlocked {
+            who: <T as frame_system::Config>::AccountId,
+            amount: SubstrateBalanceOf<T>,
+        },
         EvmBalanceChecked(H160, U256),
         EvmBalanceMutated(H160, U256, bool),
         EvmToSubstrateTransfer(H160, <T as frame_system::Config>::AccountId, u128),
-        TransferOfBalanceNew{ from: <T as frame_system::Config>::AccountId, to: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T>, message: Vec<u8> },
+        TransferOfBalanceNew {
+            from: <T as frame_system::Config>::AccountId,
+            to: <T as frame_system::Config>::AccountId,
+            amount: SubstrateBalanceOf<T>,
+            message: Vec<u8>,
+        },
         IPFSHashIncluded(<T as frame_system::Config>::AccountId, Vec<u8>),
-
-
     }
 
     #[pallet::error]
@@ -76,7 +100,7 @@ pub mod pallet {
         OperationNotAllowed,
         InvalidSignature,
         MessageTooLong,
-        InvalidMessageContent,         
+        InvalidMessageContent,
         SuspiciousContent,
         InvalidIPFSHash,
         UnauthorizedBackend,
@@ -85,20 +109,30 @@ pub mod pallet {
 
     #[pallet::call]
     impl<T: Config> Pallet<T> {
-        
         #[pallet::weight(10_000)]
         #[pallet::call_index(0)]
-        pub fn mint(origin: OriginFor<T>, account: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T>) -> DispatchResult {
+        pub fn mint(
+            origin: OriginFor<T>,
+            account: <T as frame_system::Config>::AccountId,
+            amount: SubstrateBalanceOf<T>,
+        ) -> DispatchResult {
             ensure_root(origin)?;
 
             T::SubstrateCurrency::deposit_creating(&account, amount);
-            Self::deposit_event(Event::Minted { who: account, amount });
+            Self::deposit_event(Event::Minted {
+                who: account,
+                amount,
+            });
             Ok(())
         }
 
         #[pallet::weight(10_000)]
         #[pallet::call_index(1)]
-        pub fn burn(origin: OriginFor<T>, account: <T as frame_system::Config>::AccountId, amount: SubstrateBalanceOf<T>) -> DispatchResult {
+        pub fn burn(
+            origin: OriginFor<T>,
+            account: <T as frame_system::Config>::AccountId,
+            amount: SubstrateBalanceOf<T>,
+        ) -> DispatchResult {
             ensure_root(origin)?;
 
             T::SubstrateCurrency::withdraw(
@@ -107,7 +141,10 @@ pub mod pallet {
                 frame_support::traits::WithdrawReasons::TRANSFER,
                 frame_support::traits::ExistenceRequirement::KeepAlive,
             )?;
-            Self::deposit_event(Event::Burned { who: account, amount });
+            Self::deposit_event(Event::Burned {
+                who: account,
+                amount,
+            });
             Ok(())
         }
 
@@ -118,10 +155,12 @@ pub mod pallet {
 
             T::SubstrateCurrency::reserve(&who, amount)?;
             <LockedBalance<T>>::insert(&who, amount);
-            Self::deposit_event(Event::Locked { who: who.clone(), amount });
+            Self::deposit_event(Event::Locked {
+                who: who.clone(),
+                amount,
+            });
             Ok(())
         }
-        
 
         #[pallet::weight(10_000)]
         #[pallet::call_index(3)]
@@ -133,7 +172,10 @@ pub mod pallet {
 
             T::SubstrateCurrency::unreserve(&who, amount);
             <LockedBalance<T>>::mutate(&who, |balance| *balance -= amount);
-            Self::deposit_event(Event::Unlocked { who: who.clone(), amount });
+            Self::deposit_event(Event::Unlocked {
+                who: who.clone(),
+                amount,
+            });
             Ok(())
         }
 
@@ -162,7 +204,10 @@ pub mod pallet {
             let substrate_account = ensure_signed(origin)?;
 
             let transferable_balance = T::SubstrateCurrency::free_balance(&substrate_account);
-            ensure!(transferable_balance >= amount, Error::<T>::InsufficientBalance);
+            ensure!(
+                transferable_balance >= amount,
+                Error::<T>::InsufficientBalance
+            );
 
             T::SubstrateCurrency::withdraw(
                 &substrate_account,
@@ -187,93 +232,111 @@ pub mod pallet {
             evm_address: H160,
             amount: U256,
             subtract: bool,
-            signature: ecdsa::Signature, 
+            signature: ecdsa::Signature,
         ) -> DispatchResult {
             ensure!(!subtract, Error::<T>::Unauthorized);
             // let _who = ensure_signed(origin)?;
             let substrate_account = ensure_signed(origin)?;
             sp_runtime::print("amount:{}\n");
             sp_runtime::print("signature:{:?}\n");
-        
-            let amount_u128: u128 = amount.try_into().map_err(|_| Error::<T>::AmountConversionFailed)?;
-            let message = format!("Transfer {} AGC from 0x{:x} to Substrate", amount_u128, evm_address);
+
+            let amount_u128: u128 = amount
+                .try_into()
+                .map_err(|_| Error::<T>::AmountConversionFailed)?;
+            let message = format!(
+                "Transfer {} AGC from 0x{:x} to Substrate",
+                amount_u128, evm_address
+            );
             sp_runtime::print("amount in u128:{}\n");
             sp_runtime::print("message:{}\n");
             sp_runtime::print("message length:{}\n");
-        
+
             let prefix = "\x19Ethereum Signed Message:\n";
             let message_len = format!("{}", message.len());
             let message_to_sign = format!("{}{}{}", prefix, message_len, message);
-        
+
             let message_hash = keccak_256(message_to_sign.as_bytes());
             sp_runtime::print("message_to_sign:{}\n");
             sp_runtime::print("message_hash:{:?}\n");
-        
+
             let r = &signature.0[..32];
             let s = &signature.0[32..64];
             let v = &signature.0[64..65];
-            
+
             let mut sig_array = [0u8; 65];
             sig_array[..32].copy_from_slice(r);
             sig_array[32..64].copy_from_slice(s);
             sig_array[64..65].copy_from_slice(v);
-        
+
             let recovered_pubkey = secp256k1_ecdsa_recover(&sig_array, &message_hash)
                 .map_err(|_| Error::<T>::InvalidSignature)?;
-        
+
             sp_runtime::print("recovered_pubkey: {:?}\n");
-        
+
             let recovered_key_hash = keccak_256(&recovered_pubkey);
             let recovered_address = H160::from_slice(&recovered_key_hash[12..]);
-        
+
             sp_runtime::print("Recovered Ethereum Address: {:?}\n");
-        
+
             ensure!(recovered_address == evm_address, Error::<T>::Unauthorized);
-        
+
             let (account, _) = EvmPallet::<T>::account_basic(&evm_address);
             ensure!(account.balance >= amount, Error::<T>::InsufficientBalance);
-        
+
             EvmPallet::<T>::mutate_balance(evm_address, amount, false);
-        
+
             let substrate_amount = SubstrateBalanceOf::<T>::saturated_from(amount_u128);
-        
+
             T::SubstrateCurrency::deposit_creating(&substrate_account, substrate_amount);
-        
+
             Self::deposit_event(Event::Minted {
                 who: substrate_account.clone(),
                 amount: substrate_amount,
             });
-            Self::deposit_event(Event::EvmToSubstrateTransfer(evm_address, substrate_account, amount_u128));
-        
+            Self::deposit_event(Event::EvmToSubstrateTransfer(
+                evm_address,
+                substrate_account,
+                amount_u128,
+            ));
+
             Ok(())
         }
-
 
         #[pallet::weight(5_000)]
         #[pallet::call_index(7)]
         pub fn balance_transfer_new(
             origin: OriginFor<T>,
             to: <T as frame_system::Config>::AccountId,
-            amount: SubstrateBalanceOf<T>,  
-            message: Vec<u8>,               
+            amount: SubstrateBalanceOf<T>,
+            message: Vec<u8>,
         ) -> DispatchResult {
             let who = ensure_signed(origin)?;
-            ensure!(core::str::from_utf8(&message).is_ok(), Error::<T>::InvalidMessageContent);
+            ensure!(
+                core::str::from_utf8(&message).is_ok(),
+                Error::<T>::InvalidMessageContent
+            );
             ensure!(message.len() <= 64, Error::<T>::MessageTooLong);
             let message_str = core::str::from_utf8(&message).unwrap_or("");
 
             ensure!(
-                message.iter().all(|&byte| (byte >= 32 && byte <= 126)), 
+                message.iter().all(|&byte| (byte >= 32 && byte <= 126)),
                 Error::<T>::InvalidMessageContent
             );
-            let url_patterns = ["http://", "https://", "www.", ".com", ".net", ".org", ".xyz", ".io", ".gov", ".edu", ".mil", ".info"];
+            let url_patterns = [
+                "http://", "https://", "www.", ".com", ".net", ".org", ".xyz", ".io", ".gov",
+                ".edu", ".mil", ".info",
+            ];
             ensure!(
-                !url_patterns.iter().any(|&pattern| message_str.contains(pattern)),
+                !url_patterns
+                    .iter()
+                    .any(|&pattern| message_str.contains(pattern)),
                 Error::<T>::SuspiciousContent
             );
             let blacklisted_words = ["scam", "fraud", "hack", "illegal", "phishing"];
             ensure!(
-                !blacklisted_words.iter().any(|&word| message_str.to_lowercase().contains(word)),
+                !blacklisted_words
+                    .iter()
+                    .any(|&word| message_str.to_lowercase().contains(word)),
                 Error::<T>::SuspiciousContent
             );
             ensure!(
@@ -298,7 +361,7 @@ pub mod pallet {
         pub fn include_ipfs_hash(
             origin: OriginFor<T>,
             ipfs_hash: Vec<u8>,
-            backend_signature: Vec<u8>,  
+            backend_signature: Vec<u8>,
         ) -> DispatchResult {
             let user = ensure_signed(origin)?;
 
@@ -313,14 +376,10 @@ pub mod pallet {
             let backend_sig = sp_core::sr25519::Signature::try_from(backend_signature.as_slice())
                 .map_err(|_| Error::<T>::InvalidSignature)?;
 
-            let message = ipfs_hash.clone();  
+            let message = ipfs_hash.clone();
 
             ensure!(
-                sp_io::crypto::sr25519_verify(
-                    &backend_sig, 
-                    &message, 
-                    &backend_public_key
-                ),
+                sp_io::crypto::sr25519_verify(&backend_sig, &message, &backend_public_key),
                 Error::<T>::InvalidSignature
             );
 
@@ -330,20 +389,18 @@ pub mod pallet {
 
             Ok(())
         }
-
-  
     }
     impl<T: Config> Pallet<T> {
         pub fn contains_ip_address(message: &str) -> bool {
             if Self::contains_ipv4_address(message) {
                 return true;
-            }    
+            }
             if Self::contains_ipv6_address(message) {
                 return true;
             }
             false
         }
-    
+
         pub fn contains_ipv4_address(message: &str) -> bool {
             let parts: Vec<&str> = message.split('.').collect();
             if parts.len() == 4 {
@@ -360,7 +417,7 @@ pub mod pallet {
             }
             false
         }
-    
+
         pub fn contains_ipv6_address(message: &str) -> bool {
             let parts: Vec<&str> = message.split(':').collect();
             if parts.len() > 1 && parts.len() <= 8 {
@@ -377,6 +434,4 @@ pub mod pallet {
             false
         }
     }
-    
-    
 }

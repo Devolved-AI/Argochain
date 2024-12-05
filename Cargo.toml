@@ -134,8 +134,7 @@ prometheus-endpoint = { version = "0.17.0", package = "substrate-prometheus-endp
 substrate-build-script-utils = { version = "11.0.0" }
 substrate-frame-rpc-system = { version = "36.0.0" }
 substrate-test-runtime-client = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
-### substrate-test-runtime-client = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
-substrate-wasm-builder = { version = "23.0.0" }
+substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 # Frontier Client
 fc-cli = { version = "1.0.0-dev", path = "client/cli", default-features = false }
 fc-consensus = { version = "2.0.0-dev", path = "client/consensus" }
@@ -179,4 +178,4 @@ gtrandom = { version = "0.2.10", features = ["js"] }
 panic = "unwind"
 
 [patch.crates-io]
-frame-metadata = { git = "https://github.com/paritytech/frame-metadata", tag = "v18.0.0" }
+frame-metadata = { git = "https://github.com/paritytech/frame-metadata.git", tag = "v18.0.0" }

@@ -38,65 +38,65 @@ pub use self::{pallet::*, weights::WeightInfo};
 
 #[frame_support::pallet]
 pub mod pallet {
-	use super::*;
-	use frame_support::pallet_prelude::*;
-	use frame_system::pallet_prelude::*;
+    use super::*;
+    use frame_support::pallet_prelude::*;
+    use frame_system::pallet_prelude::*;
 
-	#[pallet::pallet]
-	pub struct Pallet<T>(PhantomData<T>);
+    #[pallet::pallet]
+    pub struct Pallet<T>(PhantomData<T>);
 
-	#[pallet::config]
-	pub trait Config: frame_system::Config {
-		/// Mapping from address to account id.
-		type AddressMapping: AddressMapping<Self::AccountId>;
-		/// Weight information for extrinsics in this pallet.
-		type WeightInfo: WeightInfo;
-	}
+    #[pallet::config]
+    pub trait Config: frame_system::Config {
+        /// Mapping from address to account id.
+        type AddressMapping: AddressMapping<Self::AccountId>;
+        /// Weight information for extrinsics in this pallet.
+        type WeightInfo: WeightInfo;
+    }
 
-	#[pallet::error]
-	pub enum Error<T> {
-		/// Maximum address count exceeded
-		MaxAddressCountExceeded,
-	}
+    #[pallet::error]
+    pub enum Error<T> {
+        /// Maximum address count exceeded
+        MaxAddressCountExceeded,
+    }
 
-	#[pallet::call]
-	impl<T: Config> Pallet<T> {
-		/// Increment `sufficients` for existing accounts having a nonzero `nonce` but zero `sufficients`, `consumers` and `providers` value.
-		/// This state was caused by a previous bug in EVM create account dispatchable.
-		///
-		/// Any accounts in the input list not satisfying the above condition will remain unaffected.
-		#[pallet::call_index(0)]
-		#[pallet::weight(
+    #[pallet::call]
+    impl<T: Config> Pallet<T> {
+        /// Increment `sufficients` for existing accounts having a nonzero `nonce` but zero `sufficients`, `consumers` and `providers` value.
+        /// This state was caused by a previous bug in EVM create account dispatchable.
+        ///
+        /// Any accounts in the input list not satisfying the above condition will remain unaffected.
+        #[pallet::call_index(0)]
+        #[pallet::weight(
 			<T as pallet::Config>::WeightInfo::hotfix_inc_account_sufficients(addresses.len().try_into().unwrap_or(u32::MAX))
 		)]
-		pub fn hotfix_inc_account_sufficients(
-			origin: OriginFor<T>,
-			addresses: Vec<H160>,
-		) -> DispatchResultWithPostInfo {
-			const MAX_ADDRESS_COUNT: usize = 1000;
+        pub fn hotfix_inc_account_sufficients(
+            origin: OriginFor<T>,
+            addresses: Vec<H160>,
+        ) -> DispatchResultWithPostInfo {
+            const MAX_ADDRESS_COUNT: usize = 1000;
 
-			frame_system::ensure_signed(origin)?;
-			ensure!(
-				addresses.len() <= MAX_ADDRESS_COUNT,
-				Error::<T>::MaxAddressCountExceeded
-			);
+            frame_system::ensure_signed(origin)?;
+            ensure!(
+                addresses.len() <= MAX_ADDRESS_COUNT,
+                Error::<T>::MaxAddressCountExceeded
+            );
 
-			for address in addresses {
-				let account_id = T::AddressMapping::into_account_id(address);
-				let nonce = frame_system::Pallet::<T>::account_nonce(&account_id);
-				let refs = frame_system::Pallet::<T>::consumers(&account_id)
-					.saturating_add(frame_system::Pallet::<T>::providers(&account_id))
-					.saturating_add(frame_system::Pallet::<T>::sufficients(&account_id));
+            for address in addresses {
+                let account_id = T::AddressMapping::into_account_id(address);
+                let nonce = frame_system::Pallet::<T>::account_nonce(&account_id);
+                let refs = frame_system::Pallet::<T>::consumers(&account_id)
+                    .saturating_add(frame_system::Pallet::<T>::providers(&account_id))
+                    .saturating_add(frame_system::Pallet::<T>::sufficients(&account_id));
 
-				if !nonce.is_zero() && refs.is_zero() {
-					frame_system::Pallet::<T>::inc_sufficients(&account_id);
-				}
-			}
+                if !nonce.is_zero() && refs.is_zero() {
+                    frame_system::Pallet::<T>::inc_sufficients(&account_id);
+                }
+            }
 
-			Ok(PostDispatchInfo {
-				actual_weight: None,
-				pays_fee: Pays::Yes,
-			})
-		}
-	}
+            Ok(PostDispatchInfo {
+                actual_weight: None,
+                pays_fee: Pays::Yes,
+            })
+        }
+    }
 }

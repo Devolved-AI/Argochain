@@ -25,11 +25,11 @@ use crate::types::pubsub;
 /// Eth PUB-SUB rpc interface.
 #[rpc(server)]
 pub trait EthPubSubApi {
-	/// Subscribe to Eth subscription.
-	#[subscription(
+    /// Subscribe to Eth subscription.
+    #[subscription(
 		name = "eth_subscribe" => "eth_subscription",
 		unsubscribe = "eth_unsubscribe",
 		item = pubsub::Result
 	)]
-	fn subscribe(&self, kind: pubsub::Kind, params: Option<pubsub::Params>);
+    fn subscribe(&self, kind: pubsub::Kind, params: Option<pubsub::Params>);
 }

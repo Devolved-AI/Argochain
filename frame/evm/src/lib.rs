@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: Apache-2.0
 // This file is part of Frontier.
 //
@@ -70,10 +69,9 @@ pub use evm::{
     Config as EvmConfig, Context, ExitError, ExitFatal, ExitReason, ExitRevert, ExitSucceed,
 };
 use impl_trait_for_tuples::impl_for_tuples;
-use scale_info::TypeInfo;
 use log::info;
+use scale_info::TypeInfo;
 // Substrate
-use scale_codec::MaxEncodedLen;
 use frame_support::{
     dispatch::{DispatchResultWithPostInfo, Pays, PostDispatchInfo},
     traits::{
@@ -88,6 +86,7 @@ use frame_support::{
     weights::Weight,
 };
 use frame_system::RawOrigin;
+use scale_codec::MaxEncodedLen;
 use sp_core::{Decode, Encode, Hasher, H160, H256, U256};
 use sp_runtime::{
     traits::{BadOrigin, NumberFor, Saturating, UniqueSaturatedInto, Zero},
@@ -574,17 +573,7 @@ pub type BalanceOf<T> =
 type NegativeImbalanceOf<C, T> =
     <C as Currency<<T as frame_system::Config>::AccountId>>::NegativeImbalance;
 
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    Eq,
-    PartialEq,
-    Encode,
-    Decode,
-    TypeInfo,
-    MaxEncodedLen
-)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Encode, Decode, TypeInfo, MaxEncodedLen)]
 pub struct CodeMetadata {
     pub size: u64,
     pub hash: H256,
@@ -779,7 +768,7 @@ impl<T: Config> GasWeightMapping for FixedGasWeightMapping<T> {
 // impl<T: Config> GasWeightMapping for DynamicGasWeightMapping<T> {
 //     fn gas_to_weight(gas: u64, without_base_weight: bool) -> Weight {
 //         log::info!("Starting gas_to_weight conversion with gas: {}", gas);
-        
+
 //         // Start by calculating the weight based on the gas and the runtime's WeightPerGas configuration
 //         let mut weight = (T::WeightPerGas::get()).saturating_mul(gas);
 //         log::info!("Initial weight (WeightPerGas * gas): {}", weight);
@@ -818,8 +807,6 @@ impl<T: Config> GasWeightMapping for FixedGasWeightMapping<T> {
 //     }
 // }
 
-
-
 // Example implementation for storage-heavy transaction detection
 fn is_storage_heavy_transaction(gas: u64) -> bool {
     let is_heavy = gas > 500_000; // Placeholder threshold
@@ -830,7 +817,11 @@ fn is_storage_heavy_transaction(gas: u64) -> bool {
 // Example implementation for contract-to-contract call detection
 fn involves_external_contract_call(gas: u64) -> bool {
     let involves_call = gas > 250_000; // Placeholder threshold
-    log::info!("involves_external_contract_call: {}, gas: {}", involves_call, gas);
+    log::info!(
+        "involves_external_contract_call: {}, gas: {}",
+        involves_call,
+        gas
+    );
     involves_call
 }
 
@@ -845,7 +836,11 @@ fn get_block_fullness() -> f64 {
 // Example function to calculate congestion factor
 fn calculate_congestion_factor(block_fullness: f64) -> u64 {
     let factor = if block_fullness > 0.9 { 2 } else { 1 };
-    log::info!("calculate_congestion_factor: {}, block_fullness: {}", factor, block_fullness);
+    log::info!(
+        "calculate_congestion_factor: {}, block_fullness: {}",
+        factor,
+        block_fullness
+    );
     factor
 }
 
@@ -860,11 +855,8 @@ fn calculate_gas_buffer(gas: u64) -> u64 {
     }
 }
 
-
-
 static SHANGHAI_CONFIG: EvmConfig = EvmConfig::shanghai();
 // static DEFAULT_CONFIG: EvmConfig = EvmConfig::default();
-
 
 impl<T: Config> Pallet<T> {
     /// Check whether an account is empty.
@@ -966,36 +958,49 @@ impl<T: Config> Pallet<T> {
         T::FindAuthor::find_author(pre_runtime_digests).unwrap_or_default()
     }
 
-
     fn u256_to_balance(value: U256) -> BalanceOf<T> {
         value.low_u128().try_into().unwrap_or_else(|_| Zero::zero())
     }
 
     pub fn mutate_balance(address: H160, delta: U256, add: bool) {
         let account_id = T::AddressMapping::into_account_id(address);
-    
+
         let current_balance = T::Currency::free_balance(&account_id);
-    
-        let mut balance_u256 = U256::from(UniqueSaturatedInto::<u128>::unique_saturated_into(current_balance));
-    
-        info!("Balance before mutation for address {:?}: {:?}", address, balance_u256);
-    
+
+        let mut balance_u256 = U256::from(UniqueSaturatedInto::<u128>::unique_saturated_into(
+            current_balance,
+        ));
+
+        info!(
+            "Balance before mutation for address {:?}: {:?}",
+            address, balance_u256
+        );
+
         let delta_with_decimals = delta.saturating_mul(U256::exp10(18));
-    
+
         if add {
             balance_u256 = balance_u256.saturating_add(delta);
             info!("Adding delta (with decimals): {:?}", delta);
         } else {
             balance_u256 = balance_u256.saturating_sub(delta);
-            info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
+            info!(
+                "Subtracting delta (with decimals): {:?}",
+                delta_with_decimals
+            );
         }
-    
-        info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
-    
+
+        info!(
+            "Balance after mutation (U256) for address {:?}: {:?}",
+            address, balance_u256
+        );
+
         let new_balance = Self::u256_to_balance(balance_u256);
-    
-        info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
-    
+
+        info!(
+            "Balance after mutation (native type) for address {:?}: {:?}",
+            address, new_balance
+        );
+
         T::Currency::make_free_balance_be(&account_id, new_balance);
     }
 }
@@ -1175,4 +1180,3 @@ impl<T> OnCreate<T> for Tuple {
         )*)
     }
 }
-

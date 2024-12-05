@@ -32,39 +32,39 @@ pub use pallet::*;
 
 #[frame_support::pallet]
 pub mod pallet {
-	use frame_support::pallet_prelude::*;
+    use frame_support::pallet_prelude::*;
 
-	const STORAGE_VERSION: StorageVersion = StorageVersion::new(0);
+    const STORAGE_VERSION: StorageVersion = StorageVersion::new(0);
 
-	#[pallet::pallet]
-	#[pallet::storage_version(STORAGE_VERSION)]
-	pub struct Pallet<T>(PhantomData<T>);
+    #[pallet::pallet]
+    #[pallet::storage_version(STORAGE_VERSION)]
+    pub struct Pallet<T>(PhantomData<T>);
 
-	#[pallet::config]
-	pub trait Config: frame_system::Config {}
+    #[pallet::config]
+    pub trait Config: frame_system::Config {}
 
-	impl<T: Config> Get<u64> for Pallet<T> {
-		fn get() -> u64 {
-			<ChainId<T>>::get()
-		}
-	}
+    impl<T: Config> Get<u64> for Pallet<T> {
+        fn get() -> u64 {
+            <ChainId<T>>::get()
+        }
+    }
 
-	/// The EVM chain ID.
-	#[pallet::storage]
-	pub type ChainId<T> = StorageValue<_, u64, ValueQuery>;
+    /// The EVM chain ID.
+    #[pallet::storage]
+    pub type ChainId<T> = StorageValue<_, u64, ValueQuery>;
 
-	#[pallet::genesis_config]
-	#[derive(frame_support::DefaultNoBound)]
-	pub struct GenesisConfig<T> {
-		pub chain_id: u64,
-		#[serde(skip)]
-		pub _marker: PhantomData<T>,
-	}
+    #[pallet::genesis_config]
+    #[derive(frame_support::DefaultNoBound)]
+    pub struct GenesisConfig<T> {
+        pub chain_id: u64,
+        #[serde(skip)]
+        pub _marker: PhantomData<T>,
+    }
 
-	#[pallet::genesis_build]
-	impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
-		fn build(&self) {
-			ChainId::<T>::put(self.chain_id);
-		}
-	}
+    #[pallet::genesis_build]
+    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+        fn build(&self) {
+            ChainId::<T>::put(self.chain_id);
+        }
+    }
 }
