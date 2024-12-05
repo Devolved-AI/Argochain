@@ -1,6 +1,6 @@
 // This file is part of Substrate.
 
-// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.
+// Copyright (C) Parity Technologies (UK) Ltd.
 // SPDX-License-Identifier: GPL-3.0-or-later WITH Classpath-exception-2.0
 
 // This program is free software: you can redistribute it and/or modify
@@ -18,17 +18,19 @@
 
 //! Runtime API definition for assets.
 
+use polkadot_sdk::*;
+
+use alloc::vec::Vec;
 use codec::Codec;
-use sp_std::vec::Vec;
 
 sp_api::decl_runtime_apis! {
-    pub trait AssetsApi<AccountId, AssetBalance, AssetId>
-    where
-        AccountId: Codec,
-        AssetBalance: Codec,
-        AssetId: Codec,
-    {
-        /// Returns the list of `AssetId`s and corresponding balance that an `AccountId` has.
-        fn account_balances(account: AccountId) -> Vec<(AssetId, AssetBalance)>;
-    }
+	pub trait AssetsApi<AccountId, AssetBalance, AssetId>
+	where
+		AccountId: Codec,
+		AssetBalance: Codec,
+		AssetId: Codec,
+	{
+		/// Returns the list of `AssetId`s and corresponding balance that an `AccountId` has.
+		fn account_balances(account: AccountId) -> Vec<(AssetId, AssetBalance)>;
+	}
 }
