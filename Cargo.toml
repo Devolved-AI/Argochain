@@ -98,6 +98,7 @@ sp-consensus-aura = { version = "0.39.0", default-features = false }
 sp-consensus-grandpa = { version = "20.0.0", default-features = false }
 sp-core = { version = "34.0.0", default-features = false }
 sp-database = { version = "10.0.0" }
+sp-externalities = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2407", default-features = false }
 sp-inherents = { version = "33.0.0", default-features = false }
 sp-io = { version = "37.0.0", default-features = false }
 sp-keyring = { version = "38.0.0" }
@@ -115,6 +116,7 @@ sp-version = { version = "36.0.0", default-features = false }
 # Substrate FRAME
 frame-benchmarking = { version = "36.0.0", default-features = false }
 frame-executive = { version = "36.0.0", default-features = false }
+frame-metadata = "16.0.0"
 frame-support = { version = "36.0.0", default-features = false }
 frame-system = { version = "36.1.0", default-features = false }
 frame-system-benchmarking = { version = "36.0.0", default-features = false }
@@ -174,6 +176,13 @@ ark-ff = { version = "0.4.0", default-features = false }
 ark-std = { version = "0.4.0", default-features = false }
 
 gtrandom = { version = "0.2.10", features = ["js"] }
+merkleized-metadata = "=0.1.0"
 
 [profile.release]
 panic = "unwind"
+
+# [patch.crates-io]
+# frame-metadata = { version = "16.0.0" }
+
+# [replace]
+# "frame-metadata:16.0.0" = { version = "18.0.0" }
