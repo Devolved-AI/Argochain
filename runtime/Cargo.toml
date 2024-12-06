@@ -16,6 +16,7 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 array-bytes = "6.1"
 hex-literal = "0.4.1"
+getrandom = { version = "0.2", features = ["js"] }
 
 # third-party dependencies
 codec = { package = "parity-scale-codec", version = "3.6.1", default-features = false, features = [

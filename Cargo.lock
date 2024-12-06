@@ -132,9 +132,9 @@ dependencies = [
 
 [[package]]
 name = "alloy-rlp"
-version = "0.3.9"
+version = "0.3.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da0822426598f95e45dd1ea32a738dac057529a709ee645fcc516ffa4cbde08f"
+checksum = "f542548a609dca89fcd72b3b9f355928cf844d4363c5eed9c5273a3dd225e097"
 dependencies = [
  "arrayvec 0.7.6",
  "bytes",
@@ -414,6 +414,7 @@ dependencies = [
  "frame-system-benchmarking 36.0.0",
  "frame-system-rpc-runtime-api 33.0.0",
  "frame-try-runtime 0.42.0",
+ "getrandom",
  "hex-literal 0.4.1",
  "log",
  "pallet-alliance 35.0.0",
@@ -516,7 +517,7 @@ dependencies = [
  "sp-transaction-pool 33.0.0",
  "sp-version 36.0.0",
  "static_assertions",
- "substrate-wasm-builder 23.0.0",
+ "substrate-wasm-builder 23.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1146,7 +1147,7 @@ dependencies = [
  "staging-xcm 7.0.0",
  "staging-xcm-builder 7.0.0",
  "staging-xcm-executor 7.0.0",
- "substrate-wasm-builder 17.0.0",
+ "substrate-wasm-builder 23.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
 ]
 
 [[package]]
@@ -1169,7 +1170,7 @@ dependencies = [
  "staging-xcm 7.0.0",
  "staging-xcm-builder 7.0.0",
  "staging-xcm-executor 7.0.0",
- "substrate-wasm-builder 17.0.0",
+ "substrate-wasm-builder 23.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
 ]
 
 [[package]]
@@ -5359,6 +5360,7 @@ dependencies = [
  "cfg-if",
  "parity-scale-codec",
  "scale-info",
+ "serde",
 ]
 
 [[package]]
@@ -5933,8 +5935,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4567c8db10ae91089c99af84c68c38da3ec2f087c3f82960bcdbf3656b6f4d7"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "wasi",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -7310,7 +7314,7 @@ dependencies = [
  "scale-info",
  "serde_json",
  "static_assertions",
- "substrate-wasm-builder 17.0.0",
+ "substrate-wasm-builder 23.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
 ]
 
 [[package]]
@@ -7469,7 +7473,7 @@ dependencies = [
  "libp2p-identity",
  "log",
  "multiaddr 0.18.2",
- "multihash 0.19.2",
+ "multihash 0.19.3",
  "multistream-select",
  "once_cell",
  "parking_lot 0.12.3",
@@ -7531,7 +7535,7 @@ dependencies = [
  "bs58 0.5.1",
  "ed25519-dalek 2.1.1",
  "hkdf",
- "multihash 0.19.2",
+ "multihash 0.19.3",
  "quick-protobuf",
  "rand 0.8.5",
  "sha2 0.10.8",
@@ -7620,7 +7624,7 @@ dependencies = [
  "libp2p-identity",
  "log",
  "multiaddr 0.18.2",
- "multihash 0.19.2",
+ "multihash 0.19.3",
  "once_cell",
  "quick-protobuf",
  "rand 0.8.5",
@@ -8507,7 +8511,7 @@ dependencies = [
  "data-encoding",
  "libp2p-identity",
  "multibase",
- "multihash 0.19.2",
+ "multihash 0.19.3",
  "percent-encoding",
  "serde",
  "static_assertions",
@@ -8562,9 +8566,9 @@ dependencies = [
 
 [[package]]
 name = "multihash"
-version = "0.19.2"
+version = "0.19.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc41f430805af9d1cf4adae4ed2149c759b877b01d909a1f40256188d09345d2"
+checksum = "6b430e7953c29dd6a09afc29ff0bb69c6e306329ee6794700aee27b76a1aea8d"
 dependencies = [
  "core2",
  "unsigned-varint 0.8.0",
@@ -12712,7 +12716,7 @@ dependencies = [
  "staging-parachain-info",
  "staging-xcm 7.0.0",
  "staging-xcm-executor 7.0.0",
- "substrate-wasm-builder 17.0.0",
+ "substrate-wasm-builder 23.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
 ]
 
 [[package]]
@@ -12743,7 +12747,7 @@ dependencies = [
  "staging-parachain-info",
  "staging-xcm 7.0.0",
  "staging-xcm-executor 7.0.0",
- "substrate-wasm-builder 17.0.0",
+ "substrate-wasm-builder 23.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
 ]
 
 [[package]]
@@ -14479,7 +14483,7 @@ dependencies = [
  "substrate-prometheus-endpoint 0.17.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
  "substrate-rpc-client 0.33.0",
  "substrate-state-trie-migration-rpc 27.0.0",
- "substrate-wasm-builder 17.0.0",
+ "substrate-wasm-builder 23.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
  "testnet-parachains-constants",
  "tracing-gum",
  "tracing-gum-proc-macro",
@@ -16181,7 +16185,7 @@ dependencies = [
  "libp2p",
  "linked_hash_set",
  "log",
- "multihash 0.19.2",
+ "multihash 0.19.3",
  "parity-scale-codec",
  "prost 0.12.6",
  "prost-build 0.12.6",
@@ -16212,7 +16216,7 @@ dependencies = [
  "libp2p",
  "linked_hash_set",
  "log",
- "multihash 0.19.2",
+ "multihash 0.19.3",
  "parity-scale-codec",
  "prost 0.12.6",
  "prost-build 0.12.6",
@@ -17737,7 +17741,7 @@ dependencies = [
  "litep2p",
  "log",
  "multiaddr 0.18.2",
- "multihash 0.19.2",
+ "multihash 0.19.3",
  "rand 0.8.5",
  "thiserror",
  "zeroize",
@@ -17755,7 +17759,7 @@ dependencies = [
  "litep2p",
  "log",
  "multiaddr 0.18.2",
- "multihash 0.19.2",
+ "multihash 0.19.3",
  "rand 0.8.5",
  "thiserror",
  "zeroize",
@@ -20233,7 +20237,7 @@ dependencies = [
 [[package]]
 name = "sp-crypto-ec-utils"
 version = "0.10.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 dependencies = [
  "ark-bls12-377",
  "ark-bls12-377-ext",
@@ -20341,7 +20345,7 @@ dependencies = [
 [[package]]
 name = "sp-debug-derive"
 version = "14.0.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -20361,7 +20365,7 @@ dependencies = [
 [[package]]
 name = "sp-externalities"
 version = "0.25.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 dependencies = [
  "environmental",
  "parity-scale-codec",
@@ -20845,7 +20849,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface"
 version = "24.0.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 dependencies = [
  "bytes",
  "impl-trait-for-tuples",
@@ -20897,7 +20901,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface-proc-macro"
 version = "17.0.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 dependencies = [
  "Inflector",
  "expander",
@@ -21102,7 +21106,7 @@ source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polk
 [[package]]
 name = "sp-std"
 version = "14.0.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 
 [[package]]
 name = "sp-storage"
@@ -21119,7 +21123,7 @@ dependencies = [
 [[package]]
 name = "sp-storage"
 version = "19.0.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 dependencies = [
  "impl-serde 0.5.0",
  "parity-scale-codec",
@@ -21191,7 +21195,7 @@ dependencies = [
 [[package]]
 name = "sp-tracing"
 version = "16.0.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 dependencies = [
  "parity-scale-codec",
  "tracing",
@@ -21403,7 +21407,7 @@ dependencies = [
 [[package]]
 name = "sp-wasm-interface"
 version = "20.0.0"
-source = "git+https://github.com/paritytech/polkadot-sdk#f7838db506f48e48671f867f23d8c12858c5b67c"
+source = "git+https://github.com/paritytech/polkadot-sdk#526a440203d1ff96640c6163291e57e10c8e4f9b"
 dependencies = [
  "anyhow",
  "impl-trait-for-tuples",
@@ -22258,7 +22262,7 @@ dependencies = [
  "sp-transaction-pool 26.0.0",
  "sp-trie 29.0.0",
  "sp-version 29.0.0",
- "substrate-wasm-builder 17.0.0",
+ "substrate-wasm-builder 23.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
  "trie-db",
 ]
 
@@ -22282,34 +22286,6 @@ dependencies = [
 
 [[package]]
 name = "substrate-wasm-builder"
-version = "17.0.0"
-source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0#778e9d15552ceb66ab47feb8f681030ef6d357d5"
-dependencies = [
- "array-bytes",
- "build-helper",
- "cargo_metadata",
- "console",
- "filetime",
- "frame-metadata 16.0.0",
- "merkleized-metadata",
- "parity-scale-codec",
- "parity-wasm",
- "polkavm-linker",
- "sc-executor 0.32.0",
- "sp-core 28.0.0",
- "sp-io 30.0.0",
- "sp-maybe-compressed-blob 11.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
- "sp-tracing 16.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
- "sp-version 29.0.0",
- "strum 0.26.3",
- "tempfile",
- "toml 0.8.19",
- "walkdir",
- "wasm-opt",
-]
-
-[[package]]
-name = "substrate-wasm-builder"
 version = "23.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7dc993ad871b63fbba60362f3ea86583f5e7e1256e8fdcb3b5b249c9ead354bf"
@@ -22321,6 +22297,34 @@ dependencies = [
  "parity-wasm",
  "polkavm-linker",
  "sp-maybe-compressed-blob 11.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "strum 0.26.3",
+ "tempfile",
+ "toml 0.8.19",
+ "walkdir",
+ "wasm-opt",
+]
+
+[[package]]
+name = "substrate-wasm-builder"
+version = "23.0.0"
+source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0#778e9d15552ceb66ab47feb8f681030ef6d357d5"
+dependencies = [
+ "array-bytes",
+ "build-helper",
+ "cargo_metadata",
+ "console",
+ "filetime",
+ "frame-metadata 18.0.0",
+ "merkleized-metadata",
+ "parity-scale-codec",
+ "parity-wasm",
+ "polkavm-linker",
+ "sc-executor 0.32.0",
+ "sp-core 28.0.0",
+ "sp-io 30.0.0",
+ "sp-maybe-compressed-blob 11.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
+ "sp-tracing 16.0.0 (git+https://github.com/paritytech/polkadot-sdk.git?branch=release-polkadot-v1.14.0)",
+ "sp-version 29.0.0",
  "strum 0.26.3",
  "tempfile",
  "toml 0.8.19",
@@ -22741,9 +22745,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-stream"
-version = "0.1.16"
+version = "0.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f4e6ce100d0eb49a2734f8c0812bcd324cf357d21810932c5df6b96ef2b86f1"
+checksum = "eca58d7bba4a75707817a2c44174253f9236b2d5fbd055602e9d5c07c139a047"
 dependencies = [
  "futures-core",
  "pin-project-lite",

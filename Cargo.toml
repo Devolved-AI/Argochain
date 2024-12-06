@@ -47,17 +47,20 @@ ethereum = { version = "0.14.0", default-features = false }
 ethereum-types = { version = "0.14.1", default-features = false }
 evm = { git = "https://github.com/rust-blockchain/evm", rev = "b7b82c7e1fc57b7449d6dfa6826600de37cc1e65", default-features = false }
 futures = "0.3.28"
+getrandom = { version = "0.2", features = ["js"] }
 hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
 hex-literal = "0.4.1"
 impl-serde = { version = "0.4.0", default-features = false }
 jsonrpsee = "0.16.2"
 kvdb-rocksdb = "0.19.0"
 libsecp256k1 = { version = "0.7.1", default-features = false }
+secp256k1 = { version = "0.24", features = ["global-context"], default-features = false }
 log = { version = "0.4.17", default-features = false }
 parity-db = "0.4.9"
 parking_lot = "0.12.1"
 rlp = { version = "0.5.2", default-features = false }
 scale-codec = { package = "parity-scale-codec", version = "3.6.4", default-features = false, features = ["derive"] }
+wasm-bindgen = "0.2"
 # parity-scale-codec = "3.0"
 scale-info = { version = "2.9.0", default-features = false, features = ["derive"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
@@ -179,3 +182,4 @@ panic = "unwind"
 
 [patch.crates-io]
 frame-metadata = { git = "https://github.com/paritytech/frame-metadata.git", tag = "v18.0.0" }
+# getrandom = { version = "0.2.15", features = ["js"] }
