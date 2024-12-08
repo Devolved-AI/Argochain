@@ -137,7 +137,8 @@ substrate-build-script-utils = { version = "11.0.0" }
 substrate-frame-rpc-system = { version = "36.0.0" }
 substrate-test-runtime-client = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 ### substrate-test-runtime-client = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v1.14.0" }
-substrate-wasm-builder = { version = "23.0.0" }
+# substrate-wasm-builder = { version = "23.0.0" }
+substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.14.0" }
 # Frontier Client
 fc-cli = { version = "1.0.0-dev", path = "client/cli", default-features = false }
 fc-consensus = { version = "2.0.0-dev", path = "client/consensus" }
@@ -175,14 +176,17 @@ ark-ec = { version = "0.4.0", default-features = false }
 ark-ff = { version = "0.4.0", default-features = false }
 ark-std = { version = "0.4.0", default-features = false }
 
-gtrandom = { version = "0.2.10", features = ["js"] }
-merkleized-metadata = "=0.1.0"
+getrandom = { version = "0.2.10", features = ["js"] }
+merkleized-metadata = { version = "0.1.0" }
 
 [profile.release]
 panic = "unwind"
 
-# [patch.crates-io]
+[patch.crates-io]
+merkleized-metadata = { path = "./primitives/merkleized-metadata" }
+# merkleized-metadata = { version = "0.1.0" }
 # frame-metadata = { version = "16.0.0" }
 
 # [replace]
-# "frame-metadata:16.0.0" = { version = "18.0.0" }
+# "merkleized-metadata:0.1.2" = { version = "0.1.0" }
+# "frame-metadata:18.0.0" = { version = "16.0.0" }
