@@ -28,7 +28,8 @@ use sc_transaction_pool::ChainApi;
 use sp_api::{
 	ApiExt, CallApiAt, CallApiAtParams, CallContext, ProvideRuntimeApi, // sp_externalities::extensions::Extensions, Extensions,
 };
-use sp_externalities::Extensions;
+use sp_api::__private::Extensions;
+// use sp_externalities::Extensions;
 // use sp_core::Extensions;
 // use sp_io::Extensions;
 // use sp_runtime::extensions::Extensions;
@@ -264,7 +265,7 @@ where
 						// storage_transaction_cache: &storage_transaction_cache,
 						call_context: CallContext::Offchain,
 						recorder: &None,
-						extensions: &RefCell::new(Extensions::new()),
+						extensions: &RefCell::new(sp_api::__private::Extensions::new()),
 					};
 
 					let value = if api_version == 4 {
