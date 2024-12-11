@@ -50,7 +50,7 @@ repository = "https://github.com/paritytech/frontier/"
 [patch.crates-io]
 frame-metadata = { version = "16.0.0" ,git = "https://github.com/paritytech/frame-metadata", branch = "lexnv/metadata-v16-associated-types" }
 merkleized-metadata={ git="https://github.com/bkchr/merkleized-metadata.git",branch = "bkchr-fml"}
-# getrandom = {git ="https://github.com/rust-random/getrandom.git",branch = "master",features = ["js"]}
+secp256k1 = { git = "https://github.com/paritytech/substrate-secp256k1", branch = "master" }
 
 [workspace.dependencies]
 async-channel = { version = "1.8.0" }
@@ -148,7 +148,6 @@ similar-asserts = "1.5.0"
 sqlx = { version = "0.7.4", default-features = false, features = ["macros"] }
 thiserror = "1.0"
 tokio = "1.38.0"
-
 
 
 
