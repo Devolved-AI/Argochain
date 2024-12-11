@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: Apache-2.0
 // This file is part of Frontier.
-//
-// Copyright (c) 2020-2022 Parity Technologies (UK) Ltd.
-//
+
+// Copyright (C) Parity Technologies (UK) Ltd.
+// SPDX-License-Identifier: Apache-2.0
+
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -65,9 +65,8 @@ fn transaction_without_enough_gas_should_not_work() {
 
 	ext.execute_with(|| {
 		let mut transaction = eip2930_erc20_creation_transaction(alice);
-		match &mut transaction {
-			Transaction::EIP2930(t) => t.gas_price = U256::from(11_000_000),
-			_ => {}
+		if let Transaction::EIP2930(t) = &mut transaction {
+			t.gas_price = U256::from(11_000_000);
 		}
 
 		let call = crate::Call::<Test>::transact { transaction };
@@ -188,7 +187,7 @@ fn transaction_with_invalid_chain_id_should_fail_in_block() {
 		assert_err!(
 			extrinsic.apply::<Test>(&dispatch_info, 0),
 			TransactionValidityError::Invalid(InvalidTransaction::Custom(
-				fp_ethereum::TransactionValidationError::InvalidChainId as u8,
+				fp_evm::TransactionValidationError::InvalidChainId as u8,
 			))
 		);
 	});
