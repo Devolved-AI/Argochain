@@ -85,6 +85,7 @@ use frame_support::{
     },
     weights::Weight,
 };
+use tracing::info;
 use frame_system::RawOrigin;
 use sp_core::{Decode, Encode, Hasher, H160, H256, U256};
 use sp_runtime::{
@@ -821,14 +822,14 @@ impl<T: Config> GasWeightMapping for FixedGasWeightMapping<T> {
 // Example implementation for storage-heavy transaction detection
 fn is_storage_heavy_transaction(gas: u64) -> bool {
     let is_heavy = gas > 500_000; // Placeholder threshold
-    log::info!("is_storage_heavy_transaction: {}, gas: {}", is_heavy, gas);
+    info!("is_storage_heavy_transaction: {}, gas: {}", is_heavy, gas);
     is_heavy
 }
 
 // Example implementation for contract-to-contract call detection
 fn involves_external_contract_call(gas: u64) -> bool {
     let involves_call = gas > 250_000; // Placeholder threshold
-    log::info!("involves_external_contract_call: {}, gas: {}", involves_call, gas);
+    info!("involves_external_contract_call: {}, gas: {}", involves_call, gas);
     involves_call
 }
 
@@ -836,14 +837,14 @@ fn involves_external_contract_call(gas: u64) -> bool {
 fn get_block_fullness() -> f64 {
     // This would return the ratio of block space used (e.g., 0.7 for 70%).
     let fullness = 0.7;
-    log::info!("get_block_fullness: {}", fullness);
+    info!("get_block_fullness: {}", fullness);
     fullness
 }
 
 // Example function to calculate congestion factor
 fn calculate_congestion_factor(block_fullness: f64) -> u64 {
     let factor = if block_fullness > 0.9 { 2 } else { 1 };
-    log::info!("calculate_congestion_factor: {}, block_fullness: {}", factor, block_fullness);
+    info!("calculate_congestion_factor: {}, block_fullness: {}", factor, block_fullness);
     factor
 }
 
@@ -976,23 +977,23 @@ impl<T: Config> Pallet<T> {
     
         let mut balance_u256 = U256::from(UniqueSaturatedInto::<u128>::unique_saturated_into(current_balance));
     
-        frame_support::log::info!("Balance before mutation for address {:?}: {:?}", address, balance_u256);
+        info!("Balance before mutation for address {:?}: {:?}", address, balance_u256);
     
         let delta_with_decimals = delta.saturating_mul(U256::exp10(18));
     
         if add {
             balance_u256 = balance_u256.saturating_add(delta);
-            frame_support::log::info!("Adding delta (with decimals): {:?}", delta);
+            info!("Adding delta (with decimals): {:?}", delta);
         } else {
             balance_u256 = balance_u256.saturating_sub(delta);
-            frame_support::log::info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
+            info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
         }
     
-        frame_support::log::info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
+        info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
     
         let new_balance = Self::u256_to_balance(balance_u256);
     
-        frame_support::log::info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
+        info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
     
         T::Currency::make_free_balance_be(&account_id, new_balance);
     }
