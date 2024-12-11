@@ -122,7 +122,7 @@ fc-rpc = { path = "../client/rpc" }
 fc-rpc-core = { path = "../client/rpc-core" }
 fp-consensus = { path = "../primitives/consensus" }
 fp-dynamic-fee = { path = "../primitives/dynamic-fee" }
-fp-evm = { version = "3.0.0-dev", path = "../primitives/evm", default-features = false }
+fp-evm = { path = "../primitives/evm", default-features = false }
 fp-rpc = { path = "../primitives/rpc" }
 fp-storage = { path = "../primitives/storage" }
 pallet-evm = { path = "../frame/evm" }
