@@ -51,9 +51,8 @@ edition = "2021"
 repository = "https://github.com/paritytech/frontier/"
 
 [workspace.dependencies]
-frame-metadata = "18.0.0"
-
-# frame-metadata = "16.0.0"
+frame-metadata = { path = "frame-metadata-16.0.0" }
+merkleized-metadata = { path = "merkleized-metadata-0.1.0" }
 async-trait = "0.1"
 bn = { package = "substrate-bn", version = "0.6", default-features = false }
 clap = { version = "4.5", features = ["derive", "deprecated"] }
@@ -162,7 +161,8 @@ prometheus-endpoint = { package = "substrate-prometheus-endpoint", git = "https:
 substrate-build-script-utils = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
 substrate-frame-rpc-system = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
 substrate-test-runtime-client = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
-substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+# substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-v0.9.45" }
 
 # XCM
 xcm = { package = "staging-xcm", git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }

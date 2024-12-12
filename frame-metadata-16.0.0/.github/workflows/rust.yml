@@ -1,0 +1,173 @@
+name: Compilation and Testing Suite
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+    paths-ignore:
+      - 'README.md'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  fmt:
+    name: Cargo fmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install Rust nightly toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+            profile: minimal
+            toolchain: nightly
+            override: true
+            components: rustfmt
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@2656b87321093db1cb55fbd73183d195214fdfd1 # v2.5.0
+
+      - name: Cargo fmt
+        uses: actions-rs/cargo@v1.0.3
+        with:
+          command: fmt
+          args: --all -- --check
+
+  docs:
+    name: Check documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@2656b87321093db1cb55fbd73183d195214fdfd1 # v2.5.0
+
+      - name: Check internal documentation links
+        run: RUSTDOCFLAGS="--deny rustdoc::broken_intra_doc_links" cargo doc -vv --workspace --no-deps --document-private-items
+
+      - name: Run cargo test on documentation
+        uses: actions-rs/cargo@v1.0.3
+        with:
+            command: test
+            args: --doc
+
+  tests:
+    name: Cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@2656b87321093db1cb55fbd73183d195214fdfd1 # v2.5.0
+
+      - name: Cargo test
+        uses: actions-rs/cargo@v1.0.3
+        with:
+          command: test
+          args: --all-targets --workspace
+
+  clippy:
+    name: Cargo clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+            profile: minimal
+            toolchain: stable
+            components: clippy
+            override: true
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@2656b87321093db1cb55fbd73183d195214fdfd1 # v2.5.0
+
+      - name: Run clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --all-targets -- -D warnings
+
+  check-wasm:
+    name: Check WASM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+            profile: minimal
+            toolchain: stable
+            components: clippy
+            target: wasm32-unknown-unknown
+            override: true
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@2656b87321093db1cb55fbd73183d195214fdfd1 # v2.5.0
+
+      - name: Install cargo-hack
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: cargo-hack
+          version: 0.5
+
+      - name: Checking wasm32 (v14)
+        run: cargo hack check --manifest-path ./frame-metadata/Cargo.toml --feature-powerset --no-dev-deps --features current --skip legacy --depth 4 --target wasm32-unknown-unknown
+
+      - name: Checking wasm32 (all features)
+        run: cargo hack check --manifest-path ./frame-metadata/Cargo.toml --feature-powerset --no-dev-deps --skip decode,serde_full --depth 4 --target wasm32-unknown-unknown
+
+  check-features:
+    name: Check Features
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+            profile: minimal
+            toolchain: stable
+            components: clippy
+            override: true
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@2656b87321093db1cb55fbd73183d195214fdfd1 # v2.5.0
+
+      - name: Install cargo-hack
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: cargo-hack
+          version: 0.5
+
+      - name: Checking v14 feature combinations (native)
+        run: cargo hack check --manifest-path ./frame-metadata/Cargo.toml --feature-powerset --no-dev-deps --features current --skip legacy --depth 4
+
+      - name: Checking feature combinations excluding decode/serde_full (native)
+        run: cargo hack check --manifest-path ./frame-metadata/Cargo.toml --feature-powerset --no-dev-deps --skip decode,serde_full --depth 4

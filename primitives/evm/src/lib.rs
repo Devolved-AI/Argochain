@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: Apache-2.0
 // This file is part of Frontier.
-//
-// Copyright (c) 2020-2022 Parity Technologies (UK) Ltd.
-//
+
+// Copyright (C) Parity Technologies (UK) Ltd.
+// SPDX-License-Identifier: Apache-2.0
+
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,11 +16,15 @@
 // limitations under the License.
 
 #![cfg_attr(not(feature = "std"), no_std)]
-#![deny(unused_crate_dependencies)]
+#![warn(unused_crate_dependencies)]
 
+extern crate alloc;
+
+mod account_provider;
 mod precompile;
 mod validation;
 
+use alloc::{collections::BTreeMap, vec::Vec};
 use frame_support::weights::{constants::WEIGHT_REF_TIME_PER_MILLIS, Weight};
 use scale_codec::{Decode, Encode};
 use scale_info::TypeInfo;
@@ -28,7 +32,6 @@ use scale_info::TypeInfo;
 use serde::{Deserialize, Serialize};
 use sp_core::{H160, H256, U256};
 use sp_runtime::Perbill;
-use sp_std::{collections::btree_map::BTreeMap, vec::Vec};
 
 pub use evm::{
 	backend::{Basic as Account, Log},
@@ -36,6 +39,7 @@ pub use evm::{
 };
 
 pub use self::{
+	account_provider::AccountProvider,
 	precompile::{
 		Context, ExitError, ExitRevert, ExitSucceed, IsPrecompileResult, LinearCostPrecompile,
 		Precompile, PrecompileFailure, PrecompileHandle, PrecompileOutput, PrecompileResult,
@@ -43,7 +47,7 @@ pub use self::{
 	},
 	validation::{
 		CheckEvmTransaction, CheckEvmTransactionConfig, CheckEvmTransactionInput,
-		InvalidEvmTransactionError,
+		TransactionValidationError,
 	},
 };
 
@@ -57,8 +61,8 @@ pub struct Vicinity {
 	pub origin: H160,
 }
 
-/// `System::Account` 16(hash) + 20 (key) + 60 (AccountInfo::max_encoded_len)
-pub const ACCOUNT_BASIC_PROOF_SIZE: u64 = 96;
+/// `System::Account` 16(hash) + 20 (key) + 72 (AccountInfo::max_encoded_len)
+pub const ACCOUNT_BASIC_PROOF_SIZE: u64 = 108;
 /// `AccountCodesMetadata` read, temptatively 16 (hash) + 20 (key) + 40 (CodeMetadata).
 pub const ACCOUNT_CODES_METADATA_PROOF_SIZE: u64 = 76;
 /// 16 (hash1) + 20 (key1) + 16 (hash2) + 32 (key2) + 32 (value)
@@ -108,6 +112,7 @@ impl WeightInfo {
 			_ => return Err("must provide Some valid weight limit or None"),
 		})
 	}
+
 	fn try_consume(&self, cost: u64, limit: u64, usage: u64) -> Result<u64, ExitError> {
 		let usage = usage.checked_add(cost).ok_or(ExitError::OutOfGas)?;
 		if usage > limit {
@@ -115,6 +120,7 @@ impl WeightInfo {
 		}
 		Ok(usage)
 	}
+
 	pub fn try_record_ref_time_or_fail(&mut self, cost: u64) -> Result<(), ExitError> {
 		if let (Some(ref_time_usage), Some(ref_time_limit)) =
 			(self.ref_time_usage, self.ref_time_limit)
@@ -127,6 +133,7 @@ impl WeightInfo {
 		}
 		Ok(())
 	}
+
 	pub fn try_record_proof_size_or_fail(&mut self, cost: u64) -> Result<(), ExitError> {
 		if let (Some(proof_size_usage), Some(proof_size_limit)) =
 			(self.proof_size_usage, self.proof_size_limit)
@@ -139,19 +146,20 @@ impl WeightInfo {
 		}
 		Ok(())
 	}
+
 	pub fn refund_proof_size(&mut self, amount: u64) {
 		if let Some(proof_size_usage) = self.proof_size_usage {
 			let proof_size_usage = proof_size_usage.saturating_sub(amount);
 			self.proof_size_usage = Some(proof_size_usage);
 		}
 	}
+
 	pub fn refund_ref_time(&mut self, amount: u64) {
 		if let Some(ref_time_usage) = self.ref_time_usage {
 			let ref_time_usage = ref_time_usage.saturating_sub(amount);
 			self.ref_time_usage = Some(ref_time_usage);
 		}
 	}
-
 	pub fn remaining_proof_size(&self) -> Option<u64> {
 		if let (Some(proof_size_usage), Some(proof_size_limit)) =
 			(self.proof_size_usage, self.proof_size_limit)

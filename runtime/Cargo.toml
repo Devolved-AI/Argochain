@@ -18,13 +18,15 @@ array-bytes = "6.1"
 hex-literal = "0.4.1"
 
 # third-party dependencies
-codec = { package = "parity-scale-codec", version = "3.6.1", default-features = false, features = [
+codec = { package = "parity-scale-codec", version = "3.6.12", default-features = false, features = [
 	"derive",
 	"max-encoded-len",
 ] }
-scale-info = { version = "2.5.0", default-features = false, features = ["derive"] }
+scale-info = {workspace = true}
+# { version = "2.5.0", default-features = false, features = ["derive"] }
 static_assertions = "1.1.0"
-log = { version = "0.4.17", default-features = false }
+# log = { version = "0.4.17", default-features = false }
+log ={workspace = true}
 
 # pallet-asset-conversion: turn on "num-traits" feature
 primitive-types = { version = "0.12.0", default-features = false, features = ["codec", "scale-info", "num-traits"] }
