@@ -50,7 +50,7 @@ repository = "https://github.com/paritytech/frontier/"
 [patch.crates-io]
 frame-metadata = { version = "16.0.0" ,git = "https://github.com/paritytech/frame-metadata", branch = "lexnv/metadata-v16-associated-types" }
 merkleized-metadata={ git="https://github.com/bkchr/merkleized-metadata.git",branch = "bkchr-fml"}
-secp256k1 = { git = "https://github.com/paritytech/substrate-secp256k1", branch = "master" }
+secp256k1 = { git = "https://github.com/rust-bitcoin/rust-secp256k1.git", branch = "master" }
 
 [workspace.dependencies]
 async-channel = { version = "1.8.0" }
