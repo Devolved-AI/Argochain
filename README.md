@@ -6,9 +6,9 @@ This branch has the following updates to the **node/Cargo.toml** and **runtime/C
     - secp256k1 = "0.30.0"
     - secp256k1-sys = "0.9.2"
 
-In addition, the Emscripten SDK may need to be installed in the project root of Argochain to acommodate the issues dealing with C, Clang, and WASM that that scep256k1 elliptic curve needs to operate, along with other crates.
+In addition, the Emscripten SDK may need to be installed in the project root of Argochain to accommodate the issues dealing with C, Clang, and WASM that that scep256k1 elliptic curve needs to operate along with other crates.
 
-You can install and activate it by running the following:
+You can install and activate the Emscripten SDK by running the following:
 
 ```
 git clone https://github.com/emscripten-core/emsdk.git
