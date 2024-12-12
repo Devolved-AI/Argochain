@@ -1,3 +1,31 @@
+# Dec 12, 2024 UPDATES
+
+This branch has the following updates to the **node/Cargo.toml** and **runtime/Cargo.toml** files
+- The addition of the following to the ***dependencies*** section
+    - zstd = "0.13.2"
+    - secp256k1 = "0.30.0"
+    - secp256k1-sys = "0.9.2"
+
+In addition, the Emscripten SDK may need to be installed in the project root of Argochain to acommodate the issues dealing with C, Clang, and WASM that that scep256k1 elliptic curve needs to operate, along with other crates.
+
+You can install and activate it by running the following:
+
+```
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+source ./emsdk_env.sh
+emcc --version
+```
+
+You should see a version number print out in your terminal.
+
+However, after running `cargo build --release` after cleaning and updating the project, the following error still persists and needs to be fixed
+
+`error: failed to run custom build command for 'secp256k1-sys v0.9.2'`
+
+
 # Argochain-SDK
 ![photo_2024-04-29 13 29 45](https://github.com/Devolved-AI/Argochain/assets/96510238/9989a2c0-dbdf-4baa-b8fc-54e3c75f7445)
 ------------------
