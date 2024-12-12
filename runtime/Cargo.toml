@@ -44,6 +44,8 @@ sp-api = {  default-features = false, git = "https://github.com/paritytech/polka
 sp-runtime = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2407" }
 
 sp-staking = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2407" }
+getrandom = { version = "0.2", features = ["js"] }
+
 sp-session = { default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2407"}
 sp-transaction-pool = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2407"}
 sp-statement-store = { default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2407"}

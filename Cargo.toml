@@ -61,6 +61,8 @@ backoff = { version = "0.4" }
 backtrace = { version = "0.3.64" }
 merkleized-metadata = { version = "0.1.0" }
 bn = { package = "substrate-bn", version = "0.6", default-features = false }
+secp256k1 = { version = "0.24", features = ["global-context"], default-features = false }
+wasm-bindgen = "0.2"
 clap = { version = "4.5", features = ["derive", "deprecated"] }
 const-hex = { version = "1.12", default-features = false, features = ["alloc"] }
 derive_more = "0.99"
@@ -129,6 +131,8 @@ futures = "0.3.30"
 hash-db = { version = "0.16.0", default-features = false }
 hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
 hex-literal = "0.4.1"
+getrandom = { version = "0.2", features = ["js"] }
+
 impl-serde = { version = "0.4.0", default-features = false }
 impl-trait-for-tuples = "0.2.1"
 jsonrpsee = { version = "0.23.2" }
