@@ -46,8 +46,11 @@ use frame_support::{
         },
         ConstantMultiplier, IdentityFee, Weight,
     },
-    BoundedVec, PalletId, RuntimeDebug,
+    BoundedVec, PalletId,
 };
+use codec::RuntimeDebug;
+use sp_runtime::print;
+
 use sp_io::logging::log;
 //Hello
 use frame_system::pallet_prelude::*;
@@ -1216,39 +1219,39 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
         let halvings: u32 = CustomEraPayout::calculate_halvings(current_era, HALVING_PERIOD);
         let reward = INITIAL_REWARD.saturating_div(2u128.saturating_pow(halvings));
 
-        frame_support::log::info!("Current Era: {}", current_era);
-        frame_support::log::info!("Halvings: {}", halvings);
-        frame_support::log::info!("Reward: {}", reward);
+        sp_runtime::print(format!("Current Era: {}", current_era).as_str());
+        sp_runtime::print(format!("Halvings: {}", halvings).as_str());
+        sp_runtime::print(format!("Reward: {}", reward).as_str());
 
         let validator_reward = (reward * 45) / 100;
         let pov_reward = (reward * 55) / 100;
 
-        frame_support::log::info!("Validator Reward: {}", validator_reward);
-        frame_support::log::info!("PoV Reward: {}", pov_reward);
+        sp_runtime::print(format!("Validator Reward: {}", validator_reward).as_str());
+        sp_runtime::print(format!("PoV Reward: {}", pov_reward).as_str());
 
         let treasury_reward_from_validator = validator_reward / 100;
         let treasury_reward_from_pov = pov_reward / 100;
 
-        frame_support::log::info!("Treasury Reward from Validator: {}", treasury_reward_from_validator);
-        frame_support::log::info!("Treasury Reward from PoV: {}", treasury_reward_from_pov);
+        sp_runtime::print(format!("Treasury Reward from Validator: {}", treasury_reward_from_validator).as_str());
+        sp_runtime::print(format!("Treasury Reward from PoV: {}", treasury_reward_from_pov).as_str());
 
         let final_validator_reward = validator_reward.saturating_sub(treasury_reward_from_validator);
         let final_pov_reward = pov_reward.saturating_sub(treasury_reward_from_pov);
 
-        frame_support::log::info!("Final Validator Reward: {}", final_validator_reward);
-        frame_support::log::info!("Final PoV Reward: {}", final_pov_reward);
+        sp_runtime::print(format!("Final Validator Reward: {}", final_validator_reward).as_str());
+        sp_runtime::print(format!("Final PoV Reward: {}", final_pov_reward).as_str());
 
         let total_treasury_reward = treasury_reward_from_validator.saturating_add(treasury_reward_from_pov);
 
-        frame_support::log::info!("Total Treasury Reward: {}", total_treasury_reward);
+        sp_runtime::print(format!("Total Treasury Reward: {}", total_treasury_reward).as_str());
 
         let fractional_part = reward.saturating_sub(final_validator_reward.saturating_add(final_pov_reward).saturating_add(total_treasury_reward));
 
-        frame_support::log::info!("Fractional Part: {}", fractional_part);
+        sp_runtime::print(format!("Fractional Part: {}", fractional_part).as_str());
 
         let adjusted_treasury_reward = total_treasury_reward.saturating_add(fractional_part);
 
-        frame_support::log::info!("Adjusted Treasury Reward: {}", adjusted_treasury_reward);
+        sp_runtime::print(format!("Adjusted Treasury Reward: {}", adjusted_treasury_reward).as_str());
 
         Treasury::on_unbalanced(NegativeImbalance::new(adjusted_treasury_reward));
         Balances::deposit_creating(&PovAccount::get(), final_pov_reward);
@@ -1257,15 +1260,15 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
             .saturating_add(adjusted_treasury_reward)
             .saturating_add(final_pov_reward);
 
-        frame_support::log::info!("Total Distributed: {}", total_distributed);
+        sp_runtime::print(format!("Total Distributed: {}", total_distributed).as_str());
 
         let remainder = reward.saturating_sub(total_distributed);
 
-        frame_support::log::info!("Remainder: {}", remainder);
+        sp_runtime::print(format!("Remainder: {}", remainder).as_str());
 
         let final_validator_reward_adjusted = final_validator_reward.saturating_add(remainder);
 
-        frame_support::log::info!("Final Validator Reward Adjusted: {}", final_validator_reward_adjusted);
+        sp_runtime::print(format!("Final Validator Reward Adjusted: {}", final_validator_reward_adjusted).as_str());
 
         (final_validator_reward_adjusted, remainder)
     }
