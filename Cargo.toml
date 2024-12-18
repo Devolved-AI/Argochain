@@ -50,6 +50,7 @@ repository = "https://github.com/paritytech/frontier/"
 [patch.crates-io]
 frame-metadata = { version = "16.0.0" ,git = "https://github.com/paritytech/frame-metadata", branch = "lexnv/metadata-v16-associated-types" }
 merkleized-metadata={ git="https://github.com/bkchr/merkleized-metadata.git",branch = "bkchr-fml"}
+environmental = { git = "https://github.com/paritytech/environmental", branch = "master" }
 # getrandom = {git ="https://github.com/rust-random/getrandom.git",branch = "master",features = ["js"]}
 
 [workspace.dependencies]
@@ -58,6 +59,10 @@ async-std = { version = "1.9.0" }
 async-trait = { version = "0.1.79" }
 asynchronous-codec = { version = "0.6" }
 backoff = { version = "0.4" }
+tracing = { version = "0.1.37", default-features = false }
+tracing-core = { version = "0.1.32", default-features = false }
+tracing-log = { version = "0.2.0" }
+tracing-subscriber = { version = "0.3.18" }
 backtrace = { version = "0.3.64" }
 merkleized-metadata = { version = "0.1.0" }
 bn = { package = "substrate-bn", version = "0.6", default-features = false }
