@@ -63,6 +63,7 @@ merkleized-metadata = { version = "0.1.0" }
 bn = { package = "substrate-bn", version = "0.6", default-features = false }
 secp256k1 = { version = "0.24", features = ["global-context"], default-features = false }
 wasm-bindgen = "0.2"
+secp256k1-sys = "0.10.1"
 clap = { version = "4.5", features = ["derive", "deprecated"] }
 const-hex = { version = "1.12", default-features = false, features = ["alloc"] }
 derive_more = "0.99"
@@ -123,7 +124,7 @@ blake2b_simd = { version = "1.0.1", default-features = false }
 blake3 = { version = "1.5" }
 bounded-collections = { version = "0.2.0", default-features = false }
 bounded-vec = { version = "0.7" }
-environmental = { version = "1.1.4", default-features = false }
+environmental = { version = "1.1.4", default-features = false, features = ["std"] }
 ethereum = { version = "0.15.0", default-features = false }
 ethereum-types = { version = "0.14.1", default-features = false }
 evm = { version = "0.41.1", default-features = false }
