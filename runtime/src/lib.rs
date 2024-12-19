@@ -21,7 +21,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limits.
 #![recursion_limit = "1024"]
-
+// use polkadot_sdk::*;
+// use alloc::{vec, vec::Vec};
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_election_provider_support::{
     onchain, BalancingConfig, ElectionDataProvider, SequentialPhragmen, VoteWeight,
@@ -29,8 +30,8 @@ use frame_election_provider_support::{
 use frame_support::{
     construct_runtime,
     dispatch::DispatchClass,
-    instances::{Instance1, Instance2},
 	dynamic_params::{dynamic_pallet_params, dynamic_params},
+    instances::{Instance1, Instance2},
     ord_parameter_types,
     pallet_prelude::Get,
     parameter_types,
@@ -455,42 +456,9 @@ parameter_types! {
     pub const PreimageByteDeposit: Balance = 1 * CENTS;
 }
 
-// impl pallet_preimage::Config for Runtime {
-//     type WeightInfo = pallet_preimage::weights::SubstrateWeight<Runtime>;
-//     type RuntimeEvent = RuntimeEvent;
-//     type Currency = Balances;
-//     type ManagerOrigin = EnsureRoot<AccountId>;
-//     type BaseDeposit = PreimageBaseDeposit;
-//     type ByteDeposit = PreimageByteDeposit;
-// }
-/// Dynamic parameters that can be changed at runtime through the
-/// `pallet_parameters::set_parameter`.
-#[dynamic_params(RuntimeParameters, pallet_parameters::Parameters::<Runtime>)]
-pub mod dynamic_params {
-	use super::*;
 
-	#[dynamic_pallet_params]
-	#[codec(index = 0)]
-	pub mod storage {
-		/// Configures the base deposit of storing some data.
-		#[codec(index = 0)]
-		pub static BaseDeposit: Balance = 1 * DOLLARS;
 
-		/// Configures the per-byte deposit of storing some data.
-		#[codec(index = 1)]
-		pub static ByteDeposit: Balance = 1 * CENTS;
-	}
-}
 
-#[cfg(feature = "runtime-benchmarks")]
-impl Default for RuntimeParameters {
-	fn default() -> Self {
-		RuntimeParameters::Storage(dynamic_params::storage::Parameters::BaseDeposit(
-			dynamic_params::storage::BaseDeposit,
-			Some(1 * ARGO),
-		))
-	}
-}
 impl pallet_preimage::Config for Runtime {
 	type WeightInfo = pallet_preimage::weights::SubstrateWeight<Runtime>;
 	type RuntimeEvent = RuntimeEvent;
@@ -501,12 +469,22 @@ impl pallet_preimage::Config for Runtime {
 		Balances,
 		PreimageHoldReason,
 		LinearStoragePrice<
-			dynamic_params::storage::BaseDeposit,
-			dynamic_params::storage::ByteDeposit,
+			PreimageBaseDeposit,
+			PreimageByteDeposit,
 			Balance,
 		>,
 	>;
 }
+
+// impl pallet_preimage::Config for Runtime {
+//     type WeightInfo = pallet_preimage::weights::SubstrateWeight<Runtime>;
+//     type RuntimeEvent = RuntimeEvent;
+//     type Currency = Balances;
+//     type ManagerOrigin = EnsureRoot<AccountId>;
+//     type BaseDeposit = PreimageBaseDeposit;
+//     type ByteDeposit = PreimageByteDeposit;
+// }
+
 parameter_types! {
     // NOTE: Currently it is not possible to change the epoch duration after the chain has started.
     //       Attempting to do so will brick block production.
@@ -551,6 +529,8 @@ parameter_types! {
 
 impl pallet_balances::Config for Runtime {
     type MaxLocks = MaxLocks;
+	type RuntimeFreezeReason = RuntimeFreezeReason;
+	type RuntimeHoldReason = RuntimeHoldReason;
     type MaxReserves = MaxReserves;
     type ReserveIdentifier = [u8; 8];
     type Balance = Balance;
@@ -559,10 +539,8 @@ impl pallet_balances::Config for Runtime {
     type ExistentialDeposit = ExistentialDeposit;
     type AccountStore = frame_system::Pallet<Runtime>;
     type WeightInfo = pallet_balances::weights::SubstrateWeight<Runtime>;
-    type FreezeIdentifier = ();
-    type MaxFreezes = ();
-    type RuntimeHoldReason = RuntimeHoldReason;
-    type MaxHolds = ConstU32<2>;
+    type FreezeIdentifier = RuntimeFreezeReason;
+	type MaxFreezes = VariantCountOf<RuntimeFreezeReason>;
 }
 
 parameter_types! {
@@ -600,10 +578,26 @@ impl pallet_asset_tx_payment::Config for Runtime {
 
 impl pallet_asset_conversion_tx_payment::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
-    type Fungibles = Assets;
+    // type Fungibles = Assets;
+	type AssetId = NativeOrWithId<u32>;
+
     type OnChargeAssetTransaction =
         pallet_asset_conversion_tx_payment::AssetConversionAdapter<Balances, AssetConversion>;
 }
+// impl pallet_transaction_payment::Config for Runtime {
+// 	type RuntimeEvent = RuntimeEvent;
+// 	type OnChargeTransaction = CurrencyAdapter<Balances, DealWithFees>;
+// 	type OperationalFeeMultiplier = OperationalFeeMultiplier;
+// 	type WeightToFee = IdentityFee<Balance>;
+// 	type LengthToFee = ConstantMultiplier<Balance, TransactionByteFee>;
+// 	type FeeMultiplierUpdate = TargetedFeeAdjustment<
+// 		Self,
+// 		TargetBlockFullness,
+// 		AdjustmentVariable,
+// 		MinimumMultiplier,
+// 		MaximumMultiplier,
+// 	>;
+// }
 
 parameter_types! {
     pub const MinimumPeriod: Moment = SLOT_DURATION / 2;
