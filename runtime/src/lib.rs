@@ -95,6 +95,7 @@ use pallet_base_fee;
 use pallet_dynamic_fee;
 mod precompiles;
 use precompiles::FrontierPrecompiles;
+mod migrations;
 
 ///
 use sp_core::crypto::AccountId32;
@@ -186,10 +187,10 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // and set impl_version to 0. If only runtime
     // implementation changes and behavior does not, then leave spec_version as
     // is and increment impl_version.
-    spec_version: 2,
+    spec_version: 114,
     impl_version: 0,
     apis: RUNTIME_API_VERSIONS,
-    transaction_version: 2,
+    transaction_version: 3,
     state_version: 1,
 };
 
@@ -3160,6 +3161,7 @@ pub type Executive = frame_executive::Executive<
     frame_system::ChainContext<Runtime>,
     Runtime,
     AllPalletsWithSystem,
+    migrations::V98ToV114,
 >;
 
 impl fp_self_contained::SelfContainedCall for RuntimeCall {
