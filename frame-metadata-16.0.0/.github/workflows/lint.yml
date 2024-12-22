@@ -1,0 +1,35 @@
+name:                   Check style
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+    tags:
+      - v*
+    paths-ignore:
+      - 'README.md'
+jobs:
+## Check stage
+  check-fmt:
+    name:                          Check RustFmt
+    runs-on:                       ubuntu-latest
+    env:
+      RUST_BACKTRACE:   full
+    steps:
+      - name:           Cancel Previous Runs
+        uses:           styfle/cancel-workflow-action@b173b6ec0100793626c2d9e6b90435061f4fc3e5 # 0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name:           Checkout sources & submodules
+        uses:           actions/checkout@v3
+        with:
+          fetch-depth:  5
+          submodules:   recursive
+      - name:           Add rustfmt
+        run:            rustup component add rustfmt
+      - name:           rust-fmt check
+        uses:           actions-rs/cargo@v1
+        with:
+          command:      fmt
+          args:         --all -- --check
