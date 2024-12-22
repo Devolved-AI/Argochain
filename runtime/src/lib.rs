@@ -66,6 +66,8 @@ use sp_io::logging::log;
 //Hello
 use frame_system::pallet_prelude::*;
 use sp_runtime::traits::Saturating; 
+use sp_statement_store::Proof;
+
 use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
@@ -618,6 +620,7 @@ parameter_types! {
 const_assert!(NORMAL_DISPATCH_RATIO.deconstruct() >= AVERAGE_ON_INITIALIZE_RATIO.deconstruct());
 pub type SafeMode = pallet_safe_mode::Pallet<Runtime>;
 // pub type TxPause = pallet_tx_pause::Pallet<Runtime>;
+pub type MultiBlockMigrations = pallet_migrations::Pallet<Runtime>;
 
 impl frame_system::Config for Runtime {
     // type BaseCallFilter = InsideBoth<SafeMode, TxPause>;
@@ -644,6 +647,13 @@ impl frame_system::Config for Runtime {
     type SS58Prefix = ConstU16<42>;
     type OnSetCode = ();
     type MaxConsumers = ConstU32<16>;
+    type MultiBlockMigrator = MultiBlockMigrations;
+    type RuntimeTask = (); 
+    type SingleBlockMigrations = (); 
+    type PreInherents = (); 
+    type PostInherents = ();
+    type PostTransactions = ();
+
 }
 
 impl pallet_insecure_randomness_collective_flip::Config for Runtime {}
@@ -695,6 +705,8 @@ parameter_types! {
     MaxEncodedLen,
     scale_info::TypeInfo,
 )]
+// #[derive(Debug, Clone, PartialEq, Eq, codec::Encode, codec::Decode)]
+#[derive(Debug)]
 pub enum ProxyType {
     Any,
     NonTransfer,
@@ -3493,54 +3505,54 @@ impl_runtime_apis! {
     }
 
     impl pallet_mmr::primitives::MmrApi<
-        Block,
-        mmr::Hash,
-        BlockNumber,
-    > for Runtime {
-        fn mmr_root() -> Result<mmr::Hash, mmr::Error> {
-            Ok(Mmr::mmr_root())
-        }
+		Block,
+		mmr::Hash,
+		BlockNumber,
+	> for Runtime {
+		fn mmr_root() -> Result<mmr::Hash, mmr::Error> {
+			Ok(pallet_mmr::RootHash::<Runtime>::get())
+		}
 
-        fn mmr_leaf_count() -> Result<mmr::LeafIndex, mmr::Error> {
-            Ok(Mmr::mmr_leaves())
-        }
+		fn mmr_leaf_count() -> Result<mmr::LeafIndex, mmr::Error> {
+			Ok(pallet_mmr::NumberOfLeaves::<Runtime>::get())
+		}
 
-        fn generate_proof(
-            block_numbers: Vec<BlockNumber>,
-            best_known_block_number: Option<BlockNumber>,
-        ) -> Result<(Vec<mmr::EncodableOpaqueLeaf>, mmr::Proof<mmr::Hash>), mmr::Error> {
-            Mmr::generate_proof(block_numbers, best_known_block_number).map(
-                |(leaves, proof)| {
-                    (
-                        leaves
-                            .into_iter()
-                            .map(|leaf| mmr::EncodableOpaqueLeaf::from_leaf(&leaf))
-                            .collect(),
-                        proof,
-                    )
-                },
-            )
-        }
+		fn generate_proof(
+			block_numbers: Vec<BlockNumber>,
+			best_known_block_number: Option<BlockNumber>,
+		) -> Result<(Vec<mmr::EncodableOpaqueLeaf>, mmr::LeafProof<mmr::Hash>), mmr::Error> {
+			Mmr::generate_proof(block_numbers, best_known_block_number).map(
+				|(leaves, proof)| {
+					(
+						leaves
+							.into_iter()
+							.map(|leaf| mmr::EncodableOpaqueLeaf::from_leaf(&leaf))
+							.collect(),
+						proof,
+					)
+				},
+			)
+		}
 
-        fn verify_proof(leaves: Vec<mmr::EncodableOpaqueLeaf>, proof: mmr::Proof<mmr::Hash>)
-            -> Result<(), mmr::Error>
-        {
-            let leaves = leaves.into_iter().map(|leaf|
-                leaf.into_opaque_leaf()
-                .try_decode()
-                .ok_or(mmr::Error::Verify)).collect::<Result<Vec<mmr::Leaf>, mmr::Error>>()?;
-            Mmr::verify_leaves(leaves, proof)
-        }
+		fn verify_proof(leaves: Vec<mmr::EncodableOpaqueLeaf>, proof: mmr::LeafProof<mmr::Hash>)
+			-> Result<(), mmr::Error>
+		{
+			let leaves = leaves.into_iter().map(|leaf|
+				leaf.into_opaque_leaf()
+				.try_decode()
+				.ok_or(mmr::Error::Verify)).collect::<Result<Vec<mmr::Leaf>, mmr::Error>>()?;
+			Mmr::verify_leaves(leaves, proof)
+		}
 
-        fn verify_proof_stateless(
-            root: mmr::Hash,
-            leaves: Vec<mmr::EncodableOpaqueLeaf>,
-            proof: mmr::Proof<mmr::Hash>
-        ) -> Result<(), mmr::Error> {
-            let nodes = leaves.into_iter().map(|leaf|mmr::DataOrHash::Data(leaf.into_opaque_leaf())).collect();
-            pallet_mmr::verify_leaves_proof::<mmr::Hashing, _>(root, nodes, proof)
-        }
-    }
+		fn verify_proof_stateless(
+			root: mmr::Hash,
+			leaves: Vec<mmr::EncodableOpaqueLeaf>,
+			proof: mmr::LeafProof<mmr::Hash>
+		) -> Result<(), mmr::Error> {
+			let nodes = leaves.into_iter().map(|leaf|mmr::DataOrHash::Data(leaf.into_opaque_leaf())).collect();
+			pallet_mmr::verify_leaves_proof::<mmr::Hashing, _>(root, nodes, proof)
+		}
+	}
 
     impl sp_session::SessionKeys<Block> for Runtime {
         fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {
