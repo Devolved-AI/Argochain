@@ -141,6 +141,8 @@ pallet-whitelist = { version = "37.0.0", default-features = false, git = "https:
 # pallet-revive-mock-network = { workspace = true }
 # pallet-revive-proc-macro = { workspace = true }
 # pallet-revive-uapi = { workspace = true }
+pallet-skip-feeless-payment={workspace = true}
+frame-metadata-hash-extension={workspace = true}
 # Frontier
 fp-account = { workspace = true, features = ["serde"] }
 fp-evm = { workspace = true, features = ["serde"] }

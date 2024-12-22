@@ -47,7 +47,7 @@ use frame_support::{
         AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Contains, Currency,
 		EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, Imbalance, InsideBoth,
 		InstanceFilter, KeyOwnerProofSystem, LinearStoragePrice, LockIdentifier, Nothing,
-		OnUnbalanced, VariantCountOf, WithdrawReasons,
+		OnUnbalanced, VariantCountOf, WithdrawReasons,FindAuthor,
 	},
     weights::{
         constants::{
@@ -60,6 +60,8 @@ use frame_support::{
 
 // use codec::RuntimeDebug;
 use sp_runtime::print;
+// use frame_support::traits::FindAuthor;
+
 // use sp_runtime::RuntimeLogger;
 
 use sp_io::logging::log;
@@ -67,12 +69,14 @@ use sp_io::logging::log;
 use frame_system::pallet_prelude::*;
 use sp_runtime::traits::Saturating; 
 use sp_statement_store::Proof;
+// use frame_support::traits::validation::FindAuthor;
+
 
 use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
 };
-use pallet_session::FindAuthor;
+// use pallet_session::FindAuthor;
 
 pub use node_primitives::{AccountId, Signature};
 pub use node_primitives::{AccountIndex, Balance, BlockNumber, Hash, Moment, Nonce};
@@ -927,12 +931,12 @@ impl pallet_asset_tx_payment::Config for Runtime {
         CreditToBlockAuthor,
     >;
 }
-
-impl<Native, NativeAndAssets> pallet_asset_conversion_tx_payment::Config for Runtime {
+// use pallet_asset_conversion_tx_payment::SwapAssetAdapter;
+impl pallet_asset_conversion_tx_payment::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type AssetId = NativeOrWithId<u32>;
 	type OnChargeAssetTransaction = SwapAssetAdapter<
-		Native,
+		Balances,
 		NativeAndAssets,
 		AssetConversion,
 		ResolveAssetTo<TreasuryAccount, NativeAndAssets>,
@@ -965,8 +969,8 @@ impl pallet_timestamp::Config for Runtime {
 }
 
 impl pallet_authorship::Config for Runtime {
-    // type FindAuthor = pallet_session::FindAccountFromAuthorIndex<Self, Babe>;
-    type FindAuthor = FindAuthorH160<Self>;
+    type FindAuthor = pallet_session::FindAccountFromAuthorIndex<Self, Babe>;
+    // type FindAuthor = FindAuthorH160<Self>;
     type EventHandler = (Staking, ImOnline);
 }
 
@@ -1831,52 +1835,60 @@ parameter_types! {
     pub const MaxKeys: u32 = 10_000;
     pub const MaxPeerInHeartbeats: u32 = 10_000;
 }
+// pub type AssetConversionTxPayment = pallet_asset_conversion_tx_payment::Pallet<Runtime>;
+
+pub type SkipFeelessPayment = pallet_skip_feeless_payment::Pallet<Runtime>;
+
+
+impl pallet_skip_feeless_payment::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+}
 
 impl<LocalCall> frame_system::offchain::CreateSignedTransaction<LocalCall> for Runtime
 where
-    RuntimeCall: From<LocalCall>,
+	RuntimeCall: From<LocalCall>,
 {
-    fn create_transaction<C: frame_system::offchain::AppCrypto<Self::Public, Self::Signature>>(
-        call: RuntimeCall,
-        public: <Signature as traits::Verify>::Signer,
-        account: AccountId,
-        nonce: Nonce,
-    ) -> Option<(
-        RuntimeCall,
-        <UncheckedExtrinsic as traits::Extrinsic>::SignaturePayload,
-    )> {
-        let tip = 0;
-        // take the biggest period possible.
-        let period = BlockHashCount::get()
-            .checked_next_power_of_two()
-            .map(|c| c / 2)
-            .unwrap_or(2) as u64;
-        let current_block = System::block_number()
-            .saturated_into::<u64>()
-            // The `System::block_number` is initialized with `n+1`,
-            // so the actual block number is `n`.
-            .saturating_sub(1);
-        let era = Era::mortal(period, current_block);
-        let extra = (
-            frame_system::CheckNonZeroSender::<Runtime>::new(),
-            frame_system::CheckSpecVersion::<Runtime>::new(),
-            frame_system::CheckTxVersion::<Runtime>::new(),
-            frame_system::CheckGenesis::<Runtime>::new(),
-            frame_system::CheckEra::<Runtime>::from(era),
-            frame_system::CheckNonce::<Runtime>::from(nonce),
-            frame_system::CheckWeight::<Runtime>::new(),
-            pallet_transaction_payment::ChargeTransactionPayment::<Runtime>::from(tip),
-        );
-        let raw_payload = SignedPayload::new(call, extra)
-            .map_err(|e| {
-                log::warn!("Unable to create signed payload: {:?}", e);
-            })
-            .ok()?;
-        let signature = raw_payload.using_encoded(|payload| C::sign(payload, public))?;
-        let address = Indices::unlookup(account);
-        let (call, extra, _) = raw_payload.deconstruct();
-        Some((call, (address, signature, extra)))
-    }
+	fn create_transaction<C: frame_system::offchain::AppCrypto<Self::Public, Self::Signature>>(
+		call: RuntimeCall,
+		public: <Signature as traits::Verify>::Signer,
+		account: AccountId,
+		nonce: Nonce,
+	) -> Option<(RuntimeCall, <UncheckedExtrinsic as traits::Extrinsic>::SignaturePayload)> {
+		let tip = 0;
+		// take the biggest period possible.
+		let period =
+			BlockHashCount::get().checked_next_power_of_two().map(|c| c / 2).unwrap_or(2) as u64;
+		let current_block = System::block_number()
+			.saturated_into::<u64>()
+			// The `System::block_number` is initialized with `n+1`,
+			// so the actual block number is `n`.
+			.saturating_sub(1);
+		let era = Era::mortal(period, current_block);
+		let extra = (
+			frame_system::CheckNonZeroSender::<Runtime>::new(),
+			frame_system::CheckSpecVersion::<Runtime>::new(),
+			frame_system::CheckTxVersion::<Runtime>::new(),
+			frame_system::CheckGenesis::<Runtime>::new(),
+			frame_system::CheckEra::<Runtime>::from(era),
+			frame_system::CheckNonce::<Runtime>::from(nonce),
+			frame_system::CheckWeight::<Runtime>::new(),
+			pallet_skip_feeless_payment::SkipCheckIfFeeless::from(
+				pallet_asset_conversion_tx_payment::ChargeAssetTxPayment::<Runtime>::from(
+					tip, None,
+				),
+			),
+			frame_metadata_hash_extension::CheckMetadataHash::new(false),
+		);
+		let raw_payload = SignedPayload::new(call, extra)
+			.map_err(|e| {
+				log::warn!("Unable to create signed payload: {:?}", e);
+			})
+			.ok()?;
+		let signature = raw_payload.using_encoded(|payload| C::sign(payload, public))?;
+		let address = Indices::unlookup(account);
+		let (call, extra, _) = raw_payload.deconstruct();
+		Some((call, (address, signature, extra)))
+	}
 }
 
 impl frame_system::offchain::SigningTypes for Runtime {
@@ -2518,21 +2530,27 @@ impl pallet_statement::Config for Runtime {
     type MaxAllowedBytes = MaxAllowedBytes;
 }
 
-pub struct FindAuthorH160<T>(PhantomData<T>);
+// use sp_runtime::ConsensusEngineId;
+// use sp_core::H160;
 
-impl<T: pallet_authorship::Config> FindAuthor<H160> for FindAuthorH160<T> {
+
+pub struct FindAuthorTruncated<F>(PhantomData<F>);
+impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
     fn find_author<'a, I>(digests: I) -> Option<H160>
     where
         I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
     {
-        if let Some(author_account) = pallet_session::FindAccountFromAuthorIndex::<T, sp_consensus_babe::AuthorityId>::find_account(digests) {
+        if let Some(author_index) = F::find_author(digests) {
+            let authority_id = Babe::authorities()[author_index as usize].clone().0;
             return Some(H160::from_slice(
-                &sp_core::crypto::ByteArray::to_raw_vec(&author_account)[4..24],
+                &sp_core::crypto::ByteArray::to_raw_vec(&authority_id)[4..24],
             ));
         }
         None
     }
 }
+
+
 
 const BLOCK_GAS_LIMIT: u64 = 200_000_000;
 const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
@@ -2595,7 +2613,7 @@ impl pallet_evm::Config for Runtime {
     type OnChargeTransaction = EVMCurrencyAdapter<Balances, DealWithFees>;
     type OnCreate = ();
     // type FindAuthor = FindAuthorTruncated<Babe>;
-    type FindAuthor = FindAuthorH160<Self>;
+    type FindAuthor = FindAuthorTruncated<Babe>;
     type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
     type Timestamp = Timestamp;
     type WeightInfo = pallet_evm::weights::SubstrateWeight<Self>;
@@ -3710,15 +3728,29 @@ impl fp_rpc::ConvertTransaction<opaque::UncheckedExtrinsic> for TransactionConve
 
 
 /// The SignedExtension to the basic transaction logic.
+// pub type SignedExtra = (
+//     frame_system::CheckNonZeroSender<Runtime>,
+//     frame_system::CheckSpecVersion<Runtime>,
+//     frame_system::CheckTxVersion<Runtime>,
+//     frame_system::CheckGenesis<Runtime>,
+//     frame_system::CheckEra<Runtime>,
+//     frame_system::CheckNonce<Runtime>,
+//     frame_system::CheckWeight<Runtime>,
+//     pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
+// );
 pub type SignedExtra = (
-    frame_system::CheckNonZeroSender<Runtime>,
-    frame_system::CheckSpecVersion<Runtime>,
-    frame_system::CheckTxVersion<Runtime>,
-    frame_system::CheckGenesis<Runtime>,
-    frame_system::CheckEra<Runtime>,
-    frame_system::CheckNonce<Runtime>,
-    frame_system::CheckWeight<Runtime>,
-    pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
+	frame_system::CheckNonZeroSender<Runtime>,
+	frame_system::CheckSpecVersion<Runtime>,
+	frame_system::CheckTxVersion<Runtime>,
+	frame_system::CheckGenesis<Runtime>,
+	frame_system::CheckEra<Runtime>,
+	frame_system::CheckNonce<Runtime>,
+	frame_system::CheckWeight<Runtime>,
+	pallet_skip_feeless_payment::SkipCheckIfFeeless<
+		Runtime,
+		pallet_asset_conversion_tx_payment::ChargeAssetTxPayment<Runtime>,
+	>,
+	frame_metadata_hash_extension::CheckMetadataHash<Runtime>,
 );
 /// Unchecked extrinsic type as expected by this runtime.
 pub type UncheckedExtrinsic =
