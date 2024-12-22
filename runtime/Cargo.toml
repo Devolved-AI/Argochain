@@ -136,7 +136,11 @@ pallet-transaction-storage = { version = "37.0.0", default-features = false, git
 pallet-uniques = { version = "38.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 pallet-vesting = { version = "38.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 pallet-whitelist = { version = "37.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
-
+# pallet-revive = { workspace = true }
+# pallet-revive-fixtures = { workspace = true }
+# pallet-revive-mock-network = { workspace = true }
+# pallet-revive-proc-macro = { workspace = true }
+# pallet-revive-uapi = { workspace = true }
 # Frontier
 fp-account = { workspace = true, features = ["serde"] }
 fp-evm = { workspace = true, features = ["serde"] }

@@ -144,8 +144,15 @@ frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branc
 frame-executive = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
 # frame-support = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
 frame-support = { version = "38.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409", features = ["tuples-96","experimental"]}
+# pallet-revive = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false, version = "0.2.0" }
+# pallet-revive-fixtures = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409",  default-features = false, version = "0.2.0" }
+# pallet-revive-mock-network = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false, version = "0.2.0" }
+# pallet-revive-proc-macro = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409",  default-features = false, version = "0.1.1" }
+# pallet-revive-uapi = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409",  default-features = false, version = "0.1.1" }
 
 # frame-support = { path = "frame/support", default-features = false, version = "38.0.0" }
+pallet-tx-pause = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false, version="19.0.0" }
+
 frame-system = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
 frame-system-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
 frame-system-rpc-runtime-api = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
