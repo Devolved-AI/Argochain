@@ -70,10 +70,11 @@ use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
 };
+use pallet_session::FindAuthor;
 
 pub use node_primitives::{AccountId, Signature};
 pub use node_primitives::{AccountIndex, Balance, BlockNumber, Hash, Moment, Nonce};
-// use pallet_asset_conversion::{NativeOrAssetId, NativeOrAssetIdConverter};
+// use pallet_asset_conversion::{NativeAndAssets, NativeAndAssetsConverter};
 use pallet_asset_conversion::{AccountIdConverter, Ascending, Chain, WithFirstAsset,};
 
 #[cfg(feature = "runtime-benchmarks")]
@@ -952,7 +953,8 @@ impl pallet_timestamp::Config for Runtime {
 }
 
 impl pallet_authorship::Config for Runtime {
-    type FindAuthor = pallet_session::FindAccountFromAuthorIndex<Self, Babe>;
+    // type FindAuthor = pallet_session::FindAccountFromAuthorIndex<Self, Babe>;
+    type FindAuthor = FindAuthorH160<Self>;
     type EventHandler = (Staking, ImOnline);
 }
 
@@ -2132,7 +2134,7 @@ parameter_types! {
 //     type Balance = u128;
 //     type PoolAssets = PoolAssets;
 //     type AssetId = <Self as pallet_assets::Config<Instance1>>::AssetId;
-//     type MultiAssetId = NativeOrAssetId<u32>;
+//     type MultiAssetId = NativeAndAssets<u32>;
 //     type PoolAssetId = <Self as pallet_assets::Config<Instance2>>::AssetId;
 //     type PalletId = AssetConversionPalletId;
 //     type LPFee = ConstU32<3>; // means 0.3%
@@ -2143,7 +2145,7 @@ parameter_types! {
 //     type AllowMultiAssetPools = AllowMultiAssetPools;
 //     type MaxSwapPathLength = ConstU32<4>;
 //     type MintMinLiquidity = MintMinLiquidity;
-//     type MultiAssetIdConverter = NativeOrAssetIdConverter<u32>;
+//     type MultiAssetIdConverter = NativeAndAssetsConverter<u32>;
 //     #[cfg(feature = "runtime-benchmarks")]
 //     type BenchmarkHelper = ();
 // }
@@ -2504,21 +2506,22 @@ impl pallet_statement::Config for Runtime {
     type MaxAllowedBytes = MaxAllowedBytes;
 }
 
-pub struct FindAuthorTruncated<F>(PhantomData<F>);
-impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
+pub struct FindAuthorH160<T>(PhantomData<T>);
+
+impl<T: pallet_authorship::Config> FindAuthor<H160> for FindAuthorH160<T> {
     fn find_author<'a, I>(digests: I) -> Option<H160>
     where
         I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
     {
-        if let Some(author_index) = F::find_author(digests) {
-            let authority_id = Babe::authorities()[author_index as usize].clone().0;
+        if let Some(author_account) = pallet_session::FindAccountFromAuthorIndex::<T, sp_consensus_babe::AuthorityId>::find_account(digests) {
             return Some(H160::from_slice(
-                &sp_core::crypto::ByteArray::to_raw_vec(&authority_id)[4..24],
+                &sp_core::crypto::ByteArray::to_raw_vec(&author_account)[4..24],
             ));
         }
         None
     }
 }
+
 const BLOCK_GAS_LIMIT: u64 = 200_000_000;
 const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
 parameter_types! {
@@ -2579,7 +2582,8 @@ impl pallet_evm::Config for Runtime {
     type Runner = pallet_evm::runner::stack::Runner<Self>;
     type OnChargeTransaction = EVMCurrencyAdapter<Balances, DealWithFees>;
     type OnCreate = ();
-    type FindAuthor = FindAuthorTruncated<Babe>;
+    // type FindAuthor = FindAuthorTruncated<Babe>;
+    type FindAuthor = FindAuthorH160<Self>;
     type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
     type Timestamp = Timestamp;
     type WeightInfo = pallet_evm::weights::SubstrateWeight<Self>;
@@ -3411,18 +3415,18 @@ impl_runtime_apis! {
         Block,
         Balance,
         u128,
-        NativeOrAssetId<u32>
+        NativeAndAssets<u32>
     > for Runtime
     {
-        fn quote_price_exact_tokens_for_tokens(asset1: NativeOrAssetId<u32>, asset2: NativeOrAssetId<u32>, amount: u128, include_fee: bool) -> Option<Balance> {
+        fn quote_price_exact_tokens_for_tokens(asset1: NativeAndAssets<u32>, asset2: NativeAndAssets<u32>, amount: u128, include_fee: bool) -> Option<Balance> {
             AssetConversion::quote_price_exact_tokens_for_tokens(asset1, asset2, amount, include_fee)
         }
 
-        fn quote_price_tokens_for_exact_tokens(asset1: NativeOrAssetId<u32>, asset2: NativeOrAssetId<u32>, amount: u128, include_fee: bool) -> Option<Balance> {
+        fn quote_price_tokens_for_exact_tokens(asset1: NativeAndAssets<u32>, asset2: NativeAndAssets<u32>, amount: u128, include_fee: bool) -> Option<Balance> {
             AssetConversion::quote_price_tokens_for_exact_tokens(asset1, asset2, amount, include_fee)
         }
 
-        fn get_reserves(asset1: NativeOrAssetId<u32>, asset2: NativeOrAssetId<u32>) -> Option<(Balance, Balance)> {
+        fn get_reserves(asset1: NativeAndAssets<u32>, asset2: NativeAndAssets<u32>) -> Option<(Balance, Balance)> {
             AssetConversion::get_reserves(&asset1, &asset2).ok()
         }
     }
