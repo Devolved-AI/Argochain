@@ -3426,3 +3426,17 @@ mod tests {
         );
     }
 }
+
+
+pub mod interface {
+	use super::Runtime;
+	use frame_system;
+
+	pub type Block = super::Block;
+	// pub use  types_common::OpaqueBlock;
+	pub type AccountId = <Runtime as frame_system::Config>::AccountId;
+	pub type Nonce = <Runtime as frame_system::Config>::Nonce;
+	pub type Hash = <Runtime as frame_system::Config>::Hash;
+	pub type Balance = <Runtime as pallet_balances::Config>::Balance;
+	pub type MinimumBalance = <Runtime as pallet_balances::Config>::ExistentialDeposit;
+}

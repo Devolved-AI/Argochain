@@ -112,7 +112,7 @@ pub fn run() -> sc_cli::Result<()> {
 		Some(Subcommand::ChainInfo(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| {
-				cmd.run::<minimal_template_runtime::interface::OpaqueBlock>(&config)
+				cmd.run::<argochain_runtime::interface::OpaqueBlock>(&config)
 			})
 		},
 		None => {

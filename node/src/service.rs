@@ -16,14 +16,18 @@
 // limitations under the License.
 
 use futures::FutureExt;
-use argochain_runtime::{interface::OpaqueBlock as Block, RuntimeApi};
+use argochain_runtime::RuntimeApi;
 use sc_client_api::backend::Backend;
+use node_primitives::Block;
 use sc_executor::WasmExecutor;
 use sc_service::{error::Error as ServiceError, Configuration, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryWorker};
 use sc_transaction_pool_api::OffchainTransactionPoolFactory;
 use sp_runtime::traits::Block as BlockT;
 use std::sync::Arc;
+use sp_runtime::generic::Block as GenericBlock;
+use sp_runtime::OpaqueExtrinsic;
+use sp_runtime::traits::BlakeTwo256;
 
 use crate::cli::Consensus;
 
@@ -38,8 +42,11 @@ type HostFunctions = sp_io::SubstrateHostFunctions;
 pub(crate) type FullClient =
 	sc_service::TFullClient<Block, RuntimeApi, WasmExecutor<HostFunctions>>;
 
+
 type FullBackend = sc_service::TFullBackend<Block>;
 type FullSelectChain = sc_consensus::LongestChain<FullBackend, Block>;
+type Header = sp_runtime::generic::Header<u32, BlakeTwo256>;
+pub type OpaqueBlock = GenericBlock<Header, OpaqueExtrinsic>;
 
 /// Assembly of PartialComponents (enough to run chain ops subcommands)
 pub type Service = sc_service::PartialComponents<
@@ -63,7 +70,7 @@ pub fn new_partial(config: &Configuration) -> Result<Service, ServiceError> {
 		})
 		.transpose()?;
 
-	let executor = sc_service::new_wasm_executor(config);
+	let executor = sc_service::new_wasm_executor(&config.executor);
 
 	let (client, backend, keystore_container, task_manager) =
 		sc_service::new_full_parts::<Block, RuntimeApi, _>(
@@ -106,6 +113,7 @@ pub fn new_partial(config: &Configuration) -> Result<Service, ServiceError> {
 	})
 }
 
+
 /// Builds a new service for a full client.
 pub fn new_full<Network: sc_network::NetworkBackend<Block, <Block as BlockT>::Hash>>(
 	config: Configuration,
@@ -126,7 +134,10 @@ pub fn new_full<Network: sc_network::NetworkBackend<Block, <Block as BlockT>::Ha
 		Block,
 		<Block as BlockT>::Hash,
 		Network,
-	>::new(&config.network);
+	>::new(
+		&config.network,
+		config.prometheus_config.as_ref().map(|cfg| cfg.registry.clone()),
+	);
 	let metrics = Network::register_notification_metrics(
 		config.prometheus_config.as_ref().map(|cfg| &cfg.registry),
 	);
@@ -140,7 +151,7 @@ pub fn new_full<Network: sc_network::NetworkBackend<Block, <Block as BlockT>::Ha
 			import_queue,
 			net_config,
 			block_announce_validator_builder: None,
-			warp_sync_params: None,
+			warp_sync_config: None,
 			block_relay: None,
 			metrics,
 		})?;

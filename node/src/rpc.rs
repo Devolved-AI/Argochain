@@ -23,12 +23,21 @@
 #![warn(missing_docs)]
 
 use jsonrpsee::RpcModule;
-use argochain_runtime::interface::{AccountId, Nonce, OpaqueBlock};
+use argochain_runtime::AccountId;
+use node_primitives::Nonce;
 use sc_transaction_pool_api::TransactionPool;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
 use std::sync::Arc;
+use sp_runtime::generic::Block as GenericBlock;
+use sp_runtime::OpaqueExtrinsic;
+use sp_runtime::traits::BlakeTwo256;
+use substrate_frame_rpc_system::{System, SystemApiServer};
+
 
 pub use sc_rpc_api::DenyUnsafe;
+
+type Header = sp_runtime::generic::Header<u32, BlakeTwo256>;
+pub type OpaqueBlock = GenericBlock<Header, OpaqueExtrinsic>;
 
 /// Full client dependencies.
 pub struct FullDeps<C, P> {
@@ -43,25 +52,24 @@ pub struct FullDeps<C, P> {
 #[docify::export]
 /// Instantiate all full RPC extensions.
 pub fn create_full<C, P>(
-	deps: FullDeps<C, P>,
+    deps: FullDeps<C, P>,
 ) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
 where
-	C: Send
-		+ Sync
-		+ 'static
-		+ sp_api::ProvideRuntimeApi<OpaqueBlock>
-		+ HeaderBackend<OpaqueBlock>
-		+ HeaderMetadata<OpaqueBlock, Error = BlockChainError>
-		+ 'static,
-	C::Api: sp_block_builder::BlockBuilder<OpaqueBlock>,
-	C::Api: substrate_frame_rpc_system::AccountNonceApi<OpaqueBlock, AccountId, Nonce>,
-	P: TransactionPool + 'static,
+    C: Send
+        + Sync
+        + 'static
+        + sp_api::ProvideRuntimeApi<OpaqueBlock>
+        + HeaderBackend<OpaqueBlock>
+        + HeaderMetadata<OpaqueBlock, Error = BlockChainError>
+        + 'static,
+    C::Api: sp_block_builder::BlockBuilder<OpaqueBlock>,
+    C::Api: substrate_frame_rpc_system::AccountNonceApi<OpaqueBlock, AccountId, Nonce>,
+    P: TransactionPool + 'static,
 {
-	use substrate_frame_rpc_system::{System, SystemApiServer};
-	let mut module = RpcModule::new(());
-	let FullDeps { client, pool, deny_unsafe } = deps;
+    let mut module = RpcModule::new(());
+    let FullDeps { client, pool, .. } = deps; // Ignore `deny_unsafe`
 
-	module.merge(System::new(client.clone(), pool.clone(), deny_unsafe).into_rpc())?;
+	// module.merge(System::new(client.clone(), pool, deny_unsafe).into_rpc())?;
 
-	Ok(module)
+    Ok(module)
 }
