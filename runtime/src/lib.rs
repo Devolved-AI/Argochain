@@ -47,7 +47,7 @@ use frame_support::{
         AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Contains, Currency,
 		EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, Imbalance, InsideBoth,
 		InstanceFilter, KeyOwnerProofSystem, LinearStoragePrice, LockIdentifier, Nothing,
-		OnUnbalanced, VariantCountOf, WithdrawReasons,FindAuthor,
+		OnUnbalanced, VariantCountOf, WithdrawReasons,
 	},
     weights::{
         constants::{
