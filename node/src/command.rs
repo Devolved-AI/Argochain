@@ -22,6 +22,13 @@ use crate::{
 };
 use sc_cli::SubstrateCli;
 use sc_service::PartialComponents;
+use sp_runtime::generic::Block as GenericBlock;
+use sp_runtime::OpaqueExtrinsic;
+use sp_runtime::traits::BlakeTwo256;
+
+
+type Header = sp_runtime::generic::Header<u32, BlakeTwo256>;
+pub type OpaqueBlock = GenericBlock<Header, OpaqueExtrinsic>;
 
 
 impl SubstrateCli for Cli {
@@ -51,7 +58,7 @@ impl SubstrateCli for Cli {
 
 	fn load_spec(&self, id: &str) -> Result<Box<dyn sc_service::ChainSpec>, String> {
 		Ok(match id {
-			"dev" => Box::new(chain_spec::staging_testnet_config()?),
+			"staging" => Box::new(chain_spec::staging_testnet_config()?),
 			path =>
 				Box::new(chain_spec::ChainSpec::from_json_file(std::path::PathBuf::from(path))?),
 		})
@@ -112,7 +119,7 @@ pub fn run() -> sc_cli::Result<()> {
 		Some(Subcommand::ChainInfo(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| {
-				cmd.run::<argochain_runtime::interface::OpaqueBlock>(&config)
+				cmd.run::<OpaqueBlock>(&config)
 			})
 		},
 		None => {
