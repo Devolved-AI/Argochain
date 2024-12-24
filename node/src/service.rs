@@ -177,16 +177,32 @@ pub fn new_full<Network: sc_network::NetworkBackend<Block, <Block as BlockT>::Ha
 		);
 	}
 
-	// let rpc_extensions_builder = {
-	// 	let client = client.clone();
-	// 	let pool = transaction_pool.clone();
+	// let rpc_extensions_builder = move |deny_unsafe, subscription_executor| {
+	// 	let deps = FullDeps {
+	// 		client: client.clone(),
+	// 		pool: pool.clone(),
+	// 		select_chain: select_chain.clone(),
+	// 		chain_spec: chain_spec.cloned_box(),
+	// 		deny_unsafe,
+	// 		babe: BabeDeps {
+	// 			keystore: keystore.clone(),
+	// 			babe_worker_handle: babe_worker_handle.clone(),
+	// 		},
+	// 		grandpa: GrandpaDeps {
+	// 			shared_voter_state: shared_voter_state.clone(),
+	// 			shared_authority_set: shared_authority_set.clone(),
+	// 			justification_stream: justification_stream.clone(),
+	// 			subscription_executor,
+	// 			finality_provider: finality_proof_provider.clone(),
+	// 		},
+	// 		statement_store: rpc_statement_store.clone(),
+	// 		backend: rpc_backend.clone(),
+	// 		eth: eth_rpc_params.clone(),
+	// 	};
 
-	// 	Box::new(move |_| {
-	// 		let deps = crate::rpc::FullDeps { client: client.clone(), pool: pool.clone() };
-	// 		crate::rpc::create_full(deps).map_err(Into::into)
-	// 	})
+	// 	create_full(deps, subscription_task_executor.clone(),
+	// 				pubsub_notification_sinks.clone(),).map_err(Into::into)
 	// };
-
 	let prometheus_registry = config.prometheus_registry().cloned();
 
 	// let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
