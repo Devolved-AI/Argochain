@@ -26,8 +26,11 @@ use argochain_runtime::{
 	NominationPoolsConfig, SessionConfig, SessionKeys, SocietyConfig, StakerStatus, StakingConfig,
 	SudoConfig, SystemConfig, TechnicalCommitteeConfig,GrandpaConfig,AuthorityDiscoveryConfig,EthereumConfig,
 };
+// use alloc::{vec, vec::Vec};
+use sp_std::vec;
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use sc_chain_spec::ChainSpecExtension;
+use sp_genesis_builder::PresetId;
 use sc_service::ChainType;
 use sc_telemetry::TelemetryEndpoints;
 use serde::{Deserialize, Serialize};
@@ -589,9 +592,27 @@ pub fn development_config() -> Result<ChainSpec, String> {
 	.with_name("Development")
 	.with_id("dev")
 	.with_chain_type(ChainType::Development)
-	.with_properties(properties())
-	.with_genesis_config_patch(development_config_genesis())
+	.with_genesis_config_preset_name(sp_genesis_builder::DEV_RUNTIME_PRESET)
 	.build())
+}
+// .with_genesis_config_patch(development_config_genesis())
+
+pub fn get_preset(id: &PresetId) -> Option<vec::Vec<u8>> {
+	let patch = match id.try_into() {
+		Ok(sp_genesis_builder::DEV_RUNTIME_PRESET) => development_config_genesis(),
+		_ => return None,
+	};
+	Some(
+		serde_json::to_string(&patch)
+			.expect("serialization to json is expected to work. qed.")
+			.into_bytes(),
+	)
+}
+
+pub fn preset_names() -> Vec<PresetId> {
+	vec![
+		PresetId::from(sp_genesis_builder::DEV_RUNTIME_PRESET),
+	]
 }
 
 // fn local_testnet_genesis() -> RuntimeGenesisConfig {

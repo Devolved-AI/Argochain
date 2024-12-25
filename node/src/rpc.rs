@@ -45,31 +45,45 @@ pub struct FullDeps<C, P> {
 	pub client: Arc<C>,
 	/// Transaction pool instance.
 	pub pool: Arc<P>,
-	/// Whether to deny unsafe calls
-	pub deny_unsafe: DenyUnsafe,
-}
+    
 
-#[docify::export]
-/// Instantiate all full RPC extensions.
+
+
+}
+use sp_block_builder::BlockBuilder;
+use node_primitives::Block;
+use sp_api::ProvideRuntimeApi;
+pub type RpcExtension = jsonrpsee::RpcModule<()>;
 pub fn create_full<C, P>(
     deps: FullDeps<C, P>,
 ) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
 where
-    C: Send
+    C: ProvideRuntimeApi<Block>
+        + HeaderBackend<Block>
+        + HeaderMetadata<Block, Error = BlockChainError>
+        + Send
         + Sync
-        + 'static
-        + sp_api::ProvideRuntimeApi<OpaqueBlock>
-        + HeaderBackend<OpaqueBlock>
-        + HeaderMetadata<OpaqueBlock, Error = BlockChainError>
         + 'static,
-    C::Api: sp_block_builder::BlockBuilder<OpaqueBlock>,
-    C::Api: substrate_frame_rpc_system::AccountNonceApi<OpaqueBlock, AccountId, Nonce>,
-    P: TransactionPool + 'static,
+    C::Api: pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, node_primitives::Balance>,
+    C::Api: substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
+    C::Api: BlockBuilder<Block>,
+    P: TransactionPool + Sync + Send + 'static,
 {
-    let mut module = RpcModule::new(());
-    let FullDeps { client, pool, .. } = deps; // Ignore `deny_unsafe`
+    use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApiServer};
+    use substrate_frame_rpc_system::{System, SystemApiServer};
 
-	// module.merge(System::new(client.clone(), pool, deny_unsafe).into_rpc())?;
+    // Initialize an empty RpcModule<()>
+    let mut module = RpcModule::new(());
+
+    let FullDeps { client, pool } = deps;
+
+    // Merge the System RPC into the module
+    module.merge(System::new(client.clone(), pool.clone()).into_rpc())?;
+
+    // Merge the TransactionPayment RPC into the module
+    module.merge(TransactionPayment::new(client).into_rpc())?;
 
     Ok(module)
 }
+
+

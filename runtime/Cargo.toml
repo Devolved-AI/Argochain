@@ -14,6 +14,7 @@ publish = false
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
+
 array-bytes = "6.1"
 hex-literal = "0.4.1"
 
@@ -51,6 +52,12 @@ sp-transaction-pool = { version = "34.0.0", default-features = false, git = "htt
 sp-statement-store = { version = "18.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409"}
 sp-version = { version = "37.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 sp-io = { version = "38.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+sp-consensus-beefy = {default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+sp-genesis-builder = {default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+
+
+
+
 
 # frame dependencies
 frame-executive = { version = "38.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
@@ -138,6 +145,8 @@ pallet-uniques = { version = "38.0.0", default-features = false, git = "https://
 pallet-vesting = { version = "38.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 pallet-whitelist = { version = "37.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 # pallet-beefy-mmr = { version = "39.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+pallet-broker = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+pallet-tx-pause = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 
 
 # Frontier
@@ -179,6 +188,7 @@ std = [
 	"pallet-authority-discovery/std",
 	"pallet-authorship/std",
 	"sp-consensus-babe/std",
+	"sp-consensus-beefy/std",
 	"sp-consensus-grandpa/std",
 	"pallet-babe/std",
 	"pallet-bags-list/std",
@@ -211,12 +221,14 @@ std = [
 	"pallet-nomination-pools-benchmarking?/std",
 	"pallet-identity/std",
 	"pallet-scheduler/std",
+	"pallet-tx-pause/std",
 	"node-primitives/std",
 	"sp-offchain/std",
 	"pallet-offences/std",
 	"pallet-glutton/std",
 	"pallet-preimage/std",
 	"pallet-proxy/std",
+	"pallet-broker/std",
 	"sp-core/std",
 	"pallet-insecure-randomness-collective-flip/std",
 	"sp-std/std",
@@ -384,6 +396,7 @@ try-runtime = [
 	"pallet-glutton/try-runtime",
 	"pallet-preimage/try-runtime",
 	"pallet-proxy/try-runtime",
+	"pallet-broker/try-runtime",
 	"pallet-insecure-randomness-collective-flip/try-runtime",
 	"pallet-ranked-collective/try-runtime",
 	"pallet-recovery/try-runtime",

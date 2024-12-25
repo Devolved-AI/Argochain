@@ -175,50 +175,55 @@ pub fn new_full<Network: sc_network::NetworkBackend<Block, <Block as BlockT>::Ha
 			.run(client.clone(), task_manager.spawn_handle())
 			.boxed(),
 		);
+
 	}
 
-	// let rpc_extensions_builder = move |deny_unsafe, subscription_executor| {
-	// 	let deps = FullDeps {
-	// 		client: client.clone(),
-	// 		pool: pool.clone(),
-	// 		select_chain: select_chain.clone(),
-	// 		chain_spec: chain_spec.cloned_box(),
-	// 		deny_unsafe,
-	// 		babe: BabeDeps {
-	// 			keystore: keystore.clone(),
-	// 			babe_worker_handle: babe_worker_handle.clone(),
-	// 		},
-	// 		grandpa: GrandpaDeps {
-	// 			shared_voter_state: shared_voter_state.clone(),
-	// 			shared_authority_set: shared_authority_set.clone(),
-	// 			justification_stream: justification_stream.clone(),
-	// 			subscription_executor,
-	// 			finality_provider: finality_proof_provider.clone(),
-	// 		},
-	// 		statement_store: rpc_statement_store.clone(),
-	// 		backend: rpc_backend.clone(),
-	// 		eth: eth_rpc_params.clone(),
-	// 	};
+	use sc_rpc::DenyUnsafe;
+	use sp_core::traits::SpawnNamed;
 
-	// 	create_full(deps, subscription_task_executor.clone(),
-	// 				pubsub_notification_sinks.clone(),).map_err(Into::into)
-	// };
+
+	let role = config.role;
+	let force_authoring = config.force_authoring;
+	let backoff_authoring_blocks: Option<()> = None;
+	let name = config.network.node_name.clone();
+	let enable_grandpa = !config.disable_grandpa;
+
 	let prometheus_registry = config.prometheus_registry().cloned();
 
-	// let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
-	// 	network,
-	// 	client: client.clone(),
-	// 	keystore: keystore_container.keystore(),
-	// 	task_manager: &mut task_manager,
-	// 	transaction_pool: transaction_pool.clone(),
-	// 	rpc_builder: rpc_extensions_builder,
-	// 	backend,
-	// 	system_rpc_tx,
-	// 	tx_handler_controller,
-	// 	sync_service,
-	// 	config,
-	// 	telemetry: telemetry.as_mut(),
-	// })?;
+	let rpc_extensions_builder = {
+		let client = client.clone();
+		let pool = transaction_pool.clone();
+	
+		Box::new(move |spawn_named: Arc<dyn SpawnNamed>| {
+			let deny_unsafe = DenyUnsafe::Yes;
+	
+			let deps = crate::rpc::FullDeps {
+				client: client.clone(),
+				pool: pool.clone()
+			};
+	
+			crate::rpc::create_full(deps).map_err(|e| -> sc_service::Error {
+				sc_service::Error::Other(format!("RPC error: {:?}", e).into())
+			})
+		})
+	};
+	
+		
+
+	let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
+		network,
+		client: client.clone(),
+		keystore: keystore_container.keystore(),
+		task_manager: &mut task_manager,
+		transaction_pool: transaction_pool.clone(),
+		rpc_builder: rpc_extensions_builder,
+		backend,
+		system_rpc_tx,
+		tx_handler_controller,
+		sync_service,
+		config,
+		telemetry: telemetry.as_mut(),
+	})?;
 
 	let proposer = sc_basic_authorship::ProposerFactory::new(
 		task_manager.spawn_handle(),
