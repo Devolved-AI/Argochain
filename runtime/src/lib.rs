@@ -29,33 +29,35 @@ use frame_election_provider_support::{
 	onchain, BalancingConfig, ElectionDataProvider, SequentialPhragmen, VoteWeight,
 };
 use frame_support::{
+	derive_impl,
     construct_runtime,
-    dispatch::DispatchClass,
+	dispatch::DispatchClass,
 	dynamic_params::{dynamic_pallet_params, dynamic_params},
-    instances::{Instance1, Instance2},
-    ord_parameter_types,
-    pallet_prelude::Get,
-    parameter_types,
-    traits::{
-        fungible::{
+	genesis_builder_helper::{build_state, get_preset},
+	instances::{Instance1, Instance2},
+	ord_parameter_types,
+	pallet_prelude::Get,
+	parameter_types,
+	traits::{
+		fungible::{
 			Balanced, Credit, HoldConsideration, ItemOf, NativeFromLeft, NativeOrWithId, UnionOf,
 		},
-        tokens::{
+		tokens::{
 			imbalance::ResolveAssetTo, nonfungibles_v2::Inspect, pay::PayAssetFromAccount,
 			GetSalary, PayFromAccount,
 		},
-        AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Contains, Currency,
-		EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, Imbalance, InsideBoth,
+		AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Contains, Currency,
+		EitherOfDiverse,FindAuthor, EnsureOriginWithArg, EqualPrivilegeOnly, Imbalance, InsideBoth,
 		InstanceFilter, KeyOwnerProofSystem, LinearStoragePrice, LockIdentifier, Nothing,
 		OnUnbalanced, VariantCountOf, WithdrawReasons,
 	},
-    weights::{
-        constants::{
-            BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_REF_TIME_PER_SECOND,
-        },
-        ConstantMultiplier, IdentityFee, Weight,
-    },
-    BoundedVec, PalletId,
+	weights::{
+		constants::{
+			BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_REF_TIME_PER_SECOND,
+		},
+		ConstantMultiplier, IdentityFee, Weight,
+	},
+	BoundedVec, PalletId,
 };
 
 // use codec::RuntimeDebug;
@@ -936,7 +938,7 @@ impl pallet_asset_conversion_tx_payment::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type AssetId = NativeOrWithId<u32>;
 	type OnChargeAssetTransaction = SwapAssetAdapter<
-		Balances,
+        Balances,
 		NativeAndAssets,
 		AssetConversion,
 		ResolveAssetTo<TreasuryAccount, NativeAndAssets>,
@@ -2200,7 +2202,7 @@ parameter_types! {
 pub type NativeAndAssets =
 	UnionOf<Balances, Assets, NativeFromLeft, NativeOrWithId<u32>, AccountId>;
 
-impl<Native> pallet_asset_conversion::Config for Runtime {
+impl pallet_asset_conversion::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type Balance = u128;
 	type HigherPrecisionBalance = sp_core::U256;
@@ -2209,7 +2211,7 @@ impl<Native> pallet_asset_conversion::Config for Runtime {
 	type PoolId = (Self::AssetKind, Self::AssetKind);
 	type PoolLocator = Chain<
 		WithFirstAsset<
-			Native,
+			Balances,
 			AccountId,
 			NativeOrWithId<u32>,
 			AccountIdConverter<AssetConversionPalletId, Self::PoolId>,
