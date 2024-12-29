@@ -37,7 +37,7 @@ After you build the project, you can use the following command to explore its
 parameters and subcommands:
 
 ```sh
-./target/release/solochain-template-node -h
+./target/release/argochain-node -h
 ```
 
 You can generate and view the [Rust
