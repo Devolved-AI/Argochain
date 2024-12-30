@@ -37,7 +37,7 @@ After you build the project, you can use the following command to explore its
 parameters and subcommands:
 
 ```sh
-./target/release/solochain-template-node -h
+./target/release/argochain-node -h
 ```
 
 You can generate and view the [Rust
@@ -54,19 +54,19 @@ The following command starts a single-node development chain that doesn't
 persist state:
 
 ```sh
-./target/release/solochain-template-node --dev
+./target/release/argochain-node --dev
 ```
 
 To purge the development chain's state, run the following command:
 
 ```sh
-./target/release/solochain-template-node purge-chain --dev
+./target/release/argochain-node purge-chain --dev
 ```
 
 To start the development chain with detailed logging, run the following command:
 
 ```sh
-RUST_BACKTRACE=1 ./target/release/solochain-template-node -ldebug --dev
+RUST_BACKTRACE=1 ./target/release/argochain-node -ldebug --dev
 ```
 
 Development chains:
@@ -77,7 +77,6 @@ Development chains:
 - Are preconfigured with a genesis state (`/node/src/chain_spec.rs`) that
   includes several pre-funded development accounts.
 
-
 To persist chain state between runs, specify a base path by running a command
 similar to the following:
 
@@ -86,7 +85,7 @@ similar to the following:
 $ mkdir my-chain-state
 
 // Use of that folder to store the chain state
-$ ./target/release/solochain-template-node --dev --base-path ./my-chain-state/
+$ ./target/release/argochain-node --dev --base-path ./my-chain-state/
 
 // Check the folder structure created inside the base path after running the chain
 $ ls ./my-chain-state
@@ -156,7 +155,6 @@ following:
   mechanisms](https://docs.substrate.io/fundamentals/consensus/#default-consensus-models)
   such as Aura for block authoring and GRANDPA for finality.
 
-
 ### Runtime
 
 In Substrate, the terms "runtime" and "state transition function" are analogous.
@@ -175,7 +173,7 @@ template and note the following:
 
 - This file configures several pallets to include in the runtime. Each pallet
   configuration is defined by a code block that begins with `impl
-  $PALLET_NAME::Config for Runtime`.
+$PALLET_NAME::Config for Runtime`.
 - The pallets are composed into a single runtime by way of the
   [`construct_runtime!`](https://paritytech.github.io/substrate/master/frame_support/macro.construct_runtime.html)
   macro, which is part of the [core FRAME pallet

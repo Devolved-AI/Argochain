@@ -1,5 +1,5 @@
 [package]
-name = "solochain-template-node"
+name = "argochain"
 description = "A solochain node template built with Substrate, part of Polkadot Sdk."
 version = "0.1.0"
 license = "Unlicense"
@@ -79,7 +79,7 @@ substrate-frame-rpc-system.workspace = true
 substrate-frame-rpc-system.default-features = true
 frame-benchmarking-cli.workspace = true
 frame-benchmarking-cli.default-features = true
-solochain-template-runtime.workspace = true
+argochain-runtime.workspace = true
 
 [build-dependencies]
 substrate-build-script-utils.workspace = true
@@ -88,14 +88,14 @@ substrate-build-script-utils.default-features = true
 [features]
 default = ["std"]
 std = [
-	"solochain-template-runtime/std",
+	"argochain-runtime/std",
 ]
 # Dependencies that are only required if runtime benchmarking should be build.
 runtime-benchmarks = [
 	"frame-benchmarking-cli/runtime-benchmarks",
 	"frame-system/runtime-benchmarks",
 	"sc-service/runtime-benchmarks",
-	"solochain-template-runtime/runtime-benchmarks",
+	"argochain-runtime/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 ]
 # Enable features that allow the runtime to be tried and debugged. Name might be subject to change
@@ -103,6 +103,6 @@ runtime-benchmarks = [
 try-runtime = [
 	"frame-system/try-runtime",
 	"pallet-transaction-payment/try-runtime",
-	"solochain-template-runtime/try-runtime",
+	"argochain-runtime/try-runtime",
 	"sp-runtime/try-runtime",
 ]
