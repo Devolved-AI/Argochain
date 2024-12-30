@@ -69,6 +69,8 @@ pub mod weights;
 
 use alloc::{collections::btree_map::BTreeMap, vec::Vec};
 use core::cmp::min;
+use log::{info, debug, warn, error};
+
 pub use evm::{
 	Config as EvmConfig, Context, ExitError, ExitFatal, ExitReason, ExitRevert, ExitSucceed,
 };
@@ -195,6 +197,9 @@ pub mod pallet {
 		/// Define the quick clear limit of storage clearing when a contract suicides. Set to 0 to disable it.
 		type SuicideQuickClearLimit: Get<u32>;
 
+		/// Gas limit storage growth ratio.
+		type GasLimitStorageGrowthRatio: Get<u64>;
+
 		/// Get the timestamp for the current block.
 		#[pallet::no_default]
 		type Timestamp: Time;
@@ -224,11 +229,14 @@ pub mod pallet {
 
 		const BLOCK_GAS_LIMIT: u64 = 150_000_000;
 		const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
+		/// The maximum storage growth per block in bytes.
+		const MAX_STORAGE_GROWTH: u64 = 400 * 1024;
 
 		parameter_types! {
 			pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
 			pub const ChainId: u64 = 42;
 			pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
+			pub const GasLimitStorageGrowthRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_STORAGE_GROWTH);
 			pub WeightPerGas: Weight = Weight::from_parts(20_000, 0);
 			pub SuicideQuickClearLimit: u32 = 0;
 		}
@@ -251,6 +259,7 @@ pub mod pallet {
 			type OnCreate = ();
 			type FindAuthor = FindAuthorTruncated;
 			type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
+			type GasLimitStorageGrowthRatio = GasLimitStorageGrowthRatio;
 			type SuicideQuickClearLimit = SuicideQuickClearLimit;
 			type WeightInfo = ();
 		}
@@ -1032,6 +1041,37 @@ impl<T: Config> Pallet<T> {
 
 		T::FindAuthor::find_author(pre_runtime_digests).unwrap_or_default()
 	}
+	fn u256_to_balance(value: U256) -> BalanceOf<T> {
+        value.low_u128().try_into().unwrap_or_else(|_| Zero::zero())
+    }
+
+    pub fn mutate_balance(address: H160, delta: U256, add: bool) {
+        let account_id = T::AddressMapping::into_account_id(address);
+    
+        let current_balance = T::Currency::free_balance(&account_id);
+    
+        let mut balance_u256 = U256::from(UniqueSaturatedInto::<u128>::unique_saturated_into(current_balance));
+    
+        info!("Balance before mutation for address {:?}: {:?}", address, balance_u256);
+    
+        let delta_with_decimals = delta.saturating_mul(U256::exp10(18));
+    
+        if add {
+            balance_u256 = balance_u256.saturating_add(delta);
+            info!("Adding delta (with decimals): {:?}", delta);
+        } else {
+            balance_u256 = balance_u256.saturating_sub(delta);
+            info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
+        }
+    
+        info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
+    
+        let new_balance = Self::u256_to_balance(balance_u256);
+    
+        info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
+    
+        T::Currency::make_free_balance_be(&account_id, new_balance);
+    }
 }
 
 /// Handle withdrawing, refunding and depositing of transaction fees.
