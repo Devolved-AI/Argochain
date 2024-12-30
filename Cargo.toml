@@ -52,14 +52,14 @@ repository = "https://github.com/paritytech/frontier/"
 
 [workspace.dependencies]
 frame-metadata = "18.0.0"
-
+environmental = { version = "1.1.4" }
 # frame-metadata = "16.0.0"
 async-trait = "0.1"
 bn = { package = "substrate-bn", version = "0.6", default-features = false }
 clap = { version = "4.5", features = ["derive", "deprecated"] }
 const-hex = { version = "1.12", default-features = false, features = ["alloc"] }
 derive_more = "0.99"
-environmental = { version = "1.1.4", default-features = false }
+# environmental = { version = "1.1.4", default-features = false }
 ethereum = { version = "0.15.0", default-features = false }
 ethereum-types = { version = "0.14.1", default-features = false }
 evm = { version = "0.41.1", default-features = false }
