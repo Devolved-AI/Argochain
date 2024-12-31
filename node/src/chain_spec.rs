@@ -592,7 +592,7 @@ pub fn development_config() -> Result<ChainSpec, String> {
 	.with_name("Development")
 	.with_id("dev")
 	.with_chain_type(ChainType::Development)
-	.with_genesis_config_preset_name(sp_genesis_builder::DEV_RUNTIME_PRESET)
+	.with_genesis_config_patch(development_config_genesis())
 	.build())
 }
 // .with_genesis_config_patch(development_config_genesis())
