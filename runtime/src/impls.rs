@@ -29,7 +29,7 @@ use pallet_asset_tx_payment::HandleCredit;
 use sp_std::prelude::*;
 
 use crate::{
-    AccountId, AllianceMotion, Assets, Authorship, Balances, Hash, NegativeImbalance, Runtime,
+    AccountId, AllianceCollective,AllianceMotion, Assets, Authorship, Balances, Hash, NegativeImbalance, Runtime,
     RuntimeCall,
 };
 
@@ -55,28 +55,49 @@ impl HandleCredit<AccountId, Assets> for CreditToBlockAuthor {
 }
 use pallet_identity::legacy::IdentityField;
 
+// pub struct AllianceIdentityVerifier;
+// impl IdentityVerifier<AccountId> for AllianceIdentityVerifier {
+// 	fn has_required_identities(who: &AccountId) -> bool {
+// 		crate::Identity::has_identity(who, (IdentityField::Display | IdentityField::Web).bits())
+// 	}
+
+//     fn has_good_judgement(who: &AccountId) -> bool {
+//         use pallet_identity::Judgement;
+//         crate::Identity::identity(who)
+//             .map(|registration| registration.judgements)
+//             .map_or(false, |judgements| {
+//                 judgements
+//                     .iter()
+//                     .any(|(_, j)| matches!(j, Judgement::KnownGood | Judgement::Reasonable))
+//             })
+//     }
+
+//     fn super_account_id(who: &AccountId) -> Option<AccountId> {
+//         crate::Identity::super_of(who).map(|parent| parent.0)
+//     }
+// }
 pub struct AllianceIdentityVerifier;
 impl IdentityVerifier<AccountId> for AllianceIdentityVerifier {
 	fn has_required_identities(who: &AccountId) -> bool {
 		crate::Identity::has_identity(who, (IdentityField::Display | IdentityField::Web).bits())
 	}
 
-    fn has_good_judgement(who: &AccountId) -> bool {
-        use pallet_identity::Judgement;
-        crate::Identity::identity(who)
-            .map(|registration| registration.judgements)
-            .map_or(false, |judgements| {
-                judgements
-                    .iter()
-                    .any(|(_, j)| matches!(j, Judgement::KnownGood | Judgement::Reasonable))
-            })
-    }
+	fn has_good_judgement(who: &AccountId) -> bool {
+		use pallet_identity::{IdentityOf, Judgement};
+		IdentityOf::<Runtime>::get(who)
+			.map(|(registration, _)| registration.judgements)
+			.map_or(false, |judgements| {
+				judgements
+					.iter()
+					.any(|(_, j)| matches!(j, Judgement::KnownGood | Judgement::Reasonable))
+			})
+	}
 
-    fn super_account_id(who: &AccountId) -> Option<AccountId> {
-        crate::Identity::super_of(who).map(|parent| parent.0)
-    }
+	fn super_account_id(who: &AccountId) -> Option<AccountId> {
+		use pallet_identity::SuperOf;
+		SuperOf::<Runtime>::get(who).map(|parent| parent.0)
+	}
 }
-
 pub struct AllianceProposalProvider;
 impl ProposalProvider<AccountId, Hash, RuntimeCall> for AllianceProposalProvider {
     fn propose_proposal(
@@ -112,8 +133,8 @@ impl ProposalProvider<AccountId, Hash, RuntimeCall> for AllianceProposalProvider
     }
 
     fn proposal_of(proposal_hash: Hash) -> Option<RuntimeCall> {
-        AllianceMotion::proposal_of(proposal_hash)
-    }
+		pallet_collective::ProposalOf::<Runtime, AllianceCollective>::get(proposal_hash)
+	}
 }
 
 #[cfg(test)]

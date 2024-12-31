@@ -40,7 +40,9 @@ use sp_runtime::{
 };
 use std::{collections::BTreeMap, str::FromStr};
 use sc_service::Properties;
-pub use argochain_runtime::{RuntimeGenesisConfig, EVMConfig, GenesisConfig};
+// pub use argochain_runtime::{RuntimeGenesisConfig, EVMConfig, GenesisConfig};
+pub use argochain_runtime::{RuntimeGenesisConfig, EVMConfig};
+// pub use argochain_runtime::impls::GenesisConfig;
 pub use node_primitives::{AccountId, Balance, Signature};
 
 type AccountPublic = <Signature as Verify>::Signer;
