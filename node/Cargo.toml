@@ -63,7 +63,7 @@ sp-genesis-builder = {default-features = false, git = "https://github.com/parity
 
 
 sc-network-common = { version = "0.44.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
-sp-runtime = { version = "39.0.0",git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409", default-features = false }
+sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409", default-features = false }
 sp-timestamp = { version = "34.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 #sp-authorship = { version = "4.0.0-dev", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 sp-inherents = { version = "34.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
@@ -76,6 +76,7 @@ sc-sync-state-rpc = { version = "0.45.0", default-features = false, git = "https
 sc-sysinfo = { version = "38.0.0",  git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 sc-network-sync = { version = "0.44.1", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409"  }
 sc-statement-store = { version = "19.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+sp-consensus-aura = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409"}
 sc-consensus-aura = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409"}
 
 sc-offchain = { version = "40.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }

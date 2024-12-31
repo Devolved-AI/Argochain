@@ -543,35 +543,7 @@ pub fn development_genesis(
         },
         "babe": {
             "epoch_config": argochain_runtime::BABE_GENESIS_EPOCH_CONFIG,
-        },
-        "im_online": {
-            "keys": [],
-        },
-        "authority_discovery": {
-            "keys": [],
-        },
-        "grandpa": {
-            "authorities": [],
-        },
-        "technical_membership": {},
-        "treasury": {},
-        "society": {},
-        "vesting": {},
-        "assets": {},
-        "pool_assets": {},
-        "transaction_storage": {},
-        "transaction_payment": {},
-        "nomination_pools": {
-            "min_create_bond": 10 * ARGO,
-            "min_join_bond": ARGO,
-        },
-        "glutton": {},
-        "evm": {},
-        "ethereum": {
-            "_marker": null,
-        },
-        "dynamic_fee": {},
-        "base_fee": {},
+        }
     })
 }
 
@@ -597,23 +569,6 @@ pub fn development_config() -> Result<ChainSpec, String> {
 }
 // .with_genesis_config_patch(development_config_genesis())
 
-pub fn get_preset(id: &PresetId) -> Option<vec::Vec<u8>> {
-	let patch = match id.try_into() {
-		Ok(sp_genesis_builder::DEV_RUNTIME_PRESET) => development_config_genesis(),
-		_ => return None,
-	};
-	Some(
-		serde_json::to_string(&patch)
-			.expect("serialization to json is expected to work. qed.")
-			.into_bytes(),
-	)
-}
-
-pub fn preset_names() -> Vec<PresetId> {
-	vec![
-		PresetId::from(sp_genesis_builder::DEV_RUNTIME_PRESET),
-	]
-}
 
 // fn local_testnet_genesis() -> RuntimeGenesisConfig {
 // 	testnet_genesis(
