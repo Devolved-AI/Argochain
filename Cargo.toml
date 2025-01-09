@@ -60,8 +60,8 @@ pallet-transaction-payment={ git = "https://github.com/paritytech/polkadot-sdk.g
 pallet-transaction-payment-rpc={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 substrate-frame-rpc-system={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 frame-benchmarking-cli={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
-solochain-template-runtime={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
-
+# solochain-template-runtime={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
+solochain-template-runtime={path = "runtime"}
 substrate-build-script-utils={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 
 codec = { version = "3.6.12", default-features = false, package = "parity-scale-codec" }

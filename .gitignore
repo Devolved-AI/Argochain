@@ -1,0 +1,50 @@
+# Rust specific
+/target/
+**/*.rs.bk
+
+# Substrate specific
+/runtime/wasm/
+**/wasm_binary.rs
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# IDE specific files
+.idea/
+.vscode/
+*.sw?
+*.swo
+*.swn
+
+# MacOS specific
+.DS_Store
+
+# Build artifacts
+/build/
+dist/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.old
+*.swp
+*~
+*.patch
+*.rej
+
+# Git specific
+*.orig
+*.LOCK
+
+# Secrets
+.env
+*.key
+*.pem
+
+# Debug
+.debug/
