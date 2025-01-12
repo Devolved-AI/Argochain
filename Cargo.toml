@@ -10,6 +10,43 @@ members = [
     "node",
     "pallets/template",
     "runtime",
+    "frame/base-fee",
+	"frame/dynamic-fee",
+	"frame/ethereum",
+	"frame/evm",
+	"frame/evm/precompile/sha3fips",
+	"frame/evm/precompile/simple",
+	"frame/evm/precompile/modexp",
+	"frame/evm/precompile/ed25519",
+	"frame/evm/precompile/bn128",
+	"frame/evm/precompile/blake2",
+	"frame/evm/precompile/bw6761",
+	"frame/evm/precompile/bls12377",
+	"frame/evm/precompile/bls12381",
+	"frame/evm/precompile/dispatch",
+	"frame/evm/precompile/curve25519",
+	"frame/evm/precompile/storage-cleaner",
+	"frame/evm-chain-id",
+	"frame/hotfix-sufficients",
+	"client/api",
+	"client/consensus",
+	"client/rpc-core",
+	"client/rpc",
+	"client/rpc-v2",
+	"client/rpc-v2/api",
+	"client/rpc-v2/types",
+	"client/db",
+	"client/storage",
+	"client/mapping-sync",
+	"primitives/account",
+	"primitives/consensus",
+	"primitives/dynamic-fee",
+	"primitives/evm",
+	"primitives/rpc",
+	"primitives/self-contained",
+	"precompiles",
+	"precompiles/macro",
+	"precompiles/tests-external",
 ]
 resolver = "2"
 
@@ -26,10 +63,103 @@ serde-big-array = { version = "0.3.2" }
 serde_derive = { version = "1.0.117" }
 serde_json = { version = "1.0.127", default-features = false }
 serde_yaml = { version = "0.9" }
+scale-codec = { package = "parity-scale-codec", version = "3.6.12", default-features = false, features = ["derive"] }
 jsonpath_lib = { version = "0.3" }
 jsonrpsee = { version = "0.24.3" }
 jsonrpsee-core = { version = "0.24.3" }
 k256 = { version = "0.13.3", default-features = false }
+async-channel = { version = "1.8.0" }
+async-std = { version = "1.9.0" }
+async-trait = { version = "0.1.79" }
+asynchronous-codec = { version = "0.6" }
+backoff = { version = "0.4" }
+tracing = { version = "0.1.37", default-features = false }
+tracing-core = { version = "0.1.32", default-features = false }
+tracing-log = { version = "0.2.0" }
+tracing-subscriber = { version = "0.3.18" }
+backtrace = { version = "0.3.64" }
+merkleized-metadata = { version = "0.1.0" }
+bn = { package = "substrate-bn", version = "0.6", default-features = false }
+secp256k1 = { version = "0.24", features = ["global-context"], default-features = false }
+wasm-bindgen = "0.2"
+const-hex = { version = "1.12", default-features = false, features = ["alloc"] }
+derive_more = "0.99"
+build-helper = { version = "0.1.1" }
+bincode = { version = "1.3.3" }
+bip39 = { version = "2.0.0" }
+byte-slice-cast = { version = "1.2.1", default-features = false }
+byteorder = { version = "1.3.2", default-features = false }
+bytes = { version = "1.4.0", default-features = false }
+cargo_metadata = { version = "0.15.4" }
+curve25519-dalek = { version = "4.1.3" }
+derivative = { version = "2.2.0", default-features = false }
+derive-syn-parse = { version = "0.2.0" }
+digest = { version = "0.10.3", default-features = false }
+directories = { version = "5.0.1" }
+dlmalloc = { version = "0.2.4" }
+enumflags2 = { version = "0.7.7" }
+enumn = { version = "0.1.12" }
+env_logger = { version = "0.11.3" }
+ethabi = { version = "1.0.0", default-features = false, package = "ethabi-decode" }
+ethbloom = { version = "0.13.0", default-features = false }
+exit-future = { version = "0.2.0" }
+expander = { version = "2.0.0" }
+fatality = { version = "0.1.1" }
+fdlimit = { version = "0.3.0" }
+femme = { version = "2.2.1" }
+frame-metadata = { version = "16.0.0", default-features = false }
+filetime = { version = "0.2.16" }
+finality-grandpa = { version = "0.16.2", default-features = false }
+flate2 = { version = "1.0" }
+fnv = { version = "1.0.6" }
+docify = { version = "0.2.8" }
+dyn-clonable = { version = "0.9.0" }
+dyn-clone = { version = "1.0.16" }
+ed25519-dalek = { version = "2.1", default-features = false }
+ed25519-zebra = { version = "4.0.3", default-features = false }
+either = { version = "1.8.1", default-features = false }
+cfg-expr = { version = "0.15.5" }
+chrono = { version = "0.4.31" }
+cid = { version = "0.9.0" }
+cpu-time = { version = "1.0.0" }
+criterion = { version = "0.5.1", default-features = false }
+coarsetime = { version = "0.1.22" }
+color-eyre = { version = "0.6.1", default-features = false }
+color-print = { version = "0.3.4" }
+colored = { version = "2.0.4" }
+comfy-table = { version = "7.1.0", default-features = false }
+console = { version = "0.15.8" }
+cfg-if = { version = "1.0" }
+bitflags = { version = "1.3.2" }
+bitvec = { version = "1.0.1", default-features = false }
+blake2 = { version = "0.10.4", default-features = false }
+blake2b_simd = { version = "1.0.1", default-features = false }
+blake3 = { version = "1.5" }
+bounded-collections = { version = "0.2.0", default-features = false }
+bounded-vec = { version = "0.7" }
+environmental = { version = "1.1.4", default-features = false }
+ethereum = { version = "0.15.0", default-features = false }
+ethereum-types = { version = "0.14.1", default-features = false }
+evm = { version = "0.41.1", default-features = false }
+hash-db = { version = "0.16.0", default-features = false }
+hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
+hex-literal = "0.4.1"
+getrandom = { version = "0.2", features = ["js"] }
+impl-serde = { version = "0.4.0", default-features = false }
+impl-trait-for-tuples = "0.2.1"
+kvdb-rocksdb = "0.19.0"
+libsecp256k1 = { version = "0.7.1", default-features = false }
+log = { version = "0.4.21", default-features = false }
+num_enum = { version = "0.7.2", default-features = false }
+parity-db = "0.4.13"
+parking_lot = "0.12.3"
+rlp = { version = "0.5.2", default-features = false }
+similar-asserts = "1.5.0"
+sqlx = { version = "0.7.4", default-features = false, features = ["macros"] }
+thiserror = "1.0"
+tokio = "1.38.0"
+sp-runtime-interface = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
+sp-state-machine = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
 sc-cli = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 sp-core={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 sc-executor={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
@@ -60,8 +190,8 @@ pallet-transaction-payment={ git = "https://github.com/paritytech/polkadot-sdk.g
 pallet-transaction-payment-rpc={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 substrate-frame-rpc-system={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 frame-benchmarking-cli={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
-# solochain-template-runtime={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
-solochain-template-runtime={path = "runtime"}
+# Argochain={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
+Argochain={path = "runtime"}
 substrate-build-script-utils={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 
 codec = { version = "3.6.12", default-features = false, package = "parity-scale-codec" }
@@ -86,6 +216,78 @@ frame-system-rpc-runtime-api={ git = "https://github.com/paritytech/polkadot-sdk
 pallet-transaction-payment-rpc-runtime-api={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 frame-system-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
+pallet-utility = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
+sp-weights = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
+sp-crypto-hashing = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
+sp-consensus = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+prometheus-endpoint = { package = "substrate-prometheus-endpoint", git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sc-network-sync = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sc-rpc = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sc-utils = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sp-externalities = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
+sc-block-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sc-client-db = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
+substrate-test-runtime-client = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sp-database = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+
+
+
+
+
+
+
+
+
+
+
+
+
 pallet-template={path = "pallets/template",default-features = false}
 
 substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
+
+
+fc-api = { path = "client/api" }
+fc-cli = { path = "client/cli", default-features = false }
+fc-consensus = { path = "client/consensus" }
+fc-db = { path = "client/db", default-features = false }
+fc-mapping-sync = { path = "client/mapping-sync", default-features = false }
+fc-rpc = { path = "client/rpc", default-features = false }
+fc-rpc-core = { path = "client/rpc-core" }
+fc-rpc-v2 = { path = "client/rpc-v2" }
+fc-rpc-v2-api = { path = "client/rpc-v2/api" }
+fc-rpc-v2-types = { path = "client/rpc-v2/types" }
+fc-storage = { path = "client/storage" }
+# Frontier Primitive
+fp-account = { path = "primitives/account", default-features = false }
+fp-consensus = { path = "primitives/consensus", default-features = false }
+fp-dynamic-fee = { path = "primitives/dynamic-fee", default-features = false }
+fp-ethereum = { path = "primitives/ethereum", default-features = false }
+fp-evm = { path = "primitives/evm", default-features = false }
+fp-rpc = { path = "primitives/rpc", default-features = false }
+fp-self-contained = { path = "primitives/self-contained", default-features = false }
+fp-storage = { path = "primitives/storage", default-features = false }
+# Frontier FRAME
+pallet-base-fee = { path = "frame/base-fee", default-features = false }
+pallet-dynamic-fee = { path = "frame/dynamic-fee", default-features = false }
+pallet-ethereum = { path = "frame/ethereum", default-features = false }
+pallet-evm = { path = "frame/evm", default-features = false }
+pallet-evm-chain-id = { path = "frame/evm-chain-id", default-features = false }
+pallet-evm-precompile-modexp = { path = "frame/evm/precompile/modexp", default-features = false }
+pallet-evm-precompile-sha3fips = { path = "frame/evm/precompile/sha3fips", default-features = false }
+pallet-evm-precompile-simple = { path = "frame/evm/precompile/simple", default-features = false }
+pallet-evm-test-vector-support = { path = "frame/evm/test-vector-support" }
+pallet-hotfix-sufficients = { path = "frame/hotfix-sufficients", default-features = false }
+
+xcm = { package = "staging-xcm", git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
+precompile-utils = { path = "precompiles", default-features = false }
+
+# Arkworks
+ark-bls12-377 = { version = "0.4.0", default-features = false, features = ["curve"] }
+ark-bls12-381 = { version = "0.4.0", default-features = false, features = ["curve"] }
+ark-bw6-761 = { version = "0.4.0", default-features = false }
+ark-ec = { version = "0.4.0", default-features = false }
+ark-ff = { version = "0.4.0", default-features = false }
+ark-std = { version = "0.4.0", default-features = false }
+
+
