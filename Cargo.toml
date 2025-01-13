@@ -8,7 +8,7 @@ edition = "2021"
 [workspace]
 members = [
     "node",
-    "pallets/template",
+    "pallets/counter",
     "runtime",
     "frame/base-fee",
 	"frame/dynamic-fee",
@@ -191,7 +191,7 @@ pallet-transaction-payment-rpc={ git = "https://github.com/paritytech/polkadot-s
 substrate-frame-rpc-system={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 frame-benchmarking-cli={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 # Argochain={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
-Argochain={path = "runtime"}
+argochain-runtime={path = "runtime",default-features = false}
 substrate-build-script-utils={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 
 codec = { version = "3.6.12", default-features = false, package = "parity-scale-codec" }
@@ -230,6 +230,17 @@ sc-client-db = { git = "https://github.com/paritytech/polkadot-sdk", branch = "s
 substrate-test-runtime-client = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
 sp-database = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
 
+#--------------------------------------------------------------------------------------------
+# Substrate Client
+sc-chain-spec = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sc-consensus-manual-seal = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sc-keystore = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sc-network-common = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+sc-rpc-api = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409" }
+
+sp-std = { git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
+
+#--------------------------------------------------------------------------------------------
 
 
 
@@ -241,8 +252,7 @@ sp-database = { git = "https://github.com/paritytech/polkadot-sdk", branch = "st
 
 
 
-
-pallet-template={path = "pallets/template",default-features = false}
+pallet-counter={path = "pallets/counter",default-features = false}
 
 substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 
@@ -289,5 +299,3 @@ ark-bw6-761 = { version = "0.4.0", default-features = false }
 ark-ec = { version = "0.4.0", default-features = false }
 ark-ff = { version = "0.4.0", default-features = false }
 ark-std = { version = "0.4.0", default-features = false }
-
-

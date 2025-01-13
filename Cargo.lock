@@ -3,77 +3,49 @@
 version = 4
 
 [[package]]
-name = "Argochain"
-version = "0.1.0"
-dependencies = [
- "fp-account",
- "fp-evm",
- "fp-rpc",
- "fp-self-contained",
- "frame-benchmarking",
- "frame-executive",
- "frame-metadata-hash-extension",
- "frame-support",
- "frame-system",
- "frame-system-benchmarking",
- "frame-system-rpc-runtime-api",
- "frame-try-runtime",
- "pallet-aura",
- "pallet-balances",
- "pallet-base-fee",
- "pallet-dynamic-fee",
- "pallet-ethereum",
- "pallet-evm",
- "pallet-evm-chain-id",
- "pallet-evm-precompile-modexp",
- "pallet-evm-precompile-sha3fips",
- "pallet-evm-precompile-simple",
- "pallet-grandpa",
- "pallet-sudo",
- "pallet-template",
- "pallet-timestamp",
- "pallet-transaction-payment",
- "pallet-transaction-payment-rpc-runtime-api",
- "parity-scale-codec",
- "scale-info",
- "sp-api",
- "sp-block-builder",
- "sp-consensus-aura",
- "sp-consensus-grandpa",
- "sp-core",
- "sp-genesis-builder",
- "sp-inherents",
- "sp-offchain",
- "sp-runtime",
- "sp-session",
- "sp-storage",
- "sp-transaction-pool",
- "sp-version",
- "substrate-wasm-builder",
-]
-
-[[package]]
 name = "Argochain-node"
 version = "0.1.0"
 dependencies = [
- "Argochain",
+ "argochain-runtime",
+ "async-trait",
  "clap",
+ "fc-api",
+ "fc-cli",
+ "fc-consensus",
+ "fc-db",
+ "fc-mapping-sync",
+ "fc-rpc",
+ "fc-rpc-core",
+ "fc-storage",
+ "fp-account",
+ "fp-dynamic-fee",
+ "fp-evm",
+ "fp-rpc",
+ "frame-benchmarking",
  "frame-benchmarking-cli",
- "frame-metadata-hash-extension",
  "frame-system",
+ "frame-system-rpc-runtime-api",
  "futures",
+ "hex-literal",
  "jsonrpsee",
+ "log",
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc",
+ "pallet-transaction-payment-rpc-runtime-api",
+ "parity-scale-codec",
  "sc-basic-authorship",
+ "sc-chain-spec",
  "sc-cli",
  "sc-client-api",
  "sc-consensus",
  "sc-consensus-aura",
  "sc-consensus-grandpa",
+ "sc-consensus-manual-seal",
  "sc-executor",
  "sc-network",
+ "sc-network-sync",
  "sc-offchain",
+ "sc-rpc",
  "sc-service",
  "sc-telemetry",
  "sc-transaction-pool",
@@ -87,11 +59,14 @@ dependencies = [
  "sp-core",
  "sp-inherents",
  "sp-io",
- "sp-keyring",
+ "sp-offchain",
  "sp-runtime",
+ "sp-session",
  "sp-timestamp",
+ "sp-transaction-pool",
  "substrate-build-script-utils",
  "substrate-frame-rpc-system",
+ "substrate-prometheus-endpoint",
 ]
 
 [[package]]
@@ -282,6 +257,52 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.96",
+]
+
+[[package]]
+name = "argochain-runtime"
+version = "0.1.0"
+dependencies = [
+ "fp-account",
+ "fp-evm",
+ "fp-rpc",
+ "fp-self-contained",
+ "frame-benchmarking",
+ "frame-executive",
+ "frame-support",
+ "frame-system",
+ "frame-system-benchmarking",
+ "frame-system-rpc-runtime-api",
+ "pallet-aura",
+ "pallet-balances",
+ "pallet-base-fee",
+ "pallet-dynamic-fee",
+ "pallet-ethereum",
+ "pallet-evm",
+ "pallet-evm-chain-id",
+ "pallet-evm-precompile-modexp",
+ "pallet-evm-precompile-sha3fips",
+ "pallet-evm-precompile-simple",
+ "pallet-grandpa",
+ "pallet-sudo",
+ "pallet-timestamp",
+ "pallet-transaction-payment",
+ "pallet-transaction-payment-rpc-runtime-api",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-api",
+ "sp-block-builder",
+ "sp-consensus-aura",
+ "sp-consensus-grandpa",
+ "sp-core",
+ "sp-genesis-builder",
+ "sp-inherents",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-transaction-pool",
+ "sp-version",
+ "substrate-wasm-builder",
 ]
 
 [[package]]
@@ -520,6 +541,12 @@ dependencies = [
  "quote",
  "syn 2.0.96",
 ]
+
+[[package]]
+name = "assert_matches"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b34d609dfbaf33d6889b2b7106d3ca345eacad44200913df5ba02bfd31d2ba9"
 
 [[package]]
 name = "async-channel"
@@ -2272,6 +2299,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "fc-cli"
+version = "1.0.0-dev"
+dependencies = [
+ "argochain-runtime",
+ "clap",
+ "ethereum-types",
+ "fc-api",
+ "fc-db",
+ "fp-rpc",
+ "fp-storage",
+ "futures",
+ "parity-scale-codec",
+ "sc-block-builder",
+ "sc-cli",
+ "sc-client-db",
+ "serde",
+ "serde_json",
+ "sp-api",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-io",
+ "sp-runtime",
+ "substrate-test-runtime-client",
+ "tempfile",
+]
+
+[[package]]
 name = "fc-consensus"
 version = "2.0.0-dev"
 dependencies = [
@@ -2324,7 +2378,7 @@ dependencies = [
 name = "fc-mapping-sync"
 version = "2.0.0-dev"
 dependencies = [
- "Argochain",
+ "argochain-runtime",
  "ethereum",
  "ethereum-types",
  "fc-db",
@@ -5926,6 +5980,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-counter"
+version = "0.1.0"
+dependencies = [
+ "fp-evm",
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "hex",
+ "hex-literal",
+ "log",
+ "pallet-evm",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-dynamic-fee"
 version = "4.0.0-dev"
 dependencies = [
@@ -6223,20 +6297,6 @@ dependencies = [
  "frame-system",
  "parity-scale-codec",
  "scale-info",
- "sp-io",
- "sp-runtime",
-]
-
-[[package]]
-name = "pallet-template"
-version = "0.1.0"
-dependencies = [
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "parity-scale-codec",
- "scale-info",
- "sp-core",
  "sp-io",
  "sp-runtime",
 ]
@@ -8031,6 +8091,55 @@ dependencies = [
 ]
 
 [[package]]
+name = "sc-consensus-babe"
+version = "0.45.0"
+source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=stable2409#c9211527a90f053f9a58be4c1d6001ccfefbfd5f"
+dependencies = [
+ "async-trait",
+ "fork-tree",
+ "futures",
+ "log",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "parity-scale-codec",
+ "parking_lot 0.12.3",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-epochs",
+ "sc-consensus-slots",
+ "sc-telemetry",
+ "sc-transaction-pool-api",
+ "sp-api",
+ "sp-application-crypto",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-babe",
+ "sp-consensus-slots",
+ "sp-core",
+ "sp-crypto-hashing",
+ "sp-inherents",
+ "sp-keystore",
+ "sp-runtime",
+ "substrate-prometheus-endpoint",
+ "thiserror 1.0.69",
+]
+
+[[package]]
+name = "sc-consensus-epochs"
+version = "0.44.0"
+source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=stable2409#c9211527a90f053f9a58be4c1d6001ccfefbfd5f"
+dependencies = [
+ "fork-tree",
+ "parity-scale-codec",
+ "sc-client-api",
+ "sc-consensus",
+ "sp-blockchain",
+ "sp-runtime",
+]
+
+[[package]]
 name = "sc-consensus-grandpa"
 version = "0.30.0"
 source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=stable2409#c9211527a90f053f9a58be4c1d6001ccfefbfd5f"
@@ -8070,6 +8179,41 @@ dependencies = [
  "sp-crypto-hashing",
  "sp-keystore",
  "sp-runtime",
+ "substrate-prometheus-endpoint",
+ "thiserror 1.0.69",
+]
+
+[[package]]
+name = "sc-consensus-manual-seal"
+version = "0.46.0"
+source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=stable2409#c9211527a90f053f9a58be4c1d6001ccfefbfd5f"
+dependencies = [
+ "assert_matches",
+ "async-trait",
+ "futures",
+ "futures-timer",
+ "jsonrpsee",
+ "log",
+ "parity-scale-codec",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-aura",
+ "sc-consensus-babe",
+ "sc-consensus-epochs",
+ "sc-transaction-pool",
+ "sc-transaction-pool-api",
+ "serde",
+ "sp-api",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-aura",
+ "sp-consensus-babe",
+ "sp-consensus-slots",
+ "sp-core",
+ "sp-inherents",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-timestamp",
  "substrate-prometheus-endpoint",
  "thiserror 1.0.69",
 ]
