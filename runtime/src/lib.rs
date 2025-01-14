@@ -16,6 +16,9 @@ use alloc::{vec, vec::Vec};
 use core::marker::PhantomData;
 use scale_codec::{Decode, Encode};
 use sp_api::impl_runtime_apis;
+// pub mod assets_api;
+pub mod constants;
+use constants::{currency::*, time::*};
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_consensus_grandpa::{AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList};
 use sp_core::{
@@ -141,11 +144,11 @@ pub type Executive = frame_executive::Executive<
 >;
 
 // Time is measured by number of blocks.
-pub const MILLISECS_PER_BLOCK: u64 = 6000;
-pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
-pub const MINUTES: BlockNumber = 60_000 / (MILLISECS_PER_BLOCK as BlockNumber);
-pub const HOURS: BlockNumber = MINUTES * 60;
-pub const DAYS: BlockNumber = HOURS * 24;
+// pub const MILLISECS_PER_BLOCK: u64 = 6000;
+// pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
+// pub const MINUTES: BlockNumber = 60_000 / (MILLISECS_PER_BLOCK as BlockNumber);
+// pub const HOURS: BlockNumber = MINUTES * 60;
+// pub const DAYS: BlockNumber = HOURS * 24;
 
 /// Opaque types. These are used by the CLI to instantiate machinery that don't need to know
 /// the specifics of the runtime. They can then be made to be agnostic over specific formats
@@ -351,7 +354,7 @@ parameter_types! {
 	pub WeightPerGas: Weight = Weight::from_parts(weight_per_gas(BLOCK_GAS_LIMIT, NORMAL_DISPATCH_RATIO, WEIGHT_MILLISECS_PER_BLOCK), 0);
 	pub SuicideQuickClearLimit: u32 = 0;
 }
-use pallet_evm::EVMCurrencyAdapter;
+// use pallet_evm::EVMCurrencyAdapter;
 
 impl pallet_evm::Config for Runtime {
 	type FeeCalculator = BaseFee;
@@ -418,12 +421,12 @@ impl pallet_base_fee::Config for Runtime {
 	type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
 	type DefaultElasticity = DefaultElasticity;
 }
-
-// impl pallet_counter::Config for Runtime {
-//     type RuntimeEvent = RuntimeEvent;
-//     type SubstrateCurrency = Balances; 
-//     type EvmCurrency = Balances; 
-// }
+pub use pallet_counter;
+impl pallet_counter::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type SubstrateCurrency = Balances; 
+    type EvmCurrency = Balances; 
+}
 
 
 
@@ -509,8 +512,8 @@ mod runtime {
 	#[runtime::pallet_index(11)]
 	pub type ManualSeal = pallet_manual_seal;
 
-	// #[runtime::pallet_index(12)]
-	// pub type PalletCounter = pallet-counter;
+	#[runtime::pallet_index(12)]
+	pub type PalletCounter = pallet_counter;
 	
 }
 
@@ -1025,6 +1028,17 @@ impl_runtime_apis! {
 			)
 		}
 	}
+	// impl assets_api::AssetsApi<
+    //     Block,
+    //     AccountId,
+    //     Balance,
+    //     u32,
+    // > for Runtime
+    // {
+    //     fn account_balances(account: AccountId) -> Vec<(u32, Balance)> {
+    //         Assets::account_balances(account)
+    //     }
+    // }
 
 	#[cfg(feature = "runtime-benchmarks")]
 	impl frame_benchmarking::Benchmark<Block> for Runtime {

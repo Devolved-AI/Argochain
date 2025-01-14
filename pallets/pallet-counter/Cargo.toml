@@ -1,13 +1,11 @@
 [package]
 name = "pallet-counter"
-description = "FRAME pallet template for defining custom runtime logic."
 version = "0.1.0"
-license = "Unlicense"
+license.workspace = true
 authors.workspace = true
 homepage.workspace = true
 repository.workspace = true
 edition.workspace = true
-publish = false
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
@@ -19,18 +17,20 @@ codec = { features = [
 scale-info = { features = [
 	"derive",
 ], workspace = true }
-frame-benchmarking = { optional = true, workspace = true }
+frame-benchmarking = { optional = true, workspace = true ,default-features = false}
 frame-support.workspace = true
+frame-support.default-features=false
 frame-system.workspace = true
+frame-system.default-features=false
 pallet-evm={workspace = true}
 fp-evm={workspace = true}
 sp-std={workspace = true}
 hex-literal = {workspace = true}
 hex = { workspace = true, default-features = false, features = ["alloc"] }
 log={workspace = true}
-sp-core = { default-features = true, workspace = true}
-sp-io = { default-features = true, workspace = true}
-sp-runtime = { default-features = true, workspace = true}
+sp-core = { default-features = false, workspace = true}
+sp-io = { default-features = false, workspace = true}
+sp-runtime = { default-features = false, workspace = true}
 
 
 
@@ -49,7 +49,7 @@ runtime-benchmarks = [
 	"frame-support/runtime-benchmarks",
 	"frame-system/runtime-benchmarks",
 ]
-try-runtime = [
-	"frame-support/try-runtime",
-	"frame-system/try-runtime",
-]
+# try-runtime = [
+# 	"frame-support/try-runtime",
+# 	"frame-system/try-runtime",
+# ]
