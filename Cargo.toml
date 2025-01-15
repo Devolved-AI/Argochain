@@ -89,3 +89,10 @@ frame-system-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk.
 pallet-template={path = "pallets/template",default-features = false}
 
 substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
+
+# layer 2
+sp-consensus-babe = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+pallet-babe = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+polkadot-primitives = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+sp-authority-discovery = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+pallet-authority-discovery = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
