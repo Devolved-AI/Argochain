@@ -87,5 +87,7 @@ pallet-transaction-payment-rpc-runtime-api={ git = "https://github.com/paritytec
 frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 frame-system-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 pallet-template={path = "pallets/template",default-features = false}
+pallet-utility = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409", default-features = false }
+
 
 substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
