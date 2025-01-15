@@ -22,7 +22,7 @@ log = { workspace = true }
 prometheus = { version = "0.13.4", default-features = false }
 rand = "0.8"
 rlp = { workspace = true }
-scale-codec = { package = "parity-scale-codec", workspace = true }
+codec= { package = "parity-scale-codec", workspace = true }
 schnellru = "0.2.3"
 serde = { workspace = true, optional = true }
 thiserror = { workspace = true }

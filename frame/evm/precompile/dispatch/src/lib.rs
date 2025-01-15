@@ -29,7 +29,7 @@ mod tests;
 use alloc::format;
 use core::marker::PhantomData;
 
-use scale_codec::{Decode, DecodeLimit};
+use codec::{Decode, DecodeLimit};
 // Substrate
 use frame_support::{
 	dispatch::{DispatchClass, GetDispatchInfo, Pays, PostDispatchInfo},

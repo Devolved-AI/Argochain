@@ -55,7 +55,7 @@ pub mod prelude {
 			precompile_set::DiscriminantResult,
 			solidity::{
 				// We export solidity itself to encourage using `solidity::Codec` to avoid confusion
-				// with parity_scale_codec,
+				// with parity_codec,
 				self,
 				codec::{
 					Address,

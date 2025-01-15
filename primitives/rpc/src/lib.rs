@@ -24,7 +24,7 @@ extern crate alloc;
 use alloc::vec::Vec;
 use ethereum::Log;
 use ethereum_types::{Address, Bloom};
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use scale_info::TypeInfo;
 // Substrate
 use sp_core::{H256, U256};

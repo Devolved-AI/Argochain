@@ -23,7 +23,7 @@ use std::{
 	sync::Arc,
 };
 
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 // Substrate
 use sc_client_db::DatabaseSource;
 use sp_blockchain::HeaderBackend;
@@ -327,7 +327,7 @@ mod tests {
 	};
 
 	use futures::executor;
-	use scale_codec::Encode;
+	use codec::Encode;
 	use tempfile::tempdir;
 	// Substrate
 	use sc_block_builder::BlockBuilderBuilder;

@@ -25,7 +25,7 @@ mod validation;
 
 use alloc::{collections::BTreeMap, vec::Vec};
 use frame_support::weights::{constants::WEIGHT_REF_TIME_PER_MILLIS, Weight};
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use scale_info::TypeInfo;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

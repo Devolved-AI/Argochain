@@ -20,7 +20,7 @@ futures = { workspace = true }
 hex-literal = { workspace = true }
 jsonrpsee = { workspace = true, features = ["server", "macros"] }
 log = { workspace = true }
-scale-codec = { package = "parity-scale-codec", workspace = true }
+codec = { package = "parity-scale-codec", workspace = true }
 serde_json = { workspace = true, features = ["arbitrary_precision"] }
 
 # Substrate
@@ -62,9 +62,24 @@ pallet-transaction-payment-rpc-runtime-api = { workspace = true }
 substrate-frame-rpc-system = { workspace = true }
 # These dependencies are used for runtime benchmarking
 frame-benchmarking = { workspace = true, optional = true }
-frame-benchmarking-cli = { workspace = true, optional = true }
+frame-benchmarking-cli = { workspace = true,default-features = false }
 frame-system = { workspace = true }
 pallet-transaction-payment = { workspace = true }
+node-primitives={workspace = true}
+array-bytes = {workspace = true}
+rand = "0.8"
+futures-timer = "3.0"
+hex = {workspace = true,default-features = false }
+serde = { version = "1.0.163", features = ["derive"] }
+sp-keystore = {workspace = true }
+sc-consensus-babe = { workspace = true }
+sc-consensus-slots = { workspace = true }
+sp-consensus = { workspace = true }
+sc-consensus-epochs = { workspace = true }
+sp-genesis-builder = {default-features = false,workspace = true}
+sp-consensus-babe = { workspace = true  }
+sp-std = { workspace = true }
+
 
 # Frontier
 fc-api = { workspace = true }
@@ -80,9 +95,67 @@ fp-dynamic-fee = { workspace = true, features = ["default"] }
 fp-evm = { workspace = true, features = ["default"] }
 fp-rpc = { workspace = true, features = ["default"] }
 argochain-runtime = { workspace = true, features = ["std"] }
+fp-consensus = { path = "../primitives/consensus" }
+fp-storage = { path = "../primitives/storage" }
+pallet-evm = { path = "../frame/evm" }
+
+#----------------------------------------------------------------------------------------------------------------------------------------
+
+sc-keystore = { workspace = true }
+sc-network-common = { workspace = true }
+
+sp-keyring = { workspace = true }
+sp-transaction-storage-proof = { workspace = true }
+sp-authority-discovery = { workspace = true }
+sc-sync-state-rpc = { workspace = true }
+sc-sysinfo = { workspace = true }
+sc-statement-store = { workspace = true }
+
+sc-storage-monitor = {workspace = true  }
+sc-network-statement = { workspace = true }
+sp-statement-store = { workspace = true}
+sc-rpc-spec-v2 = { workspace = true }
+jsonrpc-core = {workspace = true}
+
+sc-rpc-api = {workspace = true }
+docify = { workspace = true }
+sc-service-test = { workspace = true}
+sc-block-builder = { workspace = true }
+sp-tracing = { workspace = true }
+sc-consensus-babe-rpc = { workspace = true }
+sc-consensus-grandpa-rpc = { workspace = true }
+substrate-state-trie-migration-rpc = { workspace = true  }
+sc-authority-discovery = {workspace = true  }
+pallet-assets = { workspace = true}
+pallet-asset-tx-payment = { workspace = true }
+pallet-asset-conversion-tx-payment = { workspace = true }
+mmr-rpc = { workspace = true }
+frame-metadata-hash-extension = { workspace = true }
+
+
+# These dependencies are used for runtime benchmarking
+
+
+# frame dependencies
+pallet-im-online = {workspace = true }
+
+
+
+# Frontier
+
+
+
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------
 
 [build-dependencies]
 substrate-build-script-utils = { workspace = true }
+
+[dev-dependencies]
+substrate-cli-test-utils = { workspace = true}
+
+
 
 [features]
 default = [

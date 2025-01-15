@@ -28,7 +28,7 @@ pub use ethereum::{
 use ethereum_types::{H160, H256, U256};
 use fp_evm::{CallOrCreateInfo, CheckEvmTransactionInput};
 use frame_support::dispatch::{DispatchErrorWithPostInfo, PostDispatchInfo};
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 
 pub trait ValidatedTransaction {
 	fn apply(

@@ -22,7 +22,7 @@ use crate::mock::*;
 
 use fp_evm::Context;
 use frame_support::{assert_err, assert_ok};
-use scale_codec::Encode;
+use codec::Encode;
 use sp_core::{H160, U256};
 use sp_runtime::BuildStorage;
 

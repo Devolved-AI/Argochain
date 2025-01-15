@@ -27,7 +27,7 @@ use std::{
 };
 
 use parking_lot::Mutex;
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 // Substrate
 pub use sc_client_db::DatabaseSource;
 use sp_blockchain::HeaderBackend;

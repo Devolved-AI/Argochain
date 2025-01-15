@@ -74,7 +74,7 @@ pub use evm::{
 };
 use hash_db::Hasher;
 use impl_trait_for_tuples::impl_for_tuples;
-use scale_codec::{Decode, Encode, MaxEncodedLen};
+use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use log::info;
 

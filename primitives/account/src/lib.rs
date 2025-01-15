@@ -23,7 +23,7 @@ extern crate alloc;
 use alloc::string::{String, ToString};
 use core::fmt;
 
-use scale_codec::{Decode, Encode, MaxEncodedLen};
+use codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 // Substrate
 use sp_core::{crypto::AccountId32, ecdsa, RuntimeDebug, H160, H256};

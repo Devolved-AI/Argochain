@@ -18,7 +18,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![warn(unused_crate_dependencies)]
 
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 
 /// Some storage constants
 pub mod constants {

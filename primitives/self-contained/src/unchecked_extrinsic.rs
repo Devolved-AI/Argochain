@@ -19,7 +19,7 @@ use frame_support::{
 	dispatch::{DispatchInfo, GetDispatchInfo},
 	traits::ExtrinsicCall,
 };
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use scale_info::TypeInfo;
 use sp_runtime::{
 	traits::{

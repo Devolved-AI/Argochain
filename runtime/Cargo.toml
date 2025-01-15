@@ -13,8 +13,16 @@ publish = false
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
-scale-codec = { package = "parity-scale-codec", workspace = true }
+codec = { features = [
+	"derive",
+	"max-encoded-len",
+], workspace = true }
 scale-info = { workspace = true }
+static_assertions = "1.1.0"
+primitive-types = { version = "0.12.0", default-features = false, features = ["codec", "scale-info", "num-traits"] }
+array-bytes = "6.1"
+hex-literal = "0.4.1"
+log={workspace = true}
 
 #===============================================================================================================================#
 #===============================================================================================================================#
@@ -33,7 +41,13 @@ sp-session = { workspace = true }
 sp-transaction-pool = { workspace = true }
 sp-version = { workspace = true }
 node-primitives = {workspace = true}
-
+sp-std={workspace = true, default-features = false}
+sp-authority-discovery = { version = "34.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409"}
+sp-consensus-babe = { version = "0.40.0", default-features = false,git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+sp-staking = { version = "36.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+sp-statement-store = { version = "18.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409"}
+sp-io = { version = "38.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+sp-consensus-beefy = {default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 
 #===============================================================================================================================#
 #===============================================================================================================================#
@@ -49,15 +63,19 @@ frame-system-rpc-runtime-api = { workspace = true }
 
 #===============================================================================================================================#
 #===============================================================================================================================#
+#===========================================  Own Pallets ==================================================================#
+
+pallet-counter.workspace=true
+
+
+#===============================================================================================================================#
+#===============================================================================================================================#
 #===========================================Frontier Pallets ==================================================================#
 
-
-# Frontier
 fp-account = { workspace = true, features = ["serde"] }
 fp-evm = { workspace = true, features = ["serde"] }
 fp-rpc = { workspace = true }
 fp-self-contained = { workspace = true, features = ["serde"] }
-# Frontier FRAME
 pallet-base-fee = { workspace = true }
 pallet-dynamic-fee = { workspace = true }
 pallet-ethereum = { workspace = true }
@@ -66,7 +84,7 @@ pallet-evm-chain-id = { workspace = true }
 pallet-evm-precompile-modexp = { workspace = true }
 pallet-evm-precompile-sha3fips = { workspace = true }
 pallet-evm-precompile-simple = { workspace = true }
-pallet-counter.workspace=true
+
 
 #===============================================================================================================================#
 #===============================================================================================================================#
@@ -123,34 +141,39 @@ pallet-transaction-storage = {  workspace =true ,default-features = false }
 pallet-uniques = {  workspace =true ,default-features = false }
 pallet-vesting = {  workspace =true ,default-features = false }
 pallet-whitelist = {  workspace =true ,default-features = false }
-pallet-broker = {  workspace =true ,default-features = false }
 pallet-tx-pause = {  workspace =true ,default-features = false }
+pallet-collective = {  workspace =true ,default-features = false }
 
 #===============================================================================================================================#
 #===============================================================================================================================#
 
 
 
-# frame-election-provider-support = {  workspace =true ,default-features = false }
-# # pallet-asset-conversion = {  workspace =true ,default-features = false }
-# pallet-asset-rate = {  workspace =true ,default-features = false }
-# pallet-authority-discovery = {  workspace =true ,default-features = false }
-# pallet-child-bounties = {  workspace =true ,default-features = false }
-# pallet-collective = {  workspace =true ,default-features = false }
-# pallet-contracts = {  workspace =true ,default-features = false}
-# pallet-conviction-voting = {  workspace =true ,default-features = false }
-# pallet-core-fellowship = {  workspace =true ,default-features = false }
-# pallet-election-provider-support-benchmarking = {  workspace =true ,default-features = false}
-# pallet-im-online = {  workspace =true ,default-features = false }
-# pallet-message-queue = { workspace =true ,default-features = false }
-# pallet-mmr = {  workspace =true ,default-features = false }
-# pallet-nfts-runtime-api = {  workspace =true ,default-features = false}
-# pallet-nomination-pools-benchmarking = {  workspace =true ,default-features = false }
-# pallet-nomination-pools-runtime-api = {  workspace =true ,default-features = false }
-# pallet-offences-benchmarking = {  git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409", default-features = false}
-# pallet-session-benchmarking = {  git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409", default-features = false}
-# pallet-staking-runtime-api = {  workspace =true ,default-features = false }
-# pallet-asset-conversion-tx-payment = {  workspace =true ,default-features = false }
+frame-election-provider-support = {  workspace =true ,default-features = false }
+pallet-asset-conversion = {  workspace =true ,default-features = false }
+pallet-asset-rate = {  workspace =true ,default-features = false }
+pallet-authority-discovery = {  workspace =true ,default-features = false }
+pallet-child-bounties = {  workspace =true ,default-features = false }
+
+pallet-contracts = {  workspace =true ,default-features = false}
+pallet-conviction-voting = {  workspace =true ,default-features = false }
+pallet-core-fellowship = {  workspace =true ,default-features = false }
+pallet-election-provider-support-benchmarking = { version = "37.0.0", default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409", optional = true }
+pallet-im-online = {  workspace =true ,default-features = false }
+pallet-message-queue = { workspace =true ,default-features = false }
+pallet-mmr = {  workspace =true ,default-features = false }
+pallet-nfts-runtime-api = {  workspace =true ,default-features = false}
+pallet-nomination-pools-benchmarking = { version = "36.0.0", default-features = false, optional = true, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+pallet-nomination-pools-runtime-api = {  workspace =true ,default-features = false }
+pallet-offences-benchmarking = { version = "38.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409", default-features = false, optional = true }
+pallet-session-benchmarking = { version = "38.0.0", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409", default-features = false, optional = true }
+pallet-staking-runtime-api = {  workspace =true ,default-features = false }
+pallet-asset-conversion-tx-payment = {  workspace =true ,default-features = false }
+pallet-broker = {  workspace =true ,default-features = false }
+pallet-utility = {  workspace =true ,default-features = false }
+pallet-hotfix-sufficients = { workspace = true }
+
+
 
 
 
@@ -158,59 +181,131 @@ pallet-tx-pause = {  workspace =true ,default-features = false }
 [build-dependencies]
 substrate-wasm-builder = { workspace = true, optional = true }
 
-# [dependencies.pallet-counter]
-# path = "../pallets/pallet-counter"
+
 
 [features]
 default = ["std", "with-rocksdb-weights"]
 with-rocksdb-weights = []
 with-paritydb-weights = []
 std = [
-	"scale-codec/std",
-	"scale-info/std",
-	# Substrate
-	"sp-api/std",
-	"sp-block-builder/std",
-	"sp-consensus-aura/std",
-	"sp-consensus-grandpa/std",
-	"sp-core/std",
-	"sp-genesis-builder/std",
-	"sp-inherents/std",
-	"sp-offchain/std",
-	"sp-runtime/std",
-	"sp-session/std",
-	"sp-transaction-pool/std",
-	"sp-version/std",
-	"substrate-wasm-builder",
-	# Substrate FRAME
-	"frame-benchmarking/std",
-	"frame-executive/std",
-	"frame-support/std",
-	"frame-system/std",
-	"frame-system-rpc-runtime-api/std",
+	"pallet-whitelist/std",
+	"pallet-offences-benchmarking?/std",
+	"pallet-election-provider-support-benchmarking?/std",
+	"pallet-asset-conversion-tx-payment/std",
+	# "pallet-asset-tx-payment/std",
 	"frame-system-benchmarking?/std",
-	"pallet-aura/std",
+	"frame-election-provider-support/std",
+	"sp-authority-discovery/std",
+	"pallet-asset-conversion/std",
+	"pallet-assets/std",
+	"pallet-authority-discovery/std",
+	"pallet-authorship/std",
+	"sp-consensus-babe/std",
+	"sp-consensus-beefy/std",
+	"sp-consensus-grandpa/std",
+	"pallet-babe/std",
+	"pallet-bags-list/std",
 	"pallet-balances/std",
+	"codec/std",
+	"pallet-bounties/std",
+	"sp-block-builder/std",
+	"scale-info/std",
+	"pallet-collective/std",
+	"pallet-contracts/std",
+	# "pallet-contracts-primitives/std",
+	"pallet-conviction-voting/std",
+	"pallet-core-fellowship/std",
+	"pallet-democracy/std",
+	"pallet-elections-phragmen/std",
+	"pallet-fast-unstake/std",
+	"frame-executive/std",
+	"pallet-nis/std",
 	"pallet-grandpa/std",
-	"pallet-sudo/std",
-	"pallet-timestamp/std",
-	"pallet-counter/std",
-	"pallet-transaction-payment/std",
-	"pallet-transaction-payment-rpc-runtime-api/std",
-	# Frontier
-	"fp-account/std",
-	"fp-evm/std",
-	"fp-rpc/std",
-	"fp-self-contained/std",
-	# Frontier FRAME
-	"pallet-base-fee/std",
-	"pallet-dynamic-fee/std",
-	"pallet-ethereum/std",
-	"pallet-evm/std",
+	"pallet-im-online/std",
+	"pallet-indices/std",
+	"sp-inherents/std",
+	"pallet-lottery/std",
+	"pallet-membership/std",
+	"pallet-message-queue/std",
+	"log/std",
+	"pallet-mmr/std",
+	"pallet-multisig/std",
+	"pallet-nomination-pools/std",
+	"pallet-nomination-pools-runtime-api/std",
+	"pallet-nomination-pools-benchmarking?/std",
+	"pallet-identity/std",
+	"pallet-scheduler/std",
+	"pallet-tx-pause/std",
+	"node-primitives/std",
+	"sp-offchain/std",
+	"pallet-offences/std",
+	"pallet-glutton/std",
 	"pallet-evm-chain-id/std",
-	"pallet-evm-precompile-modexp/std",
-	"pallet-evm-precompile-sha3fips/std",
+	"pallet-preimage/std",
+	"pallet-proxy/std",
+	"pallet-broker/std",
+	"sp-core/std",
+	"pallet-insecure-randomness-collective-flip/std",
+	"sp-std/std",
+	"pallet-session/std",
+	"pallet-session-benchmarking?/std",
+	"sp-api/std",
+	"sp-runtime/std",
+	"sp-staking/std",
+	"pallet-staking/std",
+	"pallet-staking-runtime-api/std",
+	"pallet-state-trie-migration/std",
+	"pallet-statement/std",
+	"pallet-salary/std",
+	"sp-session/std",
+	"pallet-sudo/std",
+	"frame-support/std",
+	"frame-benchmarking/std",
+	# "frame-benchmarking-pallet-pov/std",
+	"frame-system-rpc-runtime-api/std",
+	"frame-system/std",
+	"pallet-election-provider-multi-phase/std",
+	"pallet-timestamp/std",
+	"pallet-tips/std",
+	"pallet-transaction-payment-rpc-runtime-api/std",
+	"pallet-transaction-payment/std",
+	"pallet-transaction-storage/std",
+	"pallet-treasury/std",
+	"pallet-asset-rate/std",
+	"sp-transaction-pool/std",
+	"sp-statement-store/std",
+	"pallet-utility/std",
+	"sp-version/std",
+	"pallet-society/std",
+	"pallet-ranked-collective/std",
+	"pallet-referenda/std",
+	"pallet-remark/std",
+	"pallet-root-testing/std",
+	"pallet-recovery/std",
+	"pallet-uniques/std",
+	"pallet-nfts/std",
+	"pallet-nfts-runtime-api/std",
+	"pallet-nft-fractionalization/std",
+	"pallet-vesting/std",
+	"sp-io/std",
+	"pallet-child-bounties/std",
+	"pallet-alliance/std",
+	"substrate-wasm-builder",
+	#frontier
+	'fp-rpc/std',
+	'fp-evm/std',
+	'fp-account/std',
+	'fp-self-contained/std',
+	'pallet-base-fee/std',
+	'pallet-dynamic-fee/std',
+	'pallet-ethereum/std',
+	'pallet-evm/std',
+	'pallet-evm-precompile-simple/std',
+	'pallet-evm-precompile-sha3fips/std',
 	"pallet-evm-precompile-simple/std",
+	"pallet-counter/std",
+	# "pallet-hotfix-sufficients/std"
+
 ]
 runtime-benchmarks = [
 	"frame-benchmarking/runtime-benchmarks",
@@ -222,4 +317,11 @@ runtime-benchmarks = [
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-ethereum/runtime-benchmarks",
 	"pallet-evm/runtime-benchmarks",
+	# "pallet-alliance/runtime-benchmarks",
+	# "pallet-collective/runtime-benchmarks",
+	# "pallet-asset-conversion/runtime-benchmarks",
+	# "pallet-im-online/runtime-benchmarks",
+	# "pallet-nomination-pools-benchmarking/runtime-benchmarks",
+	# "pallet-offences-benchmarking/runtime-benchmarks",
+	# "pallet-session-benchmarking/runtime-benchmarks"
 ]

@@ -13,7 +13,7 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 evm = { workspace = true, features = ["with-codec"] }
 num_enum = { workspace = true, default-features = false }
-scale-codec = { package = "parity-scale-codec", workspace = true }
+codec= { package = "parity-scale-codec", workspace = true }
 scale-info = { workspace = true }
 serde = { workspace = true, optional = true }
 # Substrate
@@ -28,7 +28,7 @@ std = [
 	"evm/with-serde",
 	"num_enum/std",
 	"serde/std",
-	"scale-codec/std",
+	"codec/std",
 	# Substrate
 	"frame-support/std",
 	"sp-core/std",

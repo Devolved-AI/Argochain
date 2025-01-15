@@ -22,7 +22,7 @@
 extern crate alloc;
 
 use alloc::vec::Vec;
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use sp_core::H256;
 use sp_runtime::{
 	generic::{Digest, OpaqueDigestItemId},

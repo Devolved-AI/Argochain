@@ -19,7 +19,7 @@
 use std::{cmp::Ordering, collections::HashSet, num::NonZeroU32, str::FromStr, sync::Arc};
 
 use futures::TryStreamExt;
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use sqlx::{
 	query::Query,
 	sqlite::{
@@ -1020,7 +1020,7 @@ mod test {
 	use std::path::Path;
 
 	use maplit::hashset;
-	use scale_codec::Encode;
+	use codec::Encode;
 	use sqlx::{sqlite::SqliteRow, QueryBuilder, Row, SqlitePool};
 	use tempfile::tempdir;
 	// Substrate

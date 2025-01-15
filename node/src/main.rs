@@ -1,22 +1,17 @@
-//! Substrate Node Template CLI library.
-
+//! Substrate Node CLI library.
 #![warn(missing_docs)]
-#![allow(
-	clippy::type_complexity,
-	clippy::too_many_arguments,
-	clippy::large_enum_variant
-)]
-#![cfg_attr(feature = "runtime-benchmarks", warn(unused_crate_dependencies))]
 
-#[cfg(feature = "runtime-benchmarks")]
-mod benchmarking;
 mod chain_spec;
-mod cli;
-mod client;
-mod command;
-mod eth;
-mod rpc;
+#[macro_use]
 mod service;
+mod benchmarking;
+mod cli;
+mod command;
+mod rpc;
+mod eth;
+mod client;
+
+// mod command_helper;
 
 fn main() -> sc_cli::Result<()> {
 	command::run()
