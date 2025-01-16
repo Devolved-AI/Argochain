@@ -65,25 +65,25 @@ frame-system-rpc-runtime-api = { workspace = true }
 #===============================================================================================================================#
 #===========================================  Own Pallets ==================================================================#
 
-pallet-counter.workspace=true
+# pallet-counter.workspace=true
 
 
 #===============================================================================================================================#
 #===============================================================================================================================#
 #===========================================Frontier Pallets ==================================================================#
 
-fp-account = { workspace = true, features = ["serde"] }
-fp-evm = { workspace = true, features = ["serde"] }
-fp-rpc = { workspace = true }
-fp-self-contained = { workspace = true, features = ["serde"] }
-pallet-base-fee = { workspace = true }
-pallet-dynamic-fee = { workspace = true }
-pallet-ethereum = { workspace = true }
-pallet-evm = { workspace = true }
-pallet-evm-chain-id = { workspace = true }
-pallet-evm-precompile-modexp = { workspace = true }
-pallet-evm-precompile-sha3fips = { workspace = true }
-pallet-evm-precompile-simple = { workspace = true }
+# fp-account = { workspace = true, features = ["serde"] }
+# fp-evm = { workspace = true, features = ["serde"] }
+# fp-rpc = { workspace = true }
+# fp-self-contained = { workspace = true, features = ["serde"] }
+# pallet-base-fee = { workspace = true }
+# pallet-dynamic-fee = { workspace = true }
+# pallet-ethereum = { workspace = true }
+# pallet-evm = { workspace = true }
+# pallet-evm-chain-id = { workspace = true }
+# pallet-evm-precompile-modexp = { workspace = true }
+# pallet-evm-precompile-sha3fips = { workspace = true }
+# pallet-evm-precompile-simple = { workspace = true }
 
 
 #===============================================================================================================================#
@@ -171,7 +171,7 @@ pallet-staking-runtime-api = {  workspace =true ,default-features = false }
 pallet-asset-conversion-tx-payment = {  workspace =true ,default-features = false }
 pallet-broker = {  workspace =true ,default-features = false }
 pallet-utility = {  workspace =true ,default-features = false }
-pallet-hotfix-sufficients = { workspace = true }
+# pallet-hotfix-sufficients = { workspace = true }
 
 
 
@@ -240,7 +240,7 @@ std = [
 	"sp-offchain/std",
 	"pallet-offences/std",
 	"pallet-glutton/std",
-	"pallet-evm-chain-id/std",
+	# "pallet-evm-chain-id/std",
 	"pallet-preimage/std",
 	"pallet-proxy/std",
 	"pallet-broker/std",
@@ -292,18 +292,18 @@ std = [
 	"pallet-alliance/std",
 	"substrate-wasm-builder",
 	#frontier
-	'fp-rpc/std',
-	'fp-evm/std',
-	'fp-account/std',
-	'fp-self-contained/std',
-	'pallet-base-fee/std',
-	'pallet-dynamic-fee/std',
-	'pallet-ethereum/std',
-	'pallet-evm/std',
-	'pallet-evm-precompile-simple/std',
-	'pallet-evm-precompile-sha3fips/std',
-	"pallet-evm-precompile-simple/std",
-	"pallet-counter/std",
+	# 'fp-rpc/std',
+	# 'fp-evm/std',
+	# 'fp-account/std',
+	# 'fp-self-contained/std',
+	# 'pallet-base-fee/std',
+	# 'pallet-dynamic-fee/std',
+	# 'pallet-ethereum/std',
+	# 'pallet-evm/std',
+	# 'pallet-evm-precompile-simple/std',
+	# 'pallet-evm-precompile-sha3fips/std',
+	# "pallet-evm-precompile-simple/std",
+	# "pallet-counter/std",
 	# "pallet-hotfix-sufficients/std"
 
 ]
@@ -315,8 +315,8 @@ runtime-benchmarks = [
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
-	"pallet-ethereum/runtime-benchmarks",
-	"pallet-evm/runtime-benchmarks",
+	# "pallet-ethereum/runtime-benchmarks",
+	# "pallet-evm/runtime-benchmarks",
 	# "pallet-alliance/runtime-benchmarks",
 	# "pallet-collective/runtime-benchmarks",
 	# "pallet-asset-conversion/runtime-benchmarks",

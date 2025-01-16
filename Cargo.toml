@@ -9,43 +9,7 @@ edition = "2021"
 members = [
     "node",
     "runtime",
-    "frame/base-fee",
-	"frame/dynamic-fee",
-	"frame/ethereum",
-	"frame/evm",
-	"frame/evm/precompile/sha3fips",
-	"frame/evm/precompile/simple",
-	"frame/evm/precompile/modexp",
-	"frame/evm/precompile/ed25519",
-	"frame/evm/precompile/bn128",
-	"frame/evm/precompile/blake2",
-	"frame/evm/precompile/bw6761",
-	"frame/evm/precompile/bls12377",
-	"frame/evm/precompile/bls12381",
-	"frame/evm/precompile/dispatch",
-	"frame/evm/precompile/curve25519",
-	"frame/evm/precompile/storage-cleaner",
-	"frame/evm-chain-id",
-	"frame/hotfix-sufficients",
-	"client/api",
-	"client/consensus",
-	"client/rpc-core",
-	"client/rpc",
-	"client/rpc-v2",
-	"client/rpc-v2/api",
-	"client/rpc-v2/types",
-	"client/db",
-	"client/storage",
-	"client/mapping-sync",
-	"primitives/account",
-	"primitives/consensus",
-	"primitives/dynamic-fee",
-	"primitives/evm",
-	"primitives/rpc",
-	"primitives/self-contained",
-	"precompiles",
-	"precompiles/macro",
-	"precompiles/tests-external", "pallets/pallet-counter",
+	# "pallets/pallet-counter",
 ]
 resolver = "2"
 
@@ -63,6 +27,8 @@ serde_derive = { version = "1.0.117" }
 serde_json = { version = "1.0.127", default-features = false }
 serde_yaml = { version = "0.9" }
 codec = { package = "parity-scale-codec", version = "3.6.12", default-features = false, features = ["derive"] }
+scale-codec = { package = "parity-scale-codec", version = "3.6.12", default-features = false, features = ["derive"] }
+
 jsonpath_lib = { version = "0.3" }
 jsonrpsee = { version = "0.24.3" }
 jsonrpsee-core = { version = "0.24.3" }
@@ -192,6 +158,15 @@ frame-benchmarking-cli={ git = "https://github.com/paritytech/polkadot-sdk.git",
 # Argochain={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 argochain-runtime={path = "runtime",default-features = false}
 substrate-build-script-utils={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
+kitchensink-runtime = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409" }
+sp-mixnet = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409" }
+sc-mixnet = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409" }
+sc-consensus-beefy = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409" }
+sp-consensus-beefy = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409" }
+sp-mmr-primitives = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409" }
+node-rpc = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409" }
+
+
 
 
 scale-info = { version = "2.11.1", default-features = false }
@@ -286,42 +261,12 @@ sp-consensus-babe = { version = "0.40.0", git = "https://github.com/paritytech/p
 
 
 
-pallet-counter={path = "pallets/pallet-counter",default-features = false}
+# pallet-counter={path = "pallets/pallet-counter",default-features = false}
 
 substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 
 
-fc-api = { path = "client/api" }
-fc-cli = { path = "client/cli", default-features = false }
-fc-consensus = { path = "client/consensus" }
-fc-db = { path = "client/db", default-features = false }
-fc-mapping-sync = { path = "client/mapping-sync", default-features = false }
-fc-rpc = { path = "client/rpc", default-features = false }
-fc-rpc-core = { path = "client/rpc-core" }
-fc-rpc-v2 = { path = "client/rpc-v2" }
-fc-rpc-v2-api = { path = "client/rpc-v2/api" }
-fc-rpc-v2-types = { path = "client/rpc-v2/types" }
-fc-storage = { path = "client/storage" }
-# Frontier Primitive
-fp-account = { path = "primitives/account", default-features = false }
-fp-consensus = { path = "primitives/consensus", default-features = false }
-fp-dynamic-fee = { path = "primitives/dynamic-fee", default-features = false }
-fp-ethereum = { path = "primitives/ethereum", default-features = false }
-fp-evm = { path = "primitives/evm", default-features = false }
-fp-rpc = { path = "primitives/rpc", default-features = false }
-fp-self-contained = { path = "primitives/self-contained", default-features = false }
-fp-storage = { path = "primitives/storage", default-features = false }
-# Frontier FRAME
-pallet-base-fee = { path = "frame/base-fee", default-features = false }
-pallet-dynamic-fee = { path = "frame/dynamic-fee", default-features = false }
-pallet-ethereum = { path = "frame/ethereum", default-features = false }
-pallet-evm = { path = "frame/evm", default-features = false }
-pallet-evm-chain-id = { path = "frame/evm-chain-id", default-features = false }
-pallet-evm-precompile-modexp = { path = "frame/evm/precompile/modexp", default-features = false }
-pallet-evm-precompile-sha3fips = { path = "frame/evm/precompile/sha3fips", default-features = false }
-pallet-evm-precompile-simple = { path = "frame/evm/precompile/simple", default-features = false }
-pallet-evm-test-vector-support = { path = "frame/evm/test-vector-support" }
-pallet-hotfix-sufficients = { path = "frame/hotfix-sufficients", default-features = false }
+
 
 xcm = { package = "staging-xcm", git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2409", default-features = false }
 precompile-utils = { path = "precompiles", default-features = false }
