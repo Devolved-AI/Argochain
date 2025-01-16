@@ -51,6 +51,7 @@ pub mod opaque {
 impl_opaque_keys! {
 	pub struct SessionKeys {
 		pub aura: Aura,
+		pub babe: Babe,
 		pub grandpa: Grandpa,
 	}
 }
@@ -245,4 +246,7 @@ mod runtime {
 	// Include the custom logic from the pallet-template in the runtime.
 	#[runtime::pallet_index(7)]
 	pub type TemplateModule = pallet_template;
+
+	#[runtime::pallet_index(8)]
+	pub type Babe = pallet_babe;
 }
