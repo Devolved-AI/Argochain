@@ -65,7 +65,7 @@ frame-system-rpc-runtime-api = { workspace = true }
 #===============================================================================================================================#
 #===========================================  Own Pallets ==================================================================#
 
-pallet-counter.workspace=true
+# pallet-counter.workspace=true
 
 
 #===============================================================================================================================#
@@ -303,7 +303,7 @@ std = [
 	'pallet-evm-precompile-simple/std',
 	'pallet-evm-precompile-sha3fips/std',
 	"pallet-evm-precompile-simple/std",
-	"pallet-counter/std",
+	# "pallet-counter/std",
 	# "pallet-hotfix-sufficients/std"
 
 ]

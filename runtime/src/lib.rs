@@ -2391,18 +2391,18 @@ mod runtime {
     #[runtime::pallet_index(75)]
 	pub type BaseFee = pallet_base_fee::Pallet<Runtime>;
 
-    #[runtime::pallet_index(76)]
-	pub type PalletCounter = pallet_counter::Pallet<Runtime>;
+    // #[runtime::pallet_index(76)]
+	// pub type PalletCounter = pallet_counter::Pallet<Runtime>;
 }
 
 // use pallet_counter::{self, WeightInfo, DefaultWeightInfo};
-pub use pallet_counter;
+// pub use pallet_counter;
 
-impl pallet_counter::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type SubstrateCurrency = Balances; 
-    type EvmCurrency = Balances; 
-}
+// impl pallet_counter::Config for Runtime {
+//     type RuntimeEvent = RuntimeEvent;
+//     type SubstrateCurrency = Balances; 
+//     type EvmCurrency = Balances; 
+// }
 
 
 // All migrations executed on runtime upgrade as a nested tuple of types implementing
