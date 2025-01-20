@@ -381,5 +381,6 @@ pallet-whitelist = {  default-features = false, git = "https://github.com/parity
 pallet-broker = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 pallet-tx-pause = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 
+
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
