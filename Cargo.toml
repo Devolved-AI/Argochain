@@ -193,7 +193,7 @@ frame-benchmarking-cli={ git = "https://github.com/paritytech/polkadot-sdk.git",
 argochain-runtime={path = "runtime",default-features = false}
 substrate-build-script-utils={ git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false}
 
-codec = { version = "3.6.12", default-features = false, package = "parity-scale-codec" }
+codec = { package = "parity-scale-codec", version = "3.6.12", default-features = false, features = ["derive"] }
 
 scale-info = { version = "2.11.1", default-features = false }
 
@@ -375,7 +375,7 @@ pallet-transaction-storage = {  default-features = false, git = "https://github.
 pallet-uniques = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 pallet-vesting = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 pallet-whitelist = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
-pallet-broker = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
+# pallet-broker = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 pallet-tx-pause = {  default-features = false, git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2409" }
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 use alloc::{vec, vec::Vec};
 use core::marker::PhantomData;
-use scale_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use sp_api::impl_runtime_apis;
 // pub mod assets_api;
 pub mod constants;
