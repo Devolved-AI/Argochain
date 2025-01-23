@@ -249,4 +249,7 @@ mod runtime {
 
 	#[runtime::pallet_index(8)]
 	pub type Babe = pallet_babe;
+
+	// #[runtime::pallet_index(9)]
+	// pub type Historical = pallet_session_historical;
 }

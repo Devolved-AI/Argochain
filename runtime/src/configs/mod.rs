@@ -37,6 +37,7 @@ use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_runtime::{traits::One, Perbill};
 use sp_version::RuntimeVersion;
+use pallet_session::historical as pallet_session_historical;
 
 // Local module imports
 use super::{
@@ -100,16 +101,20 @@ impl pallet_aura::Config for Runtime {
 	type SlotDuration = pallet_aura::MinimumPeriodTimesTwo<Runtime>;
 }
 
+// parameter_types! {
+//     pub const MaxSetIdSessionEntries: u32 = BondingDuration::get() * SessionsPerEra::get();
+// }
+
 impl pallet_grandpa::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 
 	type WeightInfo = ();
-	type MaxAuthorities = ConstU32<32>;
-	type MaxNominators = ConstU32<0>;
-	type MaxSetIdSessionEntries = ConstU64<0>;
+	type MaxAuthorities = MaxAuthorities; //ConstU32<32>;
+	type MaxNominators = MaxNominators; //ConstU32<0>;
+	type MaxSetIdSessionEntries = ConstU64<0>; //MaxSetIdSessionEntries;
 
-	type KeyOwnerProof = sp_core::Void;
-	type EquivocationReportSystem = ();
+	type KeyOwnerProof = sp_session::MembershipProof; //sp_core::Void; //<Historical as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::Proof;
+	type EquivocationReportSystem = (); //pallet_grandpa::EquivocationReportSystem<Self, Offences, Historical, ReportLongevity>;
 }
 
 impl pallet_timestamp::Config for Runtime {
@@ -169,26 +174,38 @@ parameter_types! {
 	// 30 seconds for now
     pub const EpochDuration: u64 = EPOCH_DURATION_IN_SLOTS;
     pub const ExpectedBlockTime: Moment = MILLI_SECS_PER_BLOCK;
-    pub const MaxNominators: u32 = 256;
-	pub const MaxAuthorities: u32 = 100_000;
+    pub const MaxNominators: u32 = 400;
+	pub const MaxAuthorities: u32 = 100;
 }
 		
 impl pallet_babe::Config for Runtime {
 	type EpochDuration = EpochDuration;
 	type ExpectedBlockTime = ExpectedBlockTime;
-
 	// session module is the trigger
 	type EpochChangeTrigger = pallet_babe::ExternalTrigger;
-
 	type DisabledValidators = ();
-
 	type WeightInfo = ();
-
 	type MaxAuthorities = MaxAuthorities;
 	type MaxNominators = MaxNominators;
-
-	type KeyOwnerProof = sp_core::Void;
-		// <Historical as KeyOwnerProofSystem<(KeyTypeId, pallet_babe::AuthorityId)>>::Proof;
-
+	type KeyOwnerProof = sp_session::MembershipProof; //sp_core::Void;
+			//<Historical as KeyOwnerProofSystem<(KeyTypeId, pallet_babe::AuthorityId)>>::Proof;
 	type EquivocationReportSystem = ();
+			//pallet_babe::EquivocationReportSystem<Self, Offences, Historical, ReportLongevity>;
 }
+
+impl pallet_session::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type ValidatorId = <Self as frame_system::Config>::AccountId;
+	type ValidatorIdOf = pallet_staking::StashOf<Self>;
+	type ShouldEndSession = Babe;
+	type NextSessionRotation = Babe;
+	type SessionManager = pallet_session::historical::NoteHistoricalRoot<Self, Staking>;
+	type SessionHandler = <SessionKeys as OpaqueKeys>::KeyTypeIdProviders;
+	type Keys = SessionKeys;
+	type WeightInfo = pallet_session::weights::SubstrateWeight<Runtime>;
+}
+
+// impl pallet_session::historical::Config for Runtime {
+// 	type FullIdentification = pallet_staking::Exposure<AccountId, Balance>;
+// 	type FullIdentificationOf = pallet_staking::ExposureOf<Runtime>;
+// }
