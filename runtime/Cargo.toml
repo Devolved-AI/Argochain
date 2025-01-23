@@ -36,6 +36,7 @@ sp-session = { workspace = true }
 sp-transaction-pool = { workspace = true }
 sp-version = { workspace = true }
 node-primitives = {workspace = true}
+sp-std={workspace = true}
 
 
 #===============================================================================================================================#
