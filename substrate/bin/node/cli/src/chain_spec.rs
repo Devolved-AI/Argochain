@@ -449,12 +449,17 @@ fn development_config_genesis_json() -> serde_json::Value {
 
 /// Development config (single validator Alice).
 pub fn development_config() -> ChainSpec {
-	ChainSpec::builder(wasm_binary_unwrap(), Default::default())
-		.with_name("Development")
-		.with_id("dev")
-		.with_chain_type(ChainType::Development)
-		.with_genesis_config_patch(development_config_genesis_json())
-		.build()
+    let mut properties = serde_json::Map::new();
+    properties.insert("tokenSymbol".into(), "AGC".into());
+    properties.insert("tokenDecimals".into(), 18.into());
+
+    ChainSpec::builder(wasm_binary_unwrap(), Default::default())
+        .with_name("Development")
+        .with_id("dev")
+        .with_chain_type(ChainType::Development)
+        .with_genesis_config_patch(development_config_genesis_json())
+        .with_properties(properties)  // Add this line
+        .build()
 }
 
 fn local_testnet_genesis() -> serde_json::Value {

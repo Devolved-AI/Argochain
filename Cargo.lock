@@ -8620,7 +8620,6 @@ dependencies = [
  "sp-weights",
  "staging-chain-spec-builder",
  "staging-node-inspect",
- "staging-tracking-allocator",
  "subkey",
  "substrate-bip39",
  "substrate-build-script-utils",
@@ -12915,10 +12914,6 @@ dependencies = [
  "sp-statement-store",
  "thiserror 1.0.69",
 ]
-
-[[package]]
-name = "staging-tracking-allocator"
-version = "2.0.0"
 
 [[package]]
 name = "static_assertions"
