@@ -27,6 +27,7 @@ extern crate alloc;
 use polkadot_sdk::*;
 
 use alloc::{vec, vec::Vec};
+use core::marker::PhantomData;
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_election_provider_support::{
 	bounds::{ElectionBounds, ElectionBoundsBuilder},
@@ -52,7 +53,7 @@ use frame_support::{
 		AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Contains, Currency,
 		EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, Imbalance, InsideBoth,
 		InstanceFilter, KeyOwnerProofSystem, LinearStoragePrice, LockIdentifier, Nothing,
-		OnUnbalanced, VariantCountOf, WithdrawReasons,
+		OnUnbalanced,FindAuthor, VariantCountOf, WithdrawReasons,
 	},
 	weights::{
 		constants::{
@@ -89,7 +90,10 @@ use sp_consensus_beefy::{
 	mmr::MmrLeafVersion,
 };
 use sp_consensus_grandpa::AuthorityId as GrandpaId;
-use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
+use sp_core::{
+	crypto::{ByteArray, KeyTypeId},
+	 OpaqueMetadata, H160, H256, U256,
+};
 use sp_inherents::{CheckInherentsResult, InherentData};
 use sp_runtime::{
 	create_runtime_str,
@@ -100,7 +104,7 @@ use sp_runtime::{
 		OpaqueKeys, SaturatedConversion, StaticLookup,
 	},
 	transaction_validity::{TransactionPriority, TransactionSource, TransactionValidity},
-	ApplyExtrinsicResult, FixedPointNumber, FixedU128, Perbill, Percent, Permill, Perquintill,
+	ApplyExtrinsicResult, ConsensusEngineId, FixedPointNumber, FixedU128, Perbill, Percent, Permill, Perquintill,
 	RuntimeDebug,
 };
 #[cfg(any(feature = "std", test))]
@@ -134,8 +138,26 @@ use sp_runtime::generic::Era;
 mod voter_bags;
 
 /// Runtime API definition for assets.
-pub mod assets_api;
 
+use fp_account::EthereumSignature;
+use fp_evm::weight_per_gas;
+use fp_rpc::TransactionStatus;
+use pallet_ethereum::{Call::transact, PostLogContent, Transaction as EthereumTransaction};
+use fp_self_contained;
+
+use pallet_evm::{
+	Account as EVMAccount, EnsureAccountId20, FeeCalculator, IdentityAddressMapping, Runner,
+};
+
+use pallet_base_fee;
+use pallet_dynamic_fee;
+mod precompiles;
+use precompiles::FrontierPrecompiles;
+
+///
+use sp_core::crypto::AccountId32;
+
+pub mod assets_api;
 // Make the WASM binary available.
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
@@ -200,7 +222,16 @@ impl OnUnbalanced<NegativeImbalance> for DealWithFees {
 			Treasury::on_unbalanced(split.0);
 			Author::on_unbalanced(split.1);
 		}
+		
+
 	}
+	fn on_nonzero_unbalanced(amount: NegativeImbalance) {
+        // for fees, 80% to treasury, 20% to author
+        let split = amount.ration(80, 20);
+        Treasury::on_unbalanced(split.0);
+        Author::on_unbalanced(split.1);
+    }
+	
 }
 
 /// We assume that ~10% of the block weight is consumed by `on_initialize` handlers.
@@ -212,6 +243,16 @@ const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 /// We allow for 2 seconds of compute with a 6 second average block time, with maximum proof size.
 const MAXIMUM_BLOCK_WEIGHT: Weight =
 	Weight::from_parts(WEIGHT_REF_TIME_PER_SECOND.saturating_mul(2), u64::MAX);
+
+
+
+
+/// Current approximation of the gas/s consumption considering
+/// EVM execution over compiled WASM (on 4.4Ghz CPU).
+/// Given the 500ms Weight, from which 75% only are used for transactions,
+/// the total EVM execution gas limit is: GAS_PER_SECOND * 0.500 * 0.75 ~= 15_000_000.
+pub const GAS_PER_SECOND: u64 = 40_000_000;
+
 
 parameter_types! {
 	pub const BlockHashCount: BlockNumber = 2400;
@@ -1880,6 +1921,100 @@ parameter_types! {
 	pub NewAssetName: BoundedVec<u8, StringLimit> = (*b"Frac").to_vec().try_into().unwrap();
 }
 
+pub struct FindAuthorTruncated<F>(PhantomData<F>);
+impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
+    fn find_author<'a, I>(digests: I) -> Option<H160>
+    where
+        I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
+    {
+        if let Some(author_index) = F::find_author(digests) {
+            let authority_id = Babe::authorities()[author_index as usize].clone().0;
+            return Some(H160::from_slice(
+                &sp_core::crypto::ByteArray::to_raw_vec(&authority_id)[4..24],
+            ));
+        }
+        None
+    }
+}
+const BLOCK_GAS_LIMIT: u64 = 75_000_000;
+const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
+pub const WEIGHT_MILLISECS_PER_BLOCK: u64 = 2000;
+
+// parameter_types! {
+// 	pub const ChainId: u64 = 1295;
+// 	pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
+// 	pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
+// 	pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
+// 	pub WeightPerGas: Weight = Weight::from_parts(weight_per_gas(BLOCK_GAS_LIMIT, NORMAL_DISPATCH_RATIO, WEIGHT_MILLISECS_PER_BLOCK), 0);
+// 	pub SuicideQuickClearLimit: u32 = 0;
+// }
+
+// impl pallet_evm::Config for Runtime {
+// 	type FeeCalculator = BaseFee;
+// 	type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
+// 	type WeightPerGas = WeightPerGas;
+// 	type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
+// 	type CallOrigin = EnsureAccountId20;
+// 	type WithdrawOrigin = EnsureAccountId20;
+// 	type AddressMapping = IdentityAddressMapping;
+// 	type Currency = Balances;
+// 	type RuntimeEvent = RuntimeEvent;
+// 	type PrecompilesType = FrontierPrecompiles<Self>;
+// 	type PrecompilesValue = PrecompilesValue;
+// 	type ChainId = EVMChainId;
+// 	type BlockGasLimit = BlockGasLimit;
+// 	type Runner = pallet_evm::runner::stack::Runner<Self>;
+// 	type OnChargeTransaction = ();
+// 	type OnCreate = ();
+// 	type FindAuthor = FindAuthorTruncated<Aura>;
+// 	type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
+// 	type SuicideQuickClearLimit = SuicideQuickClearLimit;
+// 	type Timestamp = Timestamp;
+// 	type WeightInfo = pallet_evm::weights::SubstrateWeight<Self>;
+// }
+
+// parameter_types! {
+// 	pub const PostBlockAndTxnHashes: PostLogContent = PostLogContent::BlockAndTxnHashes;
+// }
+
+// impl pallet_ethereum::Config for Runtime {
+// 	type RuntimeEvent = RuntimeEvent;
+// 	type StateRoot = pallet_ethereum::IntermediateStateRoot<Self>;
+// 	type PostLogContent = PostBlockAndTxnHashes;
+// 	type ExtraDataLength = ConstU32<30>;
+// }
+
+// parameter_types! {
+// 	pub BoundDivision: U256 = U256::from(1024);
+// }
+
+// impl pallet_dynamic_fee::Config for Runtime {
+// 	type MinGasPriceBoundDivisor = BoundDivision;
+// }
+
+// parameter_types! {
+// 	pub DefaultBaseFeePerGas: U256 = U256::from(1_000_000_000);
+// 	pub DefaultElasticity: Permill = Permill::from_parts(125_000);
+// }
+// pub struct BaseFeeThreshold;
+// impl pallet_base_fee::BaseFeeThreshold for BaseFeeThreshold {
+// 	fn lower() -> Permill {
+// 		Permill::zero()
+// 	}
+// 	fn ideal() -> Permill {
+// 		Permill::from_parts(500_000)
+// 	}
+// 	fn upper() -> Permill {
+// 		Permill::from_parts(1_000_000)
+// 	}
+// }
+// impl pallet_base_fee::Config for Runtime {
+// 	type RuntimeEvent = RuntimeEvent;
+// 	type Threshold = BaseFeeThreshold;
+// 	type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
+// 	type DefaultElasticity = DefaultElasticity;
+// }
+
 impl pallet_nft_fractionalization::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type Deposit = AssetDeposit;
@@ -2473,6 +2608,21 @@ mod runtime {
 
 	#[runtime::pallet_index(79)]
 	pub type AssetConversionMigration = pallet_asset_conversion_ops::Pallet<Runtime>;
+
+	// #[runtime::pallet_index(80)]
+	// pub type Ethereum = pallet_ethereum;
+
+	// #[runtime::pallet_index(81)]
+	// pub type EVM = pallet_evm;
+
+	// #[runtime::pallet_index(82)]
+	// pub type EVMChainId = pallet_evm_chain_id;
+
+	// #[runtime::pallet_index(83)]
+	// pub type BaseFee = pallet_base_fee;
+
+
+
 }
 
 /// The address format for describing accounts.

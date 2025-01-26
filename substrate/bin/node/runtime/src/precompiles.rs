@@ -2,7 +2,7 @@ use core::marker::PhantomData;
 use pallet_evm::{
 	IsPrecompileResult, Precompile, PrecompileHandle, PrecompileResult, PrecompileSet,
 };
-use sp_core::H160;
+use crate::sp_core::H160;
 
 use pallet_evm_precompile_modexp::Modexp;
 use pallet_evm_precompile_sha3fips::Sha3FIPS256;
