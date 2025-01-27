@@ -4895,6 +4895,7 @@ dependencies = [
  "log",
  "node-primitives",
  "pallet-base-fee",
+ "pallet-counter",
  "pallet-dynamic-fee",
  "pallet-ethereum",
  "pallet-evm",
@@ -7250,6 +7251,26 @@ dependencies = [
  "sp-core",
  "sp-io",
  "sp-runtime",
+]
+
+[[package]]
+name = "pallet-counter"
+version = "0.1.0"
+dependencies = [
+ "fp-evm",
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "hex",
+ "hex-literal",
+ "log",
+ "pallet-evm",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]

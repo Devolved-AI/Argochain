@@ -52,6 +52,7 @@ pallet-evm-precompile-modexp = { workspace = true }
 pallet-evm-precompile-sha3fips = { workspace = true }
 pallet-evm-precompile-simple = { workspace = true }
 pallet-hotfix-sufficients = { workspace = true}
+pallet-counter={workspace = true}
 hex-literal = "0.4.1"
 
 
@@ -82,10 +83,10 @@ std = [
 	"pallet-dynamic-fee/std",
 	"pallet-ethereum/std",
 	"pallet-evm/std",
-	"pallet-evm-chain-id/std",
 	"pallet-evm-precompile-modexp/std",
 	"pallet-evm-precompile-sha3fips/std",
 	"pallet-evm-precompile-simple/std",
+	"pallet-counter/std",
 ]
 runtime-benchmarks = [
 	"pallet-example-mbm/runtime-benchmarks",

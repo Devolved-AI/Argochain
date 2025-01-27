@@ -53,7 +53,7 @@ use frame_support::{
 		AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Contains, Currency,
 		EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, Imbalance, InsideBoth,
 		InstanceFilter, KeyOwnerProofSystem, LinearStoragePrice, LockIdentifier, Nothing,
-		OnUnbalanced,FindAuthor, VariantCountOf, WithdrawReasons,
+		OnUnbalanced,FindAuthor, VariantCountOf, WithdrawReasons,OnFinalize
 	},
 	weights::{
 		constants::{
@@ -2080,6 +2080,7 @@ impl pallet_evm::Config for Runtime {
     type WeightInfo = pallet_evm::weights::SubstrateWeight<Self>;
 }
 
+impl pallet_evm_chain_id::Config for Runtime {}
 
 
 parameter_types! {
@@ -2111,6 +2112,11 @@ impl pallet_base_fee::Config for Runtime {
 	type Threshold = BaseFeeThreshold;
 	type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
 	type DefaultElasticity = DefaultElasticity;
+}
+impl pallet_counter::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type SubstrateCurrency = Balances; 
+    type EvmCurrency = Balances; 
 }
 
 impl pallet_nft_fractionalization::Config for Runtime {
@@ -2166,6 +2172,8 @@ impl pallet_nfts::Config for Runtime {
 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
 	type Locker = ();
 }
+
+
 
 impl pallet_transaction_storage::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
@@ -2718,6 +2726,9 @@ mod runtime {
 
 	#[runtime::pallet_index(83)]
 	pub type BaseFee = pallet_base_fee;
+	
+	#[runtime::pallet_index(84)]
+	pub type PalletCounter = pallet_counter;
 
 
 
@@ -3737,7 +3748,7 @@ impl_runtime_apis! {
                 let _ = Executive::apply_extrinsic(ext);
             }
 
-            // Ethereum::on_finalize(System::block_number() + 1); // TODO...
+            Ethereum::on_finalize(System::block_number() + 1); 
 
             (
                 pallet_ethereum::CurrentBlock::<Runtime>::get(),
