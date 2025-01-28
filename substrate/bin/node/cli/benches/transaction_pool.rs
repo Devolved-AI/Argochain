@@ -160,7 +160,7 @@ fn create_account_extrinsics(
 						call: Box::new(
 							BalancesCall::force_set_balance {
 								who: AccountId::from(a.public()).into(),
-								new_free: 1_000_000 * DOLLARS,
+								new_free: 1_000_000 * ARGO,
 							}
 							.into(),
 						),
@@ -187,7 +187,7 @@ fn create_benchmark_extrinsics(
 					account.clone(),
 					BalancesCall::transfer_allow_death {
 						dest: Sr25519Keyring::Bob.to_account_id().into(),
-						value: 1 * DOLLARS,
+						value: 1 * ARGO,
 					},
 					Some(nonce as u32),
 				)

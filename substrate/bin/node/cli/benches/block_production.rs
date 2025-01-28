@@ -159,7 +159,7 @@ fn prepare_benchmark(client: &FullClient) -> (usize, Vec<OpaqueExtrinsic>) {
 		let extrinsic: OpaqueExtrinsic = create_extrinsic(
 			client,
 			src.clone(),
-			BalancesCall::transfer_allow_death { dest: dst.clone(), value: 1 * DOLLARS },
+			BalancesCall::transfer_allow_death { dest: dst.clone(), value: 1 * ARGO },
 			Some(nonce),
 		)
 		.into();

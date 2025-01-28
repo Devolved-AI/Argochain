@@ -280,8 +280,8 @@ adequate deposit associated with them. A number of configuration parameters has 
 
 ```diff=
  parameter_types! {
- 	pub const CandidacyBond: Balance = 10 * DOLLARS;
--	pub const VotingBond: Balance = 1 * DOLLARS;
+ 	pub const CandidacyBond: Balance = 10 * ARGO;
+-	pub const VotingBond: Balance = 1 * ARGO;
 +	// 1 storage item created, key size is 32 bytes, value size is 16+16.
 +	pub const VotingBondBase: Balance = deposit(1, 64);
 +	// additional data per vote is 32 bytes (account id).

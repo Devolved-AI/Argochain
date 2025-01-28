@@ -333,13 +333,13 @@ mod multiplier_tests {
 				let adjusted_fee = fm.saturating_mul_acc_int(fee);
 				println!(
 					"iteration {}, new fm = {:?}. Fee at this point is: {} units / {} millicents, \
-					{} cents, {} dollars",
+					{} cents, {} ARGO",
 					iterations,
 					fm,
 					adjusted_fee,
 					adjusted_fee / MILLICENTS,
 					adjusted_fee / CENTS,
-					adjusted_fee / DOLLARS,
+					adjusted_fee / ARGO,
 				);
 			}
 		});

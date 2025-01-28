@@ -117,13 +117,13 @@ fn fee_multiplier_increases_and_decreases_on_big_weight() {
 	});
 }
 
-fn new_account_info(free_dollars: u128) -> Vec<u8> {
+fn new_account_info(free_ARGO: u128) -> Vec<u8> {
 	frame_system::AccountInfo {
 		nonce: 0u32,
 		consumers: 0,
 		providers: 1,
 		sufficients: 0,
-		data: (free_dollars * DOLLARS, 0 * DOLLARS, 0 * DOLLARS, 1u128 << 127),
+		data: (free_ARGO * ARGO, 0 * ARGO, 0 * ARGO, 1u128 << 127),
 	}
 	.encode()
 }
@@ -142,7 +142,7 @@ fn transaction_fee_is_correct() {
 	t.insert(<frame_system::Account<Runtime>>::hashed_key_for(bob()), new_account_info(10));
 	t.insert(
 		<pallet_balances::TotalIssuance<Runtime>>::hashed_key().to_vec(),
-		(110 * DOLLARS).encode(),
+		(110 * ARGO).encode(),
 	);
 	t.insert(<frame_system::BlockHash<Runtime>>::hashed_key_for(0), vec![0u8; 32]);
 
@@ -159,14 +159,14 @@ fn transaction_fee_is_correct() {
 	assert!(r.is_ok());
 
 	t.execute_with(|| {
-		assert_eq!(Balances::total_balance(&bob()), (10 + 69) * DOLLARS);
+		assert_eq!(Balances::total_balance(&bob()), (10 + 69) * ARGO);
 		// Components deducted from alice's balances:
 		// - Base fee
 		// - Weight fee
 		// - Length fee
 		// - Tip
 		// - Creation-fee of bob's account.
-		let mut balance_alice = (100 - 69) * DOLLARS;
+		let mut balance_alice = (100 - 69) * ARGO;
 
 		let base_weight = ExtrinsicBaseWeight::get();
 		let base_fee = IdentityFee::<Balance>::weight_to_fee(&base_weight);

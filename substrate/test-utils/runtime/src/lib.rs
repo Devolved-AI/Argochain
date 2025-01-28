@@ -366,11 +366,11 @@ pub mod currency {
 	use crate::Balance;
 	const MILLICENTS: Balance = 1_000_000_000;
 	const CENTS: Balance = 1_000 * MILLICENTS; // assume this is worth about a cent.
-	pub const DOLLARS: Balance = 100 * CENTS;
+	pub const ARGO: Balance = 100 * CENTS;
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: Balance = 1 * currency::DOLLARS;
+	pub const ExistentialDeposit: Balance = 1 * currency::ARGO;
 	// For weight estimation, we assume that the most locks on an individual account will be 50.
 	// This number may need to be adjusted in the future if this assumption no longer holds true.
 	pub const MaxLocks: u32 = 50;
@@ -734,7 +734,7 @@ impl_runtime_apis! {
 
 						json!({
 							"balances": {
-								"balances": endowed_accounts.into_iter().map(|k| (k, 10 * currency::DOLLARS)).collect::<Vec<_>>(),
+								"balances": endowed_accounts.into_iter().map(|k| (k, 10 * currency::ARGO)).collect::<Vec<_>>(),
 							},
 							"substrateTest": {
 								"authorities": [
@@ -1132,7 +1132,7 @@ mod tests {
 		genesismap::GenesisStorageBuilder::new(
 			vec![AccountKeyring::One.public().into(), AccountKeyring::Two.public().into()],
 			vec![AccountKeyring::One.into(), AccountKeyring::Two.into()],
-			1000 * currency::DOLLARS,
+			1000 * currency::ARGO,
 		)
 		.build()
 		.into()

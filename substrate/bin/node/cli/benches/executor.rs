@@ -153,7 +153,7 @@ fn test_blocks(
 		signed: Some((alice(), signed_extra(i, 0))),
 		function: RuntimeCall::Balances(pallet_balances::Call::transfer_allow_death {
 			dest: bob().into(),
-			value: 1 * DOLLARS,
+			value: 1 * ARGO,
 		}),
 	}));
 	let block1 =

@@ -35,15 +35,15 @@ pub fn config() -> RuntimeGenesisConfig {
 /// endowed accounts.
 pub fn config_endowed(extra_endowed: Vec<AccountId>) -> RuntimeGenesisConfig {
 	let mut endowed = vec![
-		(alice(), 111 * DOLLARS),
-		(bob(), 100 * DOLLARS),
-		(charlie(), 100_000_000 * DOLLARS),
-		(dave(), 111 * DOLLARS),
-		(eve(), 101 * DOLLARS),
-		(ferdie(), 100 * DOLLARS),
+		(alice(), 111 * ARGO),
+		(bob(), 100 * ARGO),
+		(charlie(), 100_000_000 * ARGO),
+		(dave(), 111 * ARGO),
+		(eve(), 101 * ARGO),
+		(ferdie(), 100 * ARGO),
 	];
 
-	endowed.extend(extra_endowed.into_iter().map(|endowed| (endowed, 100 * DOLLARS)));
+	endowed.extend(extra_endowed.into_iter().map(|endowed| (endowed, 100 * ARGO)));
 
 	RuntimeGenesisConfig {
 		indices: IndicesConfig { indices: vec![] },
@@ -57,9 +57,9 @@ pub fn config_endowed(extra_endowed: Vec<AccountId>) -> RuntimeGenesisConfig {
 		},
 		staking: StakingConfig {
 			stakers: vec![
-				(dave(), dave(), 111 * DOLLARS, StakerStatus::Validator),
-				(eve(), eve(), 100 * DOLLARS, StakerStatus::Validator),
-				(ferdie(), ferdie(), 100 * DOLLARS, StakerStatus::Validator),
+				(dave(), dave(), 111 * ARGO, StakerStatus::Validator),
+				(eve(), eve(), 100 * ARGO, StakerStatus::Validator),
+				(ferdie(), ferdie(), 100 * ARGO, StakerStatus::Validator),
 			],
 			validator_count: 3,
 			minimum_validator_count: 0,
