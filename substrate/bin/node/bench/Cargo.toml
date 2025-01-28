@@ -21,7 +21,7 @@ log = { workspace = true, default-features = true }
 node-primitives.workspace = true
 node-primitives.default-features = true
 node-testing.workspace = true
-kitchensink-runtime.workspace = true
+argochain-runtime.workspace = true
 sc-client-api.workspace = true
 sc-client-api.default-features = true
 sp-runtime.workspace = true

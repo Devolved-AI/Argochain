@@ -218,6 +218,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "argochain-runtime"
+version = "3.0.0"
+dependencies = [
+ "fp-account",
+ "fp-evm",
+ "fp-rpc",
+ "fp-self-contained",
+ "hex-literal",
+ "log",
+ "node-primitives",
+ "pallet-base-fee",
+ "pallet-counter",
+ "pallet-dynamic-fee",
+ "pallet-ethereum",
+ "pallet-evm",
+ "pallet-evm-chain-id",
+ "pallet-evm-precompile-modexp",
+ "pallet-evm-precompile-sha3fips",
+ "pallet-evm-precompile-simple",
+ "pallet-example-mbm",
+ "pallet-example-tasks",
+ "pallet-hotfix-sufficients",
+ "parity-scale-codec",
+ "polkadot-sdk",
+ "primitive-types",
+ "scale-info",
+ "serde_json",
+ "static_assertions",
+ "substrate-wasm-builder",
+]
+
+[[package]]
 name = "ark-bls12-377"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2613,6 +2645,7 @@ dependencies = [
 name = "fc-mapping-sync"
 version = "2.0.0-dev"
 dependencies = [
+ "argochain-runtime",
  "ethereum",
  "ethereum-types",
  "fc-db",
@@ -2622,7 +2655,6 @@ dependencies = [
  "fp-storage",
  "futures",
  "futures-timer",
- "kitchensink-runtime",
  "log",
  "parity-scale-codec",
  "parking_lot 0.12.3",
@@ -4884,38 +4916,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c33070833c9ee02266356de0c43f723152bd38bd96ddf52c82b3af10c9138b28"
 
 [[package]]
-name = "kitchensink-runtime"
-version = "3.0.0"
-dependencies = [
- "fp-account",
- "fp-evm",
- "fp-rpc",
- "fp-self-contained",
- "hex-literal",
- "log",
- "node-primitives",
- "pallet-base-fee",
- "pallet-counter",
- "pallet-dynamic-fee",
- "pallet-ethereum",
- "pallet-evm",
- "pallet-evm-chain-id",
- "pallet-evm-precompile-modexp",
- "pallet-evm-precompile-sha3fips",
- "pallet-evm-precompile-simple",
- "pallet-example-mbm",
- "pallet-example-tasks",
- "pallet-hotfix-sufficients",
- "parity-scale-codec",
- "polkadot-sdk",
- "primitive-types",
- "scale-info",
- "serde_json",
- "static_assertions",
- "substrate-wasm-builder",
-]
-
-[[package]]
 name = "kvdb"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6333,13 +6333,13 @@ checksum = "b93853da6d84c2e3c7d730d6473e8817692dd89be387eb01b94d7f108ecb5b8c"
 name = "node-bench"
 version = "0.9.0"
 dependencies = [
+ "argochain-runtime",
  "array-bytes",
  "clap",
  "derive_more 0.99.18",
  "fs_extra",
  "futures",
  "hash-db",
- "kitchensink-runtime",
  "kvdb",
  "kvdb-rocksdb",
  "lazy_static",
@@ -6413,9 +6413,9 @@ dependencies = [
 name = "node-runtime-generate-bags"
 version = "3.0.0"
 dependencies = [
+ "argochain-runtime",
  "clap",
  "generate-bags",
- "kitchensink-runtime",
 ]
 
 [[package]]
@@ -6436,11 +6436,11 @@ dependencies = [
 name = "node-testing"
 version = "3.0.0"
 dependencies = [
+ "argochain-runtime",
  "frame-metadata-hash-extension",
  "frame-system",
  "fs_extra",
  "futures",
- "kitchensink-runtime",
  "log",
  "node-primitives",
  "pallet-asset-conversion",
@@ -11063,10 +11063,10 @@ dependencies = [
 name = "sc-client-db"
 version = "0.44.0"
 dependencies = [
+ "argochain-runtime",
  "array-bytes",
  "criterion",
  "hash-db",
- "kitchensink-runtime",
  "kvdb",
  "kvdb-memorydb",
  "kvdb-rocksdb",
@@ -14039,6 +14039,7 @@ dependencies = [
 name = "staging-node-cli"
 version = "3.0.0"
 dependencies = [
+ "argochain-runtime",
  "array-bytes",
  "assert_cmd",
  "clap",
@@ -14046,7 +14047,6 @@ dependencies = [
  "criterion",
  "futures",
  "jsonrpsee",
- "kitchensink-runtime",
  "log",
  "nix 0.28.0",
  "node-primitives",

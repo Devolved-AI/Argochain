@@ -1,5 +1,5 @@
 [package]
-name = "kitchensink-runtime"
+name = "argochain-runtime"
 version = "3.0.0"
 authors.workspace = true
 description = "Substrate node kitchensink runtime. (polkadot v1.15.0)"

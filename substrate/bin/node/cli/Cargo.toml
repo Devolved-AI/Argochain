@@ -47,7 +47,7 @@ log = { workspace = true, default-features = true }
 rand = { workspace = true, default-features = true }
 serde_json = { workspace = true, default-features = true }
 polkadot-sdk = { features = ["node"], workspace = true, default-features = true }
-kitchensink-runtime.workspace = true
+argochain-runtime.workspace = true
 node-rpc.workspace = true
 node-primitives.workspace = true
 node-primitives.default-features = true
@@ -89,12 +89,12 @@ cli = [
 	"polkadot-sdk",
 ]
 runtime-benchmarks = [
-	"kitchensink-runtime/runtime-benchmarks",
+	"argochain-runtime/runtime-benchmarks",
 	"node-inspect?/runtime-benchmarks",
 	"polkadot-sdk/runtime-benchmarks",
 ]
 try-runtime = [
-	"kitchensink-runtime/try-runtime",
+	"argochain-runtime/try-runtime",
 	"polkadot-sdk/try-runtime",
 ]
 

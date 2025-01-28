@@ -24,7 +24,7 @@ use crate::service::{create_extrinsic, FullClient};
 
 use polkadot_sdk::*;
 
-use kitchensink_runtime::{BalancesCall, SystemCall};
+use argochain_runtime::{BalancesCall, SystemCall};
 use node_primitives::{AccountId, Balance};
 use sc_cli::Result;
 use sp_inherents::{InherentData, InherentDataProvider};

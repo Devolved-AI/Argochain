@@ -53,7 +53,7 @@ kvdb-rocksdb = { workspace = true }
 rand = { workspace = true, default-features = true }
 tempfile = { workspace = true }
 quickcheck = { workspace = true }
-kitchensink-runtime = { path = "../../bin/node/runtime" }
+argochain-runtime = { path = "../../bin/node/runtime" }
 sp-tracing = { default-features = true, path = "../../primitives/tracing" }
 substrate-test-runtime-client = { path = "../../test-utils/runtime/client" }
 array-bytes = { workspace = true, default-features = true }

@@ -3765,7 +3765,7 @@ to = "0.1.0"
 
 [[crate]]
 # substrate/bin/node/runtime
-name = "kitchensink-runtime"
+name = "argochain-runtime"
 from = "3.0.0"
 to = "3.0.0"
 

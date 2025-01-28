@@ -25,6 +25,7 @@
 extern crate alloc;
 
 use polkadot_sdk::*;
+use log::info;
 
 use alloc::{vec, vec::Vec};
 use core::marker::PhantomData;
@@ -331,39 +332,39 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
         let halvings: u32 = CustomEraPayout::calculate_halvings(current_era, HALVING_PERIOD);
         let reward = INITIAL_REWARD.saturating_div(2u128.saturating_pow(halvings));
 
-        // frame_support::log::info!("Current Era: {}", current_era);
-        // frame_support::log::info!("Halvings: {}", halvings);
-        // frame_support::log::info!("Reward: {}", reward);
+        info!("Current Era: {}", current_era);
+        info!("Halvings: {}", halvings);
+        info!("Reward: {}", reward);
 
         let validator_reward = (reward * 45) / 100;
         let pov_reward = (reward * 55) / 100;
 
-        // frame_support::log::info!("Validator Reward: {}", validator_reward);
-        // frame_support::log::info!("PoV Reward: {}", pov_reward);
+        info!("Validator Reward: {}", validator_reward);
+        info!("PoV Reward: {}", pov_reward);
 
         let treasury_reward_from_validator = validator_reward / 100;
         let treasury_reward_from_pov = pov_reward / 100;
 
-        // frame_support::log::info!("Treasury Reward from Validator: {}", treasury_reward_from_validator);
-        // frame_support::log::info!("Treasury Reward from PoV: {}", treasury_reward_from_pov);
+        info!("Treasury Reward from Validator: {}", treasury_reward_from_validator);
+        info!("Treasury Reward from PoV: {}", treasury_reward_from_pov);
 
         let final_validator_reward = validator_reward.saturating_sub(treasury_reward_from_validator);
         let final_pov_reward = pov_reward.saturating_sub(treasury_reward_from_pov);
 
-        // frame_support::log::info!("Final Validator Reward: {}", final_validator_reward);
-        // frame_support::log::info!("Final PoV Reward: {}", final_pov_reward);
+        info!("Final Validator Reward: {}", final_validator_reward);
+        info!("Final PoV Reward: {}", final_pov_reward);
 
         let total_treasury_reward = treasury_reward_from_validator.saturating_add(treasury_reward_from_pov);
 
-        // frame_support::log::info!("Total Treasury Reward: {}", total_treasury_reward);
+        info!("Total Treasury Reward: {}", total_treasury_reward);
 
         let fractional_part = reward.saturating_sub(final_validator_reward.saturating_add(final_pov_reward).saturating_add(total_treasury_reward));
 
-        // frame_support::log::info!("Fractional Part: {}", fractional_part);
+        info!("Fractional Part: {}", fractional_part);
 
         let adjusted_treasury_reward = total_treasury_reward.saturating_add(fractional_part);
 
-        // frame_support::log::info!("Adjusted Treasury Reward: {}", adjusted_treasury_reward);
+        info!("Adjusted Treasury Reward: {}", adjusted_treasury_reward);
 
         Treasury::on_unbalanced(NegativeImbalance::new(adjusted_treasury_reward));
         Balances::deposit_creating(&PovAccount::get(), final_pov_reward);
@@ -372,15 +373,15 @@ impl pallet_staking::EraPayout<Balance> for CustomEraPayout {
             .saturating_add(adjusted_treasury_reward)
             .saturating_add(final_pov_reward);
 
-        // frame_support::log::info!("Total Distributed: {}", total_distributed);
+        info!("Total Distributed: {}", total_distributed);
 
         let remainder = reward.saturating_sub(total_distributed);
 
-        // frame_support::log::info!("Remainder: {}", remainder);
+        info!("Remainder: {}", remainder);
 
         let final_validator_reward_adjusted = final_validator_reward.saturating_add(remainder);
 
-        // frame_support::log::info!("Final Validator Reward Adjusted: {}", final_validator_reward_adjusted);
+        info!("Final Validator Reward Adjusted: {}", final_validator_reward_adjusted);
 
         (final_validator_reward_adjusted, remainder)
     }
@@ -411,9 +412,9 @@ impl pallet_tx_pause::Config for Runtime {
 
 parameter_types! {
 	pub const EnterDuration: BlockNumber = 4 * HOURS;
-	pub const EnterDepositAmount: Balance = 2_000_000 * DOLLARS;
+	pub const EnterDepositAmount: Balance = 2_000_000 * ARGO;
 	pub const ExtendDuration: BlockNumber = 2 * HOURS;
-	pub const ExtendDepositAmount: Balance = 1_000_000 * DOLLARS;
+	pub const ExtendDepositAmount: Balance = 1_000_000 * ARGO;
 	pub const ReleaseDelay: u32 = 2 * DAYS;
 }
 
@@ -647,7 +648,7 @@ impl pallet_babe::Config for Runtime {
 }
 
 parameter_types! {
-	pub const IndexDeposit: Balance = 1 * DOLLARS;
+	pub const IndexDeposit: Balance = 1 * ARGO;
 }
 
 impl pallet_indices::Config for Runtime {
@@ -659,7 +660,7 @@ impl pallet_indices::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: Balance = 1 * DOLLARS;
+	pub const ExistentialDeposit: Balance = 1 * ARGO;
 	// For weight estimation, we assume that the most locks on an individual account will be 50.
 	// This number may need to be adjusted in the future if this assumption no longer holds true.
 	pub const MaxLocks: u32 = 50;
@@ -847,7 +848,7 @@ impl pallet_fast_unstake::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type ControlOrigin = frame_system::EnsureRoot<AccountId>;
 	type BatchSize = ConstU32<64>;
-	type Deposit = ConstU128<{ DOLLARS }>;
+	type Deposit = ConstU128<{ ARGO }>;
 	type Currency = Balances;
 	type Staking = Staking;
 	type MaxErasToCheckPerBlock = ConstU32<1>;
@@ -860,8 +861,8 @@ parameter_types! {
 	pub const UnsignedPhase: u32 = EPOCH_DURATION_IN_BLOCKS / 4;
 
 	// signed config
-	pub const SignedRewardBase: Balance = 1 * DOLLARS;
-	pub const SignedFixedDeposit: Balance = 1 * DOLLARS;
+	pub const SignedRewardBase: Balance = 1 * ARGO;
+	pub const SignedFixedDeposit: Balance = 1 * ARGO;
 	pub const SignedDepositIncreaseFactor: Percent = Percent::from_percent(10);
 	pub const SignedDepositByte: Balance = 1 * CENTS;
 
@@ -1077,7 +1078,7 @@ impl pallet_conviction_voting::Config for Runtime {
 
 parameter_types! {
 	pub const AlarmInterval: BlockNumber = 1;
-	pub const SubmissionDeposit: Balance = 100 * DOLLARS;
+	pub const SubmissionDeposit: Balance = 100 * ARGO;
 	pub const UndecidingTimeout: BlockNumber = 28 * DAYS;
 }
 
@@ -1193,7 +1194,7 @@ parameter_types! {
 	pub const LaunchPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
 	pub const VotingPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
 	pub const FastTrackVotingPeriod: BlockNumber = 3 * 24 * 60 * MINUTES;
-	pub const MinimumDeposit: Balance = 100 * DOLLARS;
+	pub const MinimumDeposit: Balance = 100 * ARGO;
 	pub const EnactmentPeriod: BlockNumber = 30 * 24 * 60 * MINUTES;
 	pub const CooloffPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
 	pub const MaxProposals: u32 = 100;
@@ -1272,7 +1273,7 @@ impl pallet_collective::Config<CouncilCollective> for Runtime {
 }
 
 parameter_types! {
-	pub const CandidacyBond: Balance = 10 * DOLLARS;
+	pub const CandidacyBond: Balance = 10 * ARGO;
 	// 1 storage item created, key size is 32 bytes, value size is 16+16.
 	pub const VotingBondBase: Balance = deposit(1, 64);
 	// additional data per vote is 32 bytes (account id).
@@ -1354,7 +1355,7 @@ parameter_types! {
 	pub const Burn: Permill = Permill::from_percent(50);
 	pub const TipCountdown: BlockNumber = 1 * DAYS;
 	pub const TipFindersFee: Percent = Percent::from_percent(20);
-	pub const TipReportDepositBase: Balance = 1 * DOLLARS;
+	pub const TipReportDepositBase: Balance = 1 * ARGO;
 	pub const DataDepositPerByte: Balance = 1 * CENTS;
 	pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
 	pub const MaximumReasonLength: u32 = 300;
@@ -1402,11 +1403,11 @@ impl pallet_asset_rate::Config for Runtime {
 
 parameter_types! {
 	pub const BountyCuratorDeposit: Permill = Permill::from_percent(50);
-	pub const BountyValueMinimum: Balance = 5 * DOLLARS;
-	pub const BountyDepositBase: Balance = 1 * DOLLARS;
+	pub const BountyValueMinimum: Balance = 5 * ARGO;
+	pub const BountyDepositBase: Balance = 1 * ARGO;
 	pub const CuratorDepositMultiplier: Permill = Permill::from_percent(50);
-	pub const CuratorDepositMin: Balance = 1 * DOLLARS;
-	pub const CuratorDepositMax: Balance = 100 * DOLLARS;
+	pub const CuratorDepositMin: Balance = 1 * ARGO;
+	pub const CuratorDepositMax: Balance = 100 * ARGO;
 	pub const BountyDepositPayoutDelay: BlockNumber = 1 * DAYS;
 	pub const BountyUpdatePeriod: BlockNumber = 14 * DAYS;
 }
@@ -1449,7 +1450,7 @@ impl pallet_message_queue::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ChildBountyValueMinimum: Balance = 1 * DOLLARS;
+	pub const ChildBountyValueMinimum: Balance = 1 * ARGO;
 }
 
 impl pallet_child_bounties::Config for Runtime {
@@ -1467,7 +1468,7 @@ impl pallet_tips::Config for Runtime {
 	type TipCountdown = TipCountdown;
 	type TipFindersFee = TipFindersFee;
 	type TipReportDepositBase = TipReportDepositBase;
-	type MaxTipAmount = ConstU128<{ 500 * DOLLARS }>;
+	type MaxTipAmount = ConstU128<{ 500 * ARGO }>;
 	type WeightInfo = pallet_tips::weights::SubstrateWeight<Runtime>;
 	type OnSlash = Treasury;
 }
@@ -1638,7 +1639,7 @@ parameter_types! {
 	// information, already accounted for by the byte deposit
 	pub const BasicDeposit: Balance = deposit(1, 17);
 	pub const ByteDeposit: Balance = deposit(0, 1);
-	pub const SubAccountDeposit: Balance = 2 * DOLLARS;   // 53 bytes on-chain
+	pub const SubAccountDeposit: Balance = 2 * ARGO;   // 53 bytes on-chain
 	pub const MaxSubAccounts: u32 = 100;
 	pub const MaxAdditionalFields: u32 = 100;
 	pub const MaxRegistrars: u32 = 20;
@@ -1666,10 +1667,10 @@ impl pallet_identity::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ConfigDepositBase: Balance = 5 * DOLLARS;
+	pub const ConfigDepositBase: Balance = 5 * ARGO;
 	pub const FriendDepositFactor: Balance = 50 * CENTS;
 	pub const MaxFriends: u16 = 9;
-	pub const RecoveryDeposit: Balance = 5 * DOLLARS;
+	pub const RecoveryDeposit: Balance = 5 * ARGO;
 }
 
 impl pallet_recovery::Config for Runtime {
@@ -1687,7 +1688,7 @@ parameter_types! {
 	pub const GraceStrikes: u32 = 10;
 	pub const SocietyVotingPeriod: BlockNumber = 80 * HOURS;
 	pub const ClaimPeriod: BlockNumber = 80 * HOURS;
-	pub const PeriodSpend: Balance = 500 * DOLLARS;
+	pub const PeriodSpend: Balance = 500 * ARGO;
 	pub const MaxLockDuration: BlockNumber = 36 * 30 * DAYS;
 	pub const ChallengePeriod: BlockNumber = 7 * DAYS;
 	pub const MaxPayouts: u32 = 10;
@@ -1714,7 +1715,7 @@ impl pallet_society::Config for Runtime {
 }
 
 parameter_types! {
-	pub const MinVestedTransfer: Balance = 100 * DOLLARS;
+	pub const MinVestedTransfer: Balance = 100 * ARGO;
 	pub UnvestedFundsAllowedWithdrawReasons: WithdrawReasons =
 		WithdrawReasons::except(WithdrawReasons::TRANSFER | WithdrawReasons::RESERVE);
 }
@@ -1772,11 +1773,11 @@ impl pallet_lottery::Config for Runtime {
 }
 
 parameter_types! {
-	pub const AssetDeposit: Balance = 100 * DOLLARS;
-	pub const ApprovalDeposit: Balance = 1 * DOLLARS;
+	pub const AssetDeposit: Balance = 100 * ARGO;
+	pub const ApprovalDeposit: Balance = 1 * ARGO;
 	pub const StringLimit: u32 = 50;
-	pub const MetadataDepositBase: Balance = 10 * DOLLARS;
-	pub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
+	pub const MetadataDepositBase: Balance = 10 * ARGO;
+	pub const MetadataDepositPerByte: Balance = 1 * ARGO;
 }
 
 impl pallet_assets::Config<Instance1> for Runtime {
@@ -1788,7 +1789,7 @@ impl pallet_assets::Config<Instance1> for Runtime {
 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
 	type ForceOrigin = EnsureRoot<AccountId>;
 	type AssetDeposit = AssetDeposit;
-	type AssetAccountDeposit = ConstU128<DOLLARS>;
+	type AssetAccountDeposit = ConstU128<ARGO>;
 	type MetadataDepositBase = MetadataDepositBase;
 	type MetadataDepositPerByte = MetadataDepositPerByte;
 	type ApprovalDeposit = ApprovalDeposit;
@@ -1815,7 +1816,7 @@ impl pallet_assets::Config<Instance2> for Runtime {
 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSignedBy<AssetConversionOrigin, AccountId>>;
 	type ForceOrigin = EnsureRoot<AccountId>;
 	type AssetDeposit = AssetDeposit;
-	type AssetAccountDeposit = ConstU128<DOLLARS>;
+	type AssetAccountDeposit = ConstU128<ARGO>;
 	type MetadataDepositBase = MetadataDepositBase;
 	type MetadataDepositPerByte = MetadataDepositPerByte;
 	type ApprovalDeposit = ApprovalDeposit;
@@ -1831,7 +1832,7 @@ impl pallet_assets::Config<Instance2> for Runtime {
 
 parameter_types! {
 	pub const AssetConversionPalletId: PalletId = PalletId(*b"py/ascon");
-	pub const PoolSetupFee: Balance = 1 * DOLLARS; // should be more or equal to the existential deposit
+	pub const PoolSetupFee: Balance = 1 * ARGO; // should be more or equal to the existential deposit
 	pub const MintMinLiquidity: Balance = 100;  // 100 is good enough when the main currency has 10-12 decimals.
 	pub const LiquidityWithdrawalFee: Permill = Permill::from_percent(0);
 	pub const Native: NativeOrWithId<u32> = NativeOrWithId::Native;
@@ -1890,7 +1891,7 @@ parameter_types! {
 	pub const MaxQueueLen: u32 = 1000;
 	pub const FifoQueueLen: u32 = 500;
 	pub const NisBasePeriod: BlockNumber = 30 * DAYS;
-	pub const MinBid: Balance = 100 * DOLLARS;
+	pub const MinBid: Balance = 100 * ARGO;
 	pub const MinReceipt: Perquintill = Perquintill::from_percent(1);
 	pub const IntakePeriod: BlockNumber = 10;
 	pub MaxIntakeWeight: Weight = MAXIMUM_BLOCK_WEIGHT / 10;
@@ -1943,8 +1944,8 @@ impl pallet_nis::BenchmarkSetup for SetupAsset {
 }
 
 parameter_types! {
-	pub const CollectionDeposit: Balance = 100 * DOLLARS;
-	pub const ItemDeposit: Balance = 1 * DOLLARS;
+	pub const CollectionDeposit: Balance = 100 * ARGO;
+	pub const ItemDeposit: Balance = 1 * ARGO;
 	pub const ApprovalsLimit: u32 = 20;
 	pub const ItemAttributesApprovalsLimit: u32 = 20;
 	pub const MaxTips: u32 = 10;
@@ -1973,14 +1974,14 @@ impl pallet_uniques::Config for Runtime {
 }
 
 parameter_types! {
-	pub const Budget: Balance = 10_000 * DOLLARS;
+	pub const Budget: Balance = 10_000 * ARGO;
 	pub TreasuryAccount: AccountId = Treasury::account_id();
 }
 
 pub struct SalaryForRank;
 impl GetSalary<u16, AccountId, Balance> for SalaryForRank {
 	fn get_salary(a: u16, _: &AccountId) -> Balance {
-		Balance::from(a) * 1000 * DOLLARS
+		Balance::from(a) * 1000 * ARGO
 	}
 }
 
@@ -2199,7 +2200,7 @@ impl pallet_whitelist::Config for Runtime {
 
 parameter_types! {
 	pub const MigrationSignedDepositPerItem: Balance = 1 * CENTS;
-	pub const MigrationSignedDepositBase: Balance = 20 * DOLLARS;
+	pub const MigrationSignedDepositBase: Balance = 20 * ARGO;
 	pub const MigrationMaxKeyLen: u32 = 512;
 }
 
@@ -2244,7 +2245,7 @@ impl pallet_collective::Config<AllianceCollective> for Runtime {
 parameter_types! {
 	pub const MaxFellows: u32 = AllianceMaxMembers::get();
 	pub const MaxAllies: u32 = 100;
-	pub const AllyDeposit: Balance = 10 * DOLLARS;
+	pub const AllyDeposit: Balance = 10 * ARGO;
 	pub const RetirementPeriod: BlockNumber = ALLIANCE_MOTION_DURATION_IN_BLOCKS + (1 * DAYS);
 }
 
@@ -2289,7 +2290,7 @@ impl frame_benchmarking_pallet_pov::Config for Runtime {
 }
 
 parameter_types! {
-	pub StatementCost: Balance = 1 * DOLLARS;
+	pub StatementCost: Balance = 1 * ARGO;
 	pub StatementByteCost: Balance = 100 * MILLICENTS;
 	pub const MinAllowedStatements: u32 = 4;
 	pub const MaxAllowedStatements: u32 = 10;
@@ -2406,7 +2407,7 @@ pub mod dynamic_params {
 	pub mod storage {
 		/// Configures the base deposit of storing some data.
 		#[codec(index = 0)]
-		pub static BaseDeposit: Balance = 1 * DOLLARS;
+		pub static BaseDeposit: Balance = 1 * ARGO;
 
 		/// Configures the per-byte deposit of storing some data.
 		#[codec(index = 1)]
@@ -2419,7 +2420,7 @@ impl Default for RuntimeParameters {
 	fn default() -> Self {
 		RuntimeParameters::Storage(dynamic_params::storage::Parameters::BaseDeposit(
 			dynamic_params::storage::BaseDeposit,
-			Some(1 * DOLLARS),
+			Some(1 * ARGO),
 		))
 	}
 }
@@ -3571,7 +3572,7 @@ impl_runtime_apis! {
 					if access_list.is_some() {
 						estimated_transaction_len += access_list.encoded_size();
 					}
-                    // frame_support::log::info!("Estimated transaction length: {}", estimated_transaction_len);
+                    // info!("Estimated transaction length: {}", estimated_transaction_len);
 
 
 					// let gas_limit = if gas_limit > U256::from(u64::MAX) {
@@ -3585,7 +3586,7 @@ impl_runtime_apis! {
                         gas_limit.low_u64()
                     };
                     
-                // frame_support::log::info!("Gas limit in call: {}", gas_limit);
+                // info!("Gas limit in call: {}", gas_limit);
 
 			let without_base_extrinsic_weight = true;
 
@@ -3667,8 +3668,8 @@ impl_runtime_apis! {
             } else {
                 gas_limit.low_u64()
             };
-            // frame_support::log::info!("Gas limit in create: {}", gas_limit);
-            // frame_support::log::info!("Estimated transaction length in create: {}", estimated_transaction_len);
+            // info!("Gas limit in create: {}", gas_limit);
+            // info!("Estimated transaction length in create: {}", estimated_transaction_len);
 
 
 

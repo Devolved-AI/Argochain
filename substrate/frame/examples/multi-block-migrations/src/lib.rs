@@ -21,7 +21,7 @@
 //!
 //! This pallet serves as a minimal example of a pallet that uses the [Multi-Block Migrations
 //! Framework](frame_support::migrations). You can observe how to configure it in a runtime in the
-//! `kitchensink-runtime` crate.
+//! `argochain-runtime` crate.
 //!
 //! ## Introduction and Purpose
 //!

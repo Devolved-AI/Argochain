@@ -20,7 +20,7 @@
 
 use polkadot_sdk::*;
 
-use kitchensink_runtime::{
+use argochain_runtime::{
 	constants::currency::*, wasm_binary_unwrap, Block, MaxNominations, SessionKeys, StakerStatus,
 };
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
@@ -39,13 +39,13 @@ use sp_runtime::{
 	Perbill,
 };
 
-pub use kitchensink_runtime::RuntimeGenesisConfig;
+pub use argochain_runtime::RuntimeGenesisConfig;
 pub use node_primitives::{AccountId, Balance, Signature};
 
 type AccountPublic = <Signature as Verify>::Signer;
 
 const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
-const ENDOWMENT: Balance = 10_000_000 * DOLLARS;
+const ENDOWMENT: Balance = 10_000_000 * ARGO;
 const STASH: Balance = ENDOWMENT / 1000;
 
 /// Node `ChainSpec` extensions.
@@ -424,7 +424,7 @@ pub fn testnet_genesis(
 		},
 		"sudo": { "key": Some(root_key.clone()) },
 		"babe": {
-			"epochConfig": Some(kitchensink_runtime::BABE_GENESIS_EPOCH_CONFIG),
+			"epochConfig": Some(argochain_runtime::BABE_GENESIS_EPOCH_CONFIG),
 		},
 		"society": { "pot": 0 },
 		"assets": {
@@ -432,8 +432,8 @@ pub fn testnet_genesis(
 			"assets": vec![(9, get_account_id_from_seed::<sr25519::Public>("Alice"), true, 1)],
 		},
 		"nominationPools": {
-			"minCreateBond": 10 * DOLLARS,
-			"minJoinBond": 1 * DOLLARS,
+			"minCreateBond": 10 * ARGO,
+			"minJoinBond": 1 * ARGO,
 		},
 	})
 }

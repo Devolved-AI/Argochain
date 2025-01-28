@@ -29,7 +29,7 @@
 // benchmark
 // pallet
 // --runtime
-// target/release/wbuild/kitchensink-runtime/kitchensink_runtime.compact.compressed.wasm
+// target/release/wbuild/argochain-runtime/argochain_runtime.compact.compressed.wasm
 // --pallet
 // pallet_example_mbm
 // --extrinsic
