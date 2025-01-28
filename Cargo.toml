@@ -93,7 +93,12 @@ substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git
 # layer 2
 sp-consensus-babe = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
 pallet-babe = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
-polkadot-primitives = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+# polkadot-primitives = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
 sp-authority-discovery = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
 pallet-authority-discovery = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
 pallet-session = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+sp-staking = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+pallet-staking = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+pallet-staking-reward-curve = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+pallet-staking-runtime-api = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }
+# node-primitives = { git = "https://github.com/paritytech/polkadot-sdk.git",branch = "stable2409",default-features = false }

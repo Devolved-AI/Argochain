@@ -32,21 +32,29 @@ use frame_support::{
 		IdentityFee, Weight,
 	},
 };
+use frame_support::traits::tokens::imbalance::ResolveTo;
+use frame_support::traits::EitherOfDiverse;
+use frame_system::EnsureRoot;
 use frame_system::limits::{BlockLength, BlockWeights};
 use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
-use sp_runtime::{traits::One, Perbill};
+use sp_runtime::{curve::PiecewiseLinear, traits::One, Perbill};
+use sp_runtime::traits::OpaqueKeys;
 use sp_version::RuntimeVersion;
 use pallet_session::historical as pallet_session_historical;
+
+use crate::ARGO;
 
 // Local module imports
 use super::{
 	AccountId, Aura, Balance, Balances, Block, BlockNumber, Hash, Nonce, PalletInfo, Runtime,
 	RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
-	System, EXISTENTIAL_DEPOSIT, SLOT_DURATION, VERSION, Moment, Babe
+	System, SLOT_DURATION, VERSION, Babe, SessionKeys, Timestamp,
+	Session, Staking, Moment//, EXISTENTIAL_DEPOSIT
 };
 
 use super::block_times::*;
+//use node_primitives::{AccountIndex, Balance, BlockNumber, Hash, Moment, Nonce};
 
 const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 
@@ -101,46 +109,56 @@ impl pallet_aura::Config for Runtime {
 	type SlotDuration = pallet_aura::MinimumPeriodTimesTwo<Runtime>;
 }
 
-// parameter_types! {
-//     pub const MaxSetIdSessionEntries: u32 = BondingDuration::get() * SessionsPerEra::get();
-// }
+parameter_types! {
+    pub const MaxSetIdSessionEntries: u32 = BondingDuration::get() * SessionsPerEra::get();
+}
 
 impl pallet_grandpa::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
-
 	type WeightInfo = ();
 	type MaxAuthorities = MaxAuthorities; //ConstU32<32>;
 	type MaxNominators = MaxNominators; //ConstU32<0>;
-	type MaxSetIdSessionEntries = ConstU64<0>; //MaxSetIdSessionEntries;
-
+	type MaxSetIdSessionEntries = MaxSetIdSessionEntries; //ConstU64<0>;
 	type KeyOwnerProof = sp_session::MembershipProof; //sp_core::Void; //<Historical as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::Proof;
 	type EquivocationReportSystem = (); //pallet_grandpa::EquivocationReportSystem<Self, Offences, Historical, ReportLongevity>;
+}
+parameter_types! {
+    pub const MinimumPeriod: Moment = SLOT_DURATION / 2;
 }
 
 impl pallet_timestamp::Config for Runtime {
 	/// A timestamp: milliseconds since the unix epoch.
-	type Moment = u64;
+	type Moment = Moment;
 	type OnTimestampSet = Babe; //Aura;
-	type MinimumPeriod = ConstU64<{ SLOT_DURATION / 2 }>;
-	type WeightInfo = ();
+	type MinimumPeriod = MinimumPeriod; //ConstU64<{ SLOT_DURATION / 2 }>;
+	type WeightInfo = pallet_timestamp::weights::SubstrateWeight<Runtime>; //();
+}
+
+parameter_types! {
+	pub const ExistentialDeposit: Balance = 1 * ARGO;
+	// For weight estimation, we assume that the most locks on an individual account will be 50.
+	// This number may need to be adjusted in the future if this assumption no longer holds true.
+	pub const MaxLocks: u32 = 50;
+	pub const MaxReserves: u32 = 50;
 }
 
 impl pallet_balances::Config for Runtime {
-	type MaxLocks = ConstU32<50>;
-	type MaxReserves = ();
+	type MaxLocks = MaxLocks; //ConstU32<50>;
+	type MaxReserves = MaxReserves; //();
 	type ReserveIdentifier = [u8; 8];
 	/// The type for recording an account's balance.
 	type Balance = Balance;
 	/// The ubiquitous event type.
 	type RuntimeEvent = RuntimeEvent;
 	type DustRemoval = ();
-	type ExistentialDeposit = ConstU128<EXISTENTIAL_DEPOSIT>;
-	type AccountStore = System;
+	type ExistentialDeposit = ExistentialDeposit; //ConstU128<EXISTENTIAL_DEPOSIT>;
+	type AccountStore = frame_system::Pallet<Runtime>; //System;
 	type WeightInfo = pallet_balances::weights::SubstrateWeight<Runtime>;
 	type FreezeIdentifier = RuntimeFreezeReason;
 	type MaxFreezes = VariantCountOf<RuntimeFreezeReason>;
 	type RuntimeHoldReason = RuntimeHoldReason;
 	type RuntimeFreezeReason = RuntimeHoldReason;
+	//type DoneSlashHandler = ();
 }
 
 parameter_types! {
@@ -174,7 +192,7 @@ parameter_types! {
 	// 30 seconds for now
     pub const EpochDuration: u64 = EPOCH_DURATION_IN_SLOTS;
     pub const ExpectedBlockTime: Moment = MILLI_SECS_PER_BLOCK;
-    pub const MaxNominators: u32 = 400;
+    // pub const MaxNominators: u32 = 400;
 	pub const MaxAuthorities: u32 = 100;
 }
 		
@@ -209,3 +227,72 @@ impl pallet_session::Config for Runtime {
 // 	type FullIdentification = pallet_staking::Exposure<AccountId, Balance>;
 // 	type FullIdentificationOf = pallet_staking::ExposureOf<Runtime>;
 // }
+
+pallet_staking_reward_curve::build! {
+	const REWARD_CURVE: PiecewiseLinear<'static> = curve!(
+		min_inflation: 0_025_000,
+		max_inflation: 0_100_000,
+		ideal_stake: 0_500_000,
+		falloff: 0_050_000,
+		max_piece_count: 40,
+		test_precision: 0_005_000,
+	);
+}
+
+parameter_types! {
+	pub const SessionsPerEra: sp_staking::SessionIndex = 6;
+	pub const BondingDuration: sp_staking::EraIndex = 24 * 28;
+	pub const SlashDeferDuration: sp_staking::EraIndex = 24 * 7; // 1/4 the bonding duration.
+	pub const RewardCurve: &'static PiecewiseLinear<'static> = &REWARD_CURVE;
+	pub const MaxNominators: u32 = 64;
+	pub const MaxControllersInDeprecationBatch: u32 = 5900;
+	pub OffchainRepeat: BlockNumber = 5;
+	pub HistoryDepth: u32 = 84;
+}
+
+/// Upper limit on the number of NPOS nominations.
+const MAX_QUOTA_NOMINATIONS: u32 = 16;
+
+pub struct StakingBenchmarkingConfig;
+impl pallet_staking::BenchmarkingConfig for StakingBenchmarkingConfig {
+	type MaxNominators = ConstU32<1000>;
+	type MaxValidators = ConstU32<1000>;
+}
+
+impl pallet_staking::Config for Runtime {
+	// type OldCurrency = Balances;
+	type Currency = Balances;
+	type CurrencyBalance = Balance;
+	type UnixTime = Timestamp;
+	type CurrencyToVote = sp_staking::currency_to_vote::U128CurrencyToVote;
+	type RewardRemainder = (); //ResolveTo<TreasuryAccount, Balances>;
+	type RuntimeEvent = RuntimeEvent;
+	// type RuntimeHoldReason = RuntimeHoldReason;
+	type Slash = (); //ResolveTo<TreasuryAccount, Balances>; // send the slashed funds to the treasury.
+	type Reward = (); // rewards are minted from the void
+	type SessionsPerEra = SessionsPerEra;
+	type BondingDuration = BondingDuration;
+	type SlashDeferDuration = SlashDeferDuration;
+	/// A super-majority of the council can cancel the slash.
+	type AdminOrigin = EitherOfDiverse<
+		EnsureRoot<AccountId>,
+		pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 4>,
+	>;
+	type SessionInterface = Self;
+	type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
+	type NextNewSession = Session;
+	type MaxExposurePageSize = ConstU32<256>;
+	type ElectionProvider = ElectionProviderMultiPhase;
+	type GenesisElectionProvider = onchain::OnChainExecution<OnChainSeqPhragmen>;
+	type VoterList = VoterList;
+	type NominationsQuota = pallet_staking::FixedNominationsQuota<MAX_QUOTA_NOMINATIONS>;
+	// This a placeholder, to be introduced in the next PR as an instance of bags-list
+	type TargetList = pallet_staking::UseValidatorsMap<Self>;
+	type MaxUnlockingChunks = ConstU32<32>;
+	type MaxControllersInDeprecationBatch = MaxControllersInDeprecationBatch;
+	type HistoryDepth = HistoryDepth;
+	type EventListeners = (NominationPools, DelegatedStaking);
+	type WeightInfo = pallet_staking::weights::SubstrateWeight<Runtime>;
+	type BenchmarkingConfig = StakingBenchmarkingConfig;
+	type DisablingStrategy = pallet_staking::UpToLimitWithReEnablingDisablingStrategy;
+}

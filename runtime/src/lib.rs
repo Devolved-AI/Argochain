@@ -111,13 +111,16 @@ pub const DAYS: BlockNumber = HOURS * 24;
 
 pub const BLOCK_HASH_COUNT: BlockNumber = 2400;
 
-// Unit = the base number of indivisible units for balances
-pub const UNIT: Balance = 1_000_000_000_000;
-pub const MILLI_UNIT: Balance = 1_000_000_000;
-pub const MICRO_UNIT: Balance = 1_000_000;
+// ARGO = the base number of indivisible units for balances
+// pub const ARGO: Balance = 1_000_000_000_000;
+// pub const MILLI_ARGO: Balance = 1_000_000_000;
+// pub const MICRO_ARGO: Balance = 1_000_000;
+pub const MILLICENTS: Balance = 10_000_000_000_000;
+pub const CENTS: Balance = 1_000 * MILLICENTS; // assume this is worth about a cent.
+pub const ARGO: Balance = 100 * CENTS;
 
 /// Existential deposit.
-pub const EXISTENTIAL_DEPOSIT: Balance = MILLI_UNIT;
+//pub const EXISTENTIAL_DEPOSIT: Balance = MILLI_ARGO;
 
 /// The version information used to identify this runtime when compiled natively.
 #[cfg(feature = "std")]
@@ -250,6 +253,12 @@ mod runtime {
 	#[runtime::pallet_index(8)]
 	pub type Babe = pallet_babe;
 
+	#[runtime::pallet_index(9)]
+	pub type Session = pallet_session;
+
 	// #[runtime::pallet_index(9)]
 	// pub type Historical = pallet_session_historical;
+
+	#[runtime::pallet_index(10)]
+	pub type Staking = pallet_staking;
 }
