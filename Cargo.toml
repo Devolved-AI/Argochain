@@ -29,6 +29,7 @@ members = [
 	"frame/evm-chain-id",
 	"frame/hotfix-sufficients",
 	"client/api",
+	"client/cli",
 	"client/consensus",
 	"client/rpc-core",
 	"client/rpc",

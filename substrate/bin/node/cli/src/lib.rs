@@ -35,6 +35,9 @@ mod benchmarking;
 pub mod chain_spec;
 #[cfg(feature = "cli")]
 mod cli;
+// mod client;
+// mod eth;
+// mod rpc;
 #[cfg(feature = "cli")]
 mod command;
 pub mod service;

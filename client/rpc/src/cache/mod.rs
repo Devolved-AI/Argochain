@@ -23,7 +23,7 @@ use std::{
 	marker::PhantomData,
 	sync::{Arc, Mutex},
 };
-
+// use parity_scale_codec as codec;
 use ethereum::BlockV2 as EthereumBlock;
 use ethereum_types::U256;
 use futures::StreamExt;
@@ -183,7 +183,7 @@ impl<B: BlockT> EthBlockDataCacheTask<B> {
 		task_tx: mpsc::Sender<EthBlockDataCacheMessage<B>>,
 		handler_call: F,
 	) where
-		T: Clone + scale_codec::Encode,
+		T: Clone + codec::Encode,
 		F: FnOnce(&dyn StorageOverride<B>) -> EthBlockDataCacheMessage<B>,
 		F: Send + 'static,
 	{
