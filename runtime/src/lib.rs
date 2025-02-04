@@ -261,4 +261,7 @@ mod runtime {
 
 	#[runtime::pallet_index(10)]
 	pub type Staking = pallet_staking;
+
+	#[runtime::pallet_index(11)]
+	pub type Council = pallet_collective::Pallet<Runtime, Instance1>;
 }

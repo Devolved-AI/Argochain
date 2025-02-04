@@ -49,8 +49,8 @@ use crate::ARGO;
 use super::{
 	AccountId, Aura, Balance, Balances, Block, BlockNumber, Hash, Nonce, PalletInfo, Runtime,
 	RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
-	System, SLOT_DURATION, VERSION, Babe, SessionKeys, Timestamp,
-	Session, Staking, Moment//, EXISTENTIAL_DEPOSIT
+	System, SLOT_DURATION, VERSION, Babe, SessionKeys, Timestamp, //, EXISTENTIAL_DEPOSIT
+	Session, Staking, Moment, 
 };
 
 use super::block_times::*;
@@ -295,4 +295,39 @@ impl pallet_staking::Config for Runtime {
 	type WeightInfo = pallet_staking::weights::SubstrateWeight<Runtime>;
 	type BenchmarkingConfig = StakingBenchmarkingConfig;
 	type DisablingStrategy = pallet_staking::UpToLimitWithReEnablingDisablingStrategy;
+}
+
+parameter_types! {
+	pub const CouncilMotionDuration: BlockNumber = 5 * DAYS;
+	pub const CouncilMaxProposals: u32 = 100;
+	pub const CouncilMaxMembers: u32 = 100;
+	pub const ProposalDepositOffset: Balance = ExistentialDeposit::get() + ExistentialDeposit::get();
+	// pub const ProposalHoldReason: RuntimeHoldReason =
+	// 	RuntimeHoldReason::Council(pallet_collective::HoldReason::ProposalSubmission);
+}
+
+type CouncilCollective = pallet_collective::Instance1;
+impl pallet_collective::Config<CouncilCollective> for Runtime {
+	type RuntimeOrigin = RuntimeOrigin;
+	type Proposal = RuntimeCall;
+	type RuntimeEvent = RuntimeEvent;
+	type MotionDuration = CouncilMotionDuration;
+	type MaxProposals = CouncilMaxProposals;
+	type MaxMembers = CouncilMaxMembers;
+	type DefaultVote = pallet_collective::PrimeDefaultVote;
+	type WeightInfo = pallet_collective::weights::SubstrateWeight<Runtime>;
+	type SetMembersOrigin = EnsureRoot<Self::AccountId>;
+	type MaxProposalWeight = MaxCollectivesProposalWeight;
+	// type DisapproveOrigin = EnsureRoot<Self::AccountId>;
+	// type KillOrigin = EnsureRoot<Self::AccountId>;
+	// type Consideration = HoldConsideration<
+	// 	AccountId,
+	// 	Balances,
+	// 	ProposalHoldReason,
+	// 	pallet_collective::deposit::Delayed<
+	// 		ConstU32<2>,
+	// 		pallet_collective::deposit::Linear<ConstU32<2>, ProposalDepositOffset>,
+	// 	>,
+	// 	u32,
+	// >;
 }

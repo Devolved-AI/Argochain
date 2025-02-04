@@ -5224,6 +5224,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-collective"
+version = "38.0.0"
+source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=stable2409#008650b6411b74e57cbfe1efe87176a3e6245513"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+]
+
+[[package]]
 name = "pallet-grandpa"
 version = "38.0.0"
 source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=stable2409#008650b6411b74e57cbfe1efe87176a3e6245513"
@@ -8288,6 +8303,7 @@ dependencies = [
  "pallet-authority-discovery",
  "pallet-babe",
  "pallet-balances",
+ "pallet-collective",
  "pallet-grandpa",
  "pallet-session",
  "pallet-staking",
