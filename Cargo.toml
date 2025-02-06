@@ -1,0 +1,1076 @@
+[workspace.package]
+authors = ["Parity Technologies <admin@parity.io>"]
+edition = "2021"
+repository = "https://github.com/paritytech/polkadot-sdk.git"
+license = "GPL-3.0-only"
+homepage = "https://paritytech.github.io/polkadot-sdk/master/polkadot_sdk_docs/index.html"
+
+[workspace]
+resolver = "2"
+
+members = [
+
+	"frame/base-fee",
+	"frame/dynamic-fee",
+	"frame/ethereum",
+	"frame/evm",
+	"frame/evm/precompile/sha3fips",
+	"frame/evm/precompile/simple",
+	"frame/evm/precompile/modexp",
+	"frame/evm/precompile/ed25519",
+	"frame/evm/precompile/bn128",
+	"frame/evm/precompile/blake2",
+	"frame/evm/precompile/bw6761",
+	"frame/evm/precompile/bls12377",
+	"frame/evm/precompile/bls12381",
+	"frame/evm/precompile/dispatch",
+	"frame/evm/precompile/curve25519",
+	"frame/evm/precompile/storage-cleaner",
+	"frame/evm-chain-id",
+	"frame/hotfix-sufficients",
+	"client/api",
+	"client/cli",
+	"client/consensus",
+	"client/rpc-core",
+	"client/rpc",
+	"client/rpc-v2",
+	"client/rpc-v2/api",
+	"client/rpc-v2/types",
+	"client/db",
+	"client/storage",
+	"client/mapping-sync",
+	"primitives/account",
+	"primitives/consensus",
+	"primitives/dynamic-fee",
+	"primitives/evm",
+	"primitives/rpc",
+	"primitives/self-contained",
+	"precompiles",
+	"precompiles/macro",
+	"precompiles/tests-external",
+	##
+	
+	"substrate/bin/node/bench",
+	"substrate/bin/node/cli",
+	"substrate/bin/node/inspect",
+	"substrate/bin/node/primitives",
+	"substrate/bin/node/rpc",
+	"substrate/bin/node/runtime",
+	"substrate/bin/node/testing",
+	"substrate/bin/utils/chain-spec-builder",
+	"substrate/bin/utils/subkey",
+	"substrate/client/allocator",
+	"substrate/client/api",
+	"substrate/client/authority-discovery",
+	"substrate/client/basic-authorship",
+	"substrate/client/block-builder",
+	"substrate/client/chain-spec",
+	"substrate/client/chain-spec/derive",
+	"substrate/client/cli",
+	"substrate/client/consensus/aura",
+	"substrate/client/consensus/babe",
+	"substrate/client/consensus/babe/rpc",
+	"substrate/client/consensus/beefy",
+	"substrate/client/consensus/beefy/rpc",
+	"substrate/client/consensus/common",
+	"substrate/client/consensus/epochs",
+	"substrate/client/consensus/grandpa",
+	"substrate/client/consensus/grandpa/rpc",
+	"substrate/client/consensus/manual-seal",
+	"substrate/client/consensus/pow",
+	"substrate/client/consensus/slots",
+	"substrate/client/db",
+	"substrate/client/executor",
+	"substrate/client/executor/common",
+	"substrate/client/executor/polkavm",
+	"substrate/client/executor/runtime-test",
+	"substrate/client/executor/wasmtime",
+	"substrate/client/informant",
+	"substrate/client/keystore",
+	"substrate/client/merkle-mountain-range",
+	"substrate/client/merkle-mountain-range/rpc",
+	"substrate/client/mixnet",
+	"substrate/client/network",
+	"substrate/client/network-gossip",
+	"substrate/client/network/common",
+	"substrate/client/network/light",
+	"substrate/client/network/statement",
+	"substrate/client/network/sync",
+	"substrate/client/network/test",
+	"substrate/client/network/transactions",
+	"substrate/client/network/types",
+	"substrate/client/offchain",
+	"substrate/client/proposer-metrics",
+	"substrate/client/rpc",
+	"substrate/client/rpc-api",
+	"substrate/client/rpc-servers",
+	"substrate/client/rpc-spec-v2",
+	"substrate/client/service",
+	"substrate/client/service/test",
+	"substrate/client/state-db",
+	"substrate/client/statement-store",
+	"substrate/client/storage-monitor",
+	"substrate/client/sync-state-rpc",
+	"substrate/client/sysinfo",
+	"substrate/client/telemetry",
+	"substrate/client/tracing",
+	"substrate/client/tracing/proc-macro",
+	"substrate/client/transaction-pool",
+	"substrate/client/transaction-pool/api",
+	"substrate/client/utils",
+	"substrate/deprecated/hashing",
+	"substrate/deprecated/hashing/proc-macro",
+	"substrate/frame",
+	"substrate/frame/alliance",
+	"substrate/frame/asset-conversion",
+	"substrate/frame/asset-conversion/ops",
+	"substrate/frame/asset-rate",
+	"substrate/frame/assets",
+	"substrate/frame/assets-freezer",
+	"substrate/frame/atomic-swap",
+	"substrate/frame/aura",
+	"substrate/frame/authority-discovery",
+	"substrate/frame/authorship",
+	"substrate/frame/babe",
+	"substrate/frame/bags-list",
+	"substrate/frame/bags-list/fuzzer",
+	"substrate/frame/bags-list/remote-tests",
+	"substrate/frame/balances",
+	"substrate/frame/beefy",
+	"substrate/frame/beefy-mmr",
+	"substrate/frame/benchmarking",
+	"substrate/frame/benchmarking/pov",
+	"substrate/frame/bounties",
+	"substrate/frame/broker",
+	"substrate/frame/child-bounties",
+	"substrate/frame/collective",
+
+	"substrate/frame/conviction-voting",
+	"substrate/frame/core-fellowship",
+	"substrate/frame/delegated-staking",
+	"substrate/frame/democracy",
+	"substrate/frame/election-provider-multi-phase",
+	"substrate/frame/election-provider-multi-phase/test-staking-e2e",
+	"substrate/frame/election-provider-support",
+	"substrate/frame/election-provider-support/benchmarking",
+	"substrate/frame/election-provider-support/solution-type",
+	"substrate/frame/election-provider-support/solution-type/fuzzer",
+	"substrate/frame/elections-phragmen",
+	"substrate/frame/examples",
+	"substrate/frame/examples/basic",
+	"substrate/frame/examples/default-config",
+	"substrate/frame/examples/dev-mode",
+	"substrate/frame/examples/frame-crate",
+	"substrate/frame/examples/kitchensink",
+	"substrate/frame/examples/multi-block-migrations",
+	"substrate/frame/examples/offchain-worker",
+	"substrate/frame/examples/single-block-migrations",
+	"substrate/frame/examples/split",
+	"substrate/frame/examples/tasks",
+	"substrate/frame/executive",
+	"substrate/frame/fast-unstake",
+	"substrate/frame/glutton",
+	"substrate/frame/grandpa",
+	"substrate/frame/identity",
+	"substrate/frame/im-online",
+	"substrate/frame/indices",
+	"substrate/frame/insecure-randomness-collective-flip",
+	"substrate/frame/lottery",
+	"substrate/frame/membership",
+	"substrate/frame/merkle-mountain-range",
+	"substrate/frame/message-queue",
+	"substrate/frame/metadata-hash-extension",
+	"substrate/frame/migrations",
+	"substrate/frame/mixnet",
+	"substrate/frame/multisig",
+	"substrate/frame/nft-fractionalization",
+	"substrate/frame/nfts",
+	"substrate/frame/nfts/runtime-api",
+	"substrate/frame/nis",
+	"substrate/frame/node-authorization",
+	"substrate/frame/nomination-pools",
+	"substrate/frame/nomination-pools/benchmarking",
+	"substrate/frame/nomination-pools/fuzzer",
+	"substrate/frame/nomination-pools/runtime-api",
+	"substrate/frame/nomination-pools/test-delegate-stake",
+	"substrate/frame/nomination-pools/test-transfer-stake",
+	"substrate/frame/offences",
+	"substrate/frame/offences/benchmarking",
+	"substrate/frame/paged-list",
+	"substrate/frame/paged-list/fuzzer",
+	"substrate/frame/parameters",
+	"substrate/frame/preimage",
+	"substrate/frame/proxy",
+	"substrate/frame/ranked-collective",
+	"substrate/frame/recovery",
+	"substrate/frame/referenda",
+	"substrate/frame/remark",
+	"substrate/frame/root-offences",
+	"substrate/frame/root-testing",
+	"substrate/frame/safe-mode",
+	"substrate/frame/salary",
+	"substrate/frame/scheduler",
+	"substrate/frame/scored-pool",
+	"substrate/frame/session",
+	"substrate/frame/session/benchmarking",
+	"substrate/frame/society",
+	"substrate/frame/staking",
+	"substrate/frame/staking/reward-curve",
+	"substrate/frame/staking/reward-fn",
+	"substrate/frame/staking/runtime-api",
+	"substrate/frame/state-trie-migration",
+	"substrate/frame/statement",
+	"substrate/frame/sudo",
+	"substrate/frame/support",
+	"substrate/frame/support/procedural",
+	"substrate/frame/support/procedural/tools",
+	"substrate/frame/support/procedural/tools/derive",
+	"substrate/frame/support/test",
+	"substrate/frame/support/test/compile_pass",
+	"substrate/frame/support/test/pallet",
+	"substrate/frame/support/test/stg_frame_crate",
+	"substrate/frame/system",
+	"substrate/frame/system/benchmarking",
+	"substrate/frame/system/rpc/runtime-api",
+	"substrate/frame/timestamp",
+	"substrate/frame/tips",
+	"substrate/frame/transaction-payment",
+	"substrate/frame/transaction-payment/asset-conversion-tx-payment",
+	"substrate/frame/transaction-payment/asset-tx-payment",
+	"substrate/frame/transaction-payment/rpc",
+	"substrate/frame/transaction-payment/rpc/runtime-api",
+	"substrate/frame/transaction-payment/skip-feeless-payment",
+	"substrate/frame/transaction-storage",
+	"substrate/frame/treasury",
+	"substrate/frame/try-runtime",
+	"substrate/frame/tx-pause",
+	"substrate/frame/uniques",
+	"substrate/frame/utility",
+	"substrate/frame/vesting",
+	"substrate/frame/whitelist",
+	"substrate/primitives/api",
+	"substrate/primitives/api/proc-macro",
+	"substrate/primitives/api/test",
+	"substrate/primitives/application-crypto",
+	"substrate/primitives/application-crypto/test",
+	"substrate/primitives/arithmetic",
+	"substrate/primitives/arithmetic/fuzzer",
+	"substrate/primitives/authority-discovery",
+	"substrate/primitives/block-builder",
+	"substrate/primitives/blockchain",
+	"substrate/primitives/consensus/aura",
+	"substrate/primitives/consensus/babe",
+	"substrate/primitives/consensus/beefy",
+	"substrate/primitives/consensus/common",
+	"substrate/primitives/consensus/grandpa",
+	"substrate/primitives/consensus/pow",
+	"substrate/primitives/consensus/slots",
+	"substrate/primitives/core",
+	"substrate/primitives/core/fuzz",
+	"substrate/primitives/crypto/ec-utils",
+	"substrate/primitives/crypto/hashing",
+	"substrate/primitives/crypto/hashing/proc-macro",
+	"substrate/primitives/database",
+	"substrate/primitives/debug-derive",
+	"substrate/primitives/externalities",
+	"substrate/primitives/genesis-builder",
+	"substrate/primitives/inherents",
+	"substrate/primitives/io",
+	"substrate/primitives/keyring",
+	"substrate/primitives/keystore",
+	"substrate/primitives/maybe-compressed-blob",
+	"substrate/primitives/merkle-mountain-range",
+	"substrate/primitives/metadata-ir",
+	"substrate/primitives/mixnet",
+	"substrate/primitives/npos-elections",
+	"substrate/primitives/npos-elections/fuzzer",
+	"substrate/primitives/offchain",
+	"substrate/primitives/panic-handler",
+	"substrate/primitives/rpc",
+	"substrate/primitives/runtime",
+	"substrate/primitives/runtime-interface",
+	"substrate/primitives/runtime-interface/proc-macro",
+	"substrate/primitives/runtime-interface/test",
+	"substrate/primitives/runtime-interface/test-wasm",
+	"substrate/primitives/runtime-interface/test-wasm-deprecated",
+	"substrate/primitives/session",
+	"substrate/primitives/staking",
+	"substrate/primitives/state-machine",
+	"substrate/primitives/statement-store",
+	"substrate/primitives/std",
+	"substrate/primitives/storage",
+	"substrate/primitives/test-primitives",
+	"substrate/primitives/timestamp",
+	"substrate/primitives/tracing",
+	"substrate/primitives/transaction-pool",
+	"substrate/primitives/transaction-storage-proof",
+	"substrate/primitives/trie",
+	"substrate/primitives/version",
+	"substrate/primitives/version/proc-macro",
+	"substrate/primitives/wasm-interface",
+	"substrate/primitives/weights",
+	"substrate/scripts/ci/node-template-release",
+	"substrate/test-utils",
+	"substrate/test-utils/cli",
+	"substrate/test-utils/client",
+	"substrate/test-utils/runtime",
+	"substrate/test-utils/runtime/client",
+	"substrate/test-utils/runtime/transaction-pool",
+	"substrate/utils/binary-merkle-tree",
+	"substrate/utils/build-script-utils",
+	"substrate/utils/fork-tree",
+	"substrate/utils/frame/benchmarking-cli",
+	"substrate/utils/frame/generate-bags",
+	"substrate/utils/frame/generate-bags/node-runtime",
+	"substrate/utils/frame/remote-externalities",
+	"substrate/utils/frame/rpc/client",
+	"substrate/utils/frame/rpc/state-trie-migration-rpc",
+	"substrate/utils/frame/rpc/support",
+	"substrate/utils/frame/rpc/system",
+	"substrate/utils/prometheus",
+	"substrate/utils/substrate-bip39",
+	"substrate/utils/wasm-builder",
+
+	"umbrella",
+]
+
+default-members = [
+	"substrate/bin/node/cli",
+]
+
+[workspace.lints.rust]
+suspicious_double_ref_op = { level = "allow", priority = 2 }
+
+[workspace.lints.clippy]
+all = { level = "allow", priority = 0 }
+correctness = { level = "warn", priority = 1 }
+complexity = { level = "warn", priority = 1 }
+if-same-then-else = { level = "allow", priority = 2 }
+zero-prefixed-literal = { level = "allow", priority = 2 }            # 00_1000_000
+type_complexity = { level = "allow", priority = 2 }                  # raison d'etre
+nonminimal-bool = { level = "allow", priority = 2 }                  # maybe
+borrowed-box = { level = "allow", priority = 2 }                     # Reasonable to fix this one
+too-many-arguments = { level = "allow", priority = 2 }               # (Turning this on would lead to)
+needless-lifetimes = { level = "allow", priority = 2 }               # generated code
+unnecessary_cast = { level = "allow", priority = 2 }                 # Types may change
+identity-op = { level = "allow", priority = 2 }                      # One case where we do 0 +
+useless_conversion = { level = "allow", priority = 2 }               # Types may change
+unit_arg = { level = "allow", priority = 2 }                         # stylistic
+option-map-unit-fn = { level = "allow", priority = 2 }               # stylistic
+bind_instead_of_map = { level = "allow", priority = 2 }              # stylistic
+erasing_op = { level = "allow", priority = 2 }                       # E.g. 0 * ARGO
+eq_op = { level = "allow", priority = 2 }                            # In tests we test equality.
+while_immutable_condition = { level = "allow", priority = 2 }        # false positives
+needless_option_as_deref = { level = "allow", priority = 2 }         # false positives
+derivable_impls = { level = "allow", priority = 2 }                  # false positives
+stable_sort_primitive = { level = "allow", priority = 2 }            # prefer stable sort
+extra-unused-type-parameters = { level = "allow", priority = 2 }     # stylistic
+default_constructed_unit_structs = { level = "allow", priority = 2 } # stylistic
+
+[workspace.dependencies]
+Inflector = { version = "0.11.4" }
+aes-gcm = { version = "0.10" }
+ahash = { version = "0.8.2" }
+alloy-primitives = { version = "0.4.2", default-features = false }
+alloy-sol-types = { version = "0.4.2", default-features = false }
+always-assert = { version = "0.1" }
+ansi_term = { version = "0.12.1" }
+anyhow = { version = "1.0.81" }
+aquamarine = { version = "0.5.0" }
+arbitrary = { version = "1.3.2" }
+ark-bls12-377 = { version = "0.4.0", default-features = false }
+ark-bls12-377-ext = { version = "0.4.1", default-features = false }
+ark-bls12-381 = { version = "0.4.0", default-features = false }
+ark-bls12-381-ext = { version = "0.4.1", default-features = false }
+ark-bw6-761 = { version = "0.4.0", default-features = false }
+ark-bw6-761-ext = { version = "0.4.1", default-features = false }
+ark-ec = { version = "0.4.2", default-features = false }
+ark-ed-on-bls12-377 = { version = "0.4.0", default-features = false }
+ark-ed-on-bls12-377-ext = { version = "0.4.1", default-features = false }
+ark-ed-on-bls12-381-bandersnatch = { version = "0.4.0", default-features = false }
+ark-ed-on-bls12-381-bandersnatch-ext = { version = "0.4.1", default-features = false }
+ark-scale = { version = "0.0.12", default-features = false }
+array-bytes = { version = "6.2.2", default-features = false }
+arrayvec = { version = "0.7.4" }
+assert_cmd = { version = "2.0.10" }
+assert_matches = { version = "1.5.0" }
+async-channel = { version = "1.8.0" }
+async-std = { version = "1.9.0" }
+async-trait = { version = "0.1.79" }
+asynchronous-codec = { version = "0.6" }
+backoff = { version = "0.4" }
+backtrace = { version = "0.3.64" }
+binary-merkle-tree = { path = "substrate/utils/binary-merkle-tree", default-features = false, version = "15.0.0" }
+bincode = { version = "1.3.3" }
+bip39 = { version = "2.0.0" }
+bitflags = { version = "1.3.2" }
+bitvec = { version = "1.0.1", default-features = false }
+blake2 = { version = "0.10.4", default-features = false }
+blake2b_simd = { version = "1.0.1", default-features = false }
+blake3 = { version = "1.5" }
+bounded-collections = { version = "0.2.0", default-features = false }
+bounded-vec = { version = "0.7" }
+bs58 = { version = "0.5.0", default-features = false }
+build-helper = { version = "0.1.1" }
+byte-slice-cast = { version = "1.2.1", default-features = false }
+byteorder = { version = "1.3.2", default-features = false }
+bytes = { version = "1.4.0", default-features = false }
+cargo_metadata = { version = "0.15.4" }
+cfg-expr = { version = "0.15.5" }
+cfg-if = { version = "1.0" }
+chain-spec-builder = { path = "substrate/bin/utils/chain-spec-builder", default-features = false, package = "staging-chain-spec-builder", version = "5.0.0" }
+chrono = { version = "0.4.31" }
+cid = { version = "0.9.0" }
+clap = { version = "4.5.3" }
+clap-num = { version = "1.0.2" }
+clap_complete = { version = "4.0.2" }
+coarsetime = { version = "0.1.22" }
+codec = { version = "3.6.12", default-features = false, package = "parity-scale-codec" }
+color-eyre = { version = "0.6.1", default-features = false }
+color-print = { version = "0.3.4" }
+colored = { version = "2.0.4" }
+comfy-table = { version = "7.1.0", default-features = false }
+console = { version = "0.15.8" }
+cpu-time = { version = "1.0.0" }
+criterion = { version = "0.5.1", default-features = false }
+curve25519-dalek = { version = "4.1.3" }
+derivative = { version = "2.2.0", default-features = false }
+derive-syn-parse = { version = "0.2.0" }
+derive_more = { version = "0.99.17", default-features = false }
+digest = { version = "0.10.3", default-features = false }
+directories = { version = "5.0.1" }
+dlmalloc = { version = "0.2.4" }
+docify = { version = "0.2.8" }
+dyn-clonable = { version = "0.9.0" }
+dyn-clone = { version = "1.0.16" }
+ed25519-dalek = { version = "2.1", default-features = false }
+ed25519-zebra = { version = "4.0.3", default-features = false }
+either = { version = "1.8.1", default-features = false }
+enumflags2 = { version = "0.7.7" }
+enumn = { version = "0.1.12" }
+env_logger = { version = "0.11.3" }
+environmental = { version = "1.1.4", default-features = false }
+ethabi = { version = "1.0.0", default-features = false, package = "ethabi-decode" }
+ethbloom = { version = "0.13.0", default-features = false }
+ethereum-types = { version = "0.14.1", default-features = false }
+exit-future = { version = "0.2.0" }
+expander = { version = "2.0.0" }
+fatality = { version = "0.1.1" }
+fdlimit = { version = "0.3.0" }
+femme = { version = "2.2.1" }
+filetime = { version = "0.2.16" }
+finality-grandpa = { version = "0.16.2", default-features = false }
+flate2 = { version = "1.0" }
+fnv = { version = "1.0.6" }
+fork-tree = { path = "substrate/utils/fork-tree", default-features = false, version = "13.0.0" }
+forwarded-header-value = { version = "0.1.1" }
+fraction = { version = "0.13.1" }
+frame = { path = "substrate/frame", default-features = false, package = "polkadot-sdk-frame", version = "0.6.0" }
+frame-benchmarking = { path = "substrate/frame/benchmarking", default-features = false, version = "37.0.0" }
+frame-benchmarking-cli = { path = "substrate/utils/frame/benchmarking-cli", default-features = false, version = "42.0.1" }
+frame-benchmarking-pallet-pov = { default-features = false, path = "substrate/frame/benchmarking/pov" }
+frame-election-provider-solution-type = { path = "substrate/frame/election-provider-support/solution-type", default-features = false, version = "14.0.1" }
+frame-election-provider-support = { path = "substrate/frame/election-provider-support", default-features = false, version = "37.0.0" }
+frame-executive = { path = "substrate/frame/executive", default-features = false, version = "37.0.0" }
+frame-metadata = { version = "16.0.0", default-features = false }
+frame-metadata-hash-extension = { path = "substrate/frame/metadata-hash-extension", default-features = false, version = "0.5.0" }
+frame-support = { path = "substrate/frame/support", default-features = false, version = "37.1.0" }
+frame-support-procedural = { path = "substrate/frame/support/procedural", default-features = false, version = "30.0.4" }
+frame-support-procedural-tools = { path = "substrate/frame/support/procedural/tools", default-features = false, version = "13.0.0" }
+frame-support-procedural-tools-derive = { path = "substrate/frame/support/procedural/tools/derive", default-features = false, version = "12.0.0" }
+frame-support-test = { path = "substrate/frame/support/test" }
+frame-system = { path = "substrate/frame/system", default-features = false, version = "37.1.0" }
+frame-system-benchmarking = { path = "substrate/frame/system/benchmarking", default-features = false, version = "37.0.0" }
+frame-system-rpc-runtime-api = { path = "substrate/frame/system/rpc/runtime-api", default-features = false, version = "34.0.0" }
+frame-try-runtime = { path = "substrate/frame/try-runtime", default-features = false, version = "0.43.0" }
+fs4 = { version = "0.7.0" }
+fs_extra = { version = "1.3.0" }
+futures = { version = "0.3.30" }
+futures-channel = { version = "0.3.23" }
+futures-timer = { version = "3.0.2" }
+futures-util = { version = "0.3.30", default-features = false }
+generate-bags = { path = "substrate/utils/frame/generate-bags", default-features = false, version = "37.0.0" }
+gethostname = { version = "0.2.3" }
+glob = { version = "0.3" }
+governor = { version = "0.6.0" }
+handlebars = { version = "5.1.0" }
+hash-db = { version = "0.16.0", default-features = false }
+hash256-std-hasher = { version = "0.15.2", default-features = false }
+hex = { version = "0.4.3", default-features = false }
+hex-literal = { version = "0.4.1", default-features = false }
+hkdf = { version = "0.12.0" }
+hmac = { version = "0.12.1" }
+honggfuzz = { version = "0.5.55" }
+http = { version = "1.1" }
+http-body = { version = "1", default-features = false }
+http-body-util = { version = "0.1.2", default-features = false }
+hyper = { version = "1.3.1", default-features = false }
+hyper-rustls = { version = "0.24.2" }
+hyper-util = { version = "0.1.5", default-features = false }
+# TODO: remove hyper v0.14 https://github.com/paritytech/polkadot-sdk/issues/4896
+hyperv14 = { package = "hyper", version = "0.14.29", default-features = false }
+impl-serde = { version = "0.4.0", default-features = false }
+impl-trait-for-tuples = { version = "0.2.2" }
+indexmap = { version = "2.0.0" }
+indicatif = { version = "0.17.7" }
+integer-sqrt = { version = "0.1.2" }
+ip_network = { version = "0.4.1" }
+is-terminal = { version = "0.4.9" }
+is_executable = { version = "1.0.1" }
+isahc = { version = "1.2" }
+itertools = { version = "0.11" }
+jsonpath_lib = { version = "0.3" }
+jsonrpsee = { version = "0.23.2" }
+jsonrpsee-core = { version = "0.23.2" }
+k256 = { version = "0.13.3", default-features = false }
+argochain-runtime = { path = "substrate/bin/node/runtime", version = "3.0.0" }
+kvdb = { version = "0.13.0" }
+kvdb-memorydb = { version = "0.13.0" }
+kvdb-rocksdb = { version = "0.19.0" }
+kvdb-shared-tests = { version = "0.11.0" }
+landlock = { version = "0.3.0" }
+lazy_static = { version = "1.4.0" }
+libc = { version = "0.2.153" }
+libfuzzer-sys = { version = "0.4" }
+libp2p = { version = "0.52.4" }
+libp2p-identity = { version = "0.2.3" }
+libsecp256k1 = { version = "0.7.0", default-features = false }
+linked-hash-map = { version = "0.5.4" }
+linked_hash_set = { version = "0.1.4" }
+linregress = { version = "0.5.1" }
+lite-json = { version = "0.2.0", default-features = false }
+litep2p = { version = "0.6.2" }
+log = { version = "0.4.21", default-features = false }
+macro_magic = { version = "0.5.1" }
+maplit = { version = "1.0.2" }
+memmap2 = { version = "0.9.3" }
+memory-db = { version = "0.32.0", default-features = false }
+merkleized-metadata = { version = "0.1.0" }
+merlin = { version = "3.0", default-features = false }
+metered = { version = "0.6.1", default-features = false, package = "prioritized-metered-channel" }
+mick-jaeger = { version = "0.1.8" }
+milagro-bls = { version = "1.5.4", default-features = false, package = "snowbridge-milagro-bls" }
+mixnet = { version = "0.7.0" }
+mmr-gadget = { path = "substrate/client/merkle-mountain-range", default-features = false, version = "39.0.0" }
+mmr-lib = { version = "0.5.2", package = "ckb-merkle-mountain-range" }
+mmr-rpc = { path = "substrate/client/merkle-mountain-range/rpc", default-features = false, version = "37.0.0" }
+mockall = { version = "0.11.3" }
+multiaddr = { version = "0.18.1" }
+multihash = { version = "0.19.1", default-features = false }
+multihash-codetable = { version = "0.1.1" }
+multistream-select = { version = "0.13.0" }
+names = { version = "0.14.0", default-features = false }
+nix = { version = "0.28.0" }
+node-cli = { path = "substrate/bin/node/cli", package = "staging-node-cli", version = "3.0.0" }
+node-inspect = { path = "substrate/bin/node/inspect", default-features = false, package = "staging-node-inspect", version = "0.22.0" }
+node-primitives = { path = "substrate/bin/node/primitives", default-features = false, version = "2.0.0" }
+node-rpc = { path = "substrate/bin/node/rpc", version = "3.0.0" }
+node-testing = { path = "substrate/bin/node/testing", version = "3.0.0" }
+nohash-hasher = { version = "0.2.0" }
+novelpoly = { version = "2.0.0", package = "reed-solomon-novelpoly" }
+num-bigint = { version = "0.4.3" }
+num-format = { version = "0.4.3" }
+num-rational = { version = "0.4.1" }
+num-traits = { version = "0.2.17", default-features = false }
+num_cpus = { version = "1.13.1" }
+once_cell = { version = "1.19.0" }
+orchestra = { version = "0.4.0", default-features = false }
+pallet-alliance = { path = "substrate/frame/alliance", default-features = false, version = "36.0.0" }
+pallet-asset-conversion = { path = "substrate/frame/asset-conversion", default-features = false, version = "19.0.0" }
+pallet-asset-conversion-ops = { path = "substrate/frame/asset-conversion/ops", default-features = false, version = "0.5.0" }
+pallet-asset-conversion-tx-payment = { path = "substrate/frame/transaction-payment/asset-conversion-tx-payment", default-features = false, version = "19.0.0" }
+pallet-asset-rate = { path = "substrate/frame/asset-rate", default-features = false, version = "16.0.0" }
+pallet-asset-tx-payment = { path = "substrate/frame/transaction-payment/asset-tx-payment", default-features = false, version = "37.0.0" }
+pallet-assets = { path = "substrate/frame/assets", default-features = false, version = "39.0.0" }
+pallet-assets-freezer = { path = "substrate/frame/assets-freezer", default-features = false, version = "0.4.0" }
+pallet-atomic-swap = { default-features = false, path = "substrate/frame/atomic-swap" }
+pallet-aura = { path = "substrate/frame/aura", default-features = false, version = "36.0.0" }
+pallet-authority-discovery = { path = "substrate/frame/authority-discovery", default-features = false, version = "37.0.0" }
+pallet-authorship = { path = "substrate/frame/authorship", default-features = false, version = "37.0.0" }
+pallet-babe = { path = "substrate/frame/babe", default-features = false, version = "37.0.0" }
+pallet-bags-list = { path = "substrate/frame/bags-list", default-features = false, version = "36.0.0" }
+pallet-bags-list-remote-tests = { path = "substrate/frame/bags-list/remote-tests", version = "4.0.0" }
+pallet-balances = { path = "substrate/frame/balances", default-features = false, version = "38.0.0" }
+pallet-beefy = { path = "substrate/frame/beefy", default-features = false, version = "38.0.0" }
+pallet-beefy-mmr = { path = "substrate/frame/beefy-mmr", default-features = false, version = "38.0.0" }
+pallet-bounties = { path = "substrate/frame/bounties", default-features = false, version = "36.0.1" }
+pallet-broker = { path = "substrate/frame/broker", default-features = false, version = "0.16.0" }
+pallet-child-bounties = { path = "substrate/frame/child-bounties", default-features = false, version = "36.0.0" }
+pallet-collective = { path = "substrate/frame/collective", default-features = false, version = "37.0.0" }
+# pallet-contracts = { path = "substrate/frame/contracts", default-features = false, version = "37.0.0" }
+# pallet-contracts-fixtures = { path = "substrate/frame/contracts/fixtures" }
+# pallet-contracts-mock-network = { default-features = false, path = "substrate/frame/contracts/mock-network" }
+# pallet-contracts-proc-macro = { path = "substrate/frame/contracts/proc-macro", default-features = false, version = "23.0.1" }
+# pallet-contracts-uapi = { path = "substrate/frame/contracts/uapi", default-features = false, version = "12.0.0" }
+pallet-conviction-voting = { path = "substrate/frame/conviction-voting", default-features = false, version = "37.0.0" }
+pallet-core-fellowship = { path = "substrate/frame/core-fellowship", default-features = false, version = "21.1.0" }
+pallet-default-config-example = { path = "substrate/frame/examples/default-config", default-features = false, version = "10.0.0" }
+pallet-delegated-staking = { path = "substrate/frame/delegated-staking", default-features = false, version = "4.0.0" }
+pallet-democracy = { path = "substrate/frame/democracy", default-features = false, version = "37.0.0" }
+pallet-dev-mode = { path = "substrate/frame/examples/dev-mode", default-features = false, version = "19.0.0" }
+pallet-election-provider-multi-phase = { path = "substrate/frame/election-provider-multi-phase", default-features = false, version = "36.0.0" }
+pallet-election-provider-support-benchmarking = { path = "substrate/frame/election-provider-support/benchmarking", default-features = false, version = "36.0.0" }
+pallet-elections-phragmen = { path = "substrate/frame/elections-phragmen", default-features = false, version = "38.0.0" }
+pallet-example-basic = { path = "substrate/frame/examples/basic", default-features = false, version = "34.0.0" }
+pallet-example-frame-crate = { path = "substrate/frame/examples/frame-crate", default-features = false, version = "0.1.0" }
+pallet-example-kitchensink = { path = "substrate/frame/examples/kitchensink", default-features = false, version = "4.0.0" }
+pallet-example-mbm = { path = "substrate/frame/examples/multi-block-migrations", default-features = false, version = "0.1.0" }
+pallet-example-offchain-worker = { path = "substrate/frame/examples/offchain-worker", default-features = false, version = "28.0.0" }
+pallet-example-single-block-migrations = { path = "substrate/frame/examples/single-block-migrations", default-features = false, version = "0.1.0" }
+pallet-example-split = { path = "substrate/frame/examples/split", default-features = false, version = "10.0.0" }
+pallet-example-tasks = { path = "substrate/frame/examples/tasks", default-features = false, version = "1.0.0" }
+pallet-examples = { path = "substrate/frame/examples", version = "7.0.0" }
+pallet-fast-unstake = { path = "substrate/frame/fast-unstake", default-features = false, version = "36.0.0" }
+pallet-glutton = { path = "substrate/frame/glutton", default-features = false, version = "23.0.0" }
+pallet-grandpa = { path = "substrate/frame/grandpa", default-features = false, version = "37.0.0" }
+pallet-identity = { path = "substrate/frame/identity", default-features = false, version = "37.0.0" }
+pallet-im-online = { path = "substrate/frame/im-online", default-features = false, version = "36.0.0" }
+pallet-indices = { path = "substrate/frame/indices", default-features = false, version = "37.0.0" }
+pallet-insecure-randomness-collective-flip = { path = "substrate/frame/insecure-randomness-collective-flip", default-features = false, version = "25.0.0" }
+pallet-lottery = { default-features = false, path = "substrate/frame/lottery" }
+pallet-membership = { path = "substrate/frame/membership", default-features = false, version = "37.0.0" }
+pallet-message-queue = { path = "substrate/frame/message-queue", default-features = false, version = "40.0.1" }
+pallet-migrations = { path = "substrate/frame/migrations", default-features = false, version = "7.0.1" }
+pallet-minimal-template = { path = "templates/minimal/pallets/template", default-features = false, version = "0.1.0" }
+pallet-mixnet = { default-features = false, path = "substrate/frame/mixnet" }
+pallet-mmr = { path = "substrate/frame/merkle-mountain-range", default-features = false, version = "37.0.0" }
+pallet-multisig = { path = "substrate/frame/multisig", default-features = false, version = "37.0.0" }
+pallet-nft-fractionalization = { path = "substrate/frame/nft-fractionalization", default-features = false, version = "20.0.0" }
+pallet-nfts = { path = "substrate/frame/nfts", default-features = false, version = "31.0.0" }
+pallet-nfts-runtime-api = { path = "substrate/frame/nfts/runtime-api", default-features = false, version = "23.0.0" }
+pallet-nis = { path = "substrate/frame/nis", default-features = false, version = "37.0.0" }
+pallet-node-authorization = { default-features = false, path = "substrate/frame/node-authorization" }
+pallet-nomination-pools = { path = "substrate/frame/nomination-pools", default-features = false, version = "36.0.0" }
+pallet-nomination-pools-benchmarking = { path = "substrate/frame/nomination-pools/benchmarking", default-features = false, version = "37.0.0" }
+pallet-nomination-pools-runtime-api = { path = "substrate/frame/nomination-pools/runtime-api", default-features = false, version = "34.0.0" }
+pallet-offences = { path = "substrate/frame/offences", default-features = false, version = "36.0.0" }
+pallet-offences-benchmarking = { path = "substrate/frame/offences/benchmarking", default-features = false, version = "37.0.0" }
+pallet-paged-list = { path = "substrate/frame/paged-list", default-features = false, version = "0.15.0" }
+pallet-parachain-template = { path = "templates/parachain/pallets/template", default-features = false, version = "0.1.0" }
+pallet-parameters = { path = "substrate/frame/parameters", default-features = false, version = "0.8.0" }
+pallet-preimage = { path = "substrate/frame/preimage", default-features = false, version = "37.0.0" }
+pallet-proxy = { path = "substrate/frame/proxy", default-features = false, version = "37.0.0" }
+pallet-ranked-collective = { path = "substrate/frame/ranked-collective", default-features = false, version = "37.1.0" }
+pallet-recovery = { path = "substrate/frame/recovery", default-features = false, version = "37.0.0" }
+pallet-referenda = { path = "substrate/frame/referenda", default-features = false, version = "37.0.0" }
+pallet-remark = { default-features = false, path = "substrate/frame/remark" }
+pallet-root-offences = { default-features = false, path = "substrate/frame/root-offences" }
+pallet-root-testing = { path = "substrate/frame/root-testing", default-features = false, version = "13.0.0" }
+pallet-safe-mode = { default-features = false, path = "substrate/frame/safe-mode" }
+pallet-salary = { path = "substrate/frame/salary", default-features = false, version = "22.1.0" }
+pallet-scheduler = { path = "substrate/frame/scheduler", default-features = false, version = "38.0.0" }
+pallet-scored-pool = { default-features = false, path = "substrate/frame/scored-pool" }
+pallet-session = { path = "substrate/frame/session", default-features = false, version = "37.0.0" }
+pallet-session-benchmarking = { path = "substrate/frame/session/benchmarking", default-features = false, version = "37.0.0" }
+pallet-skip-feeless-payment = { path = "substrate/frame/transaction-payment/skip-feeless-payment", default-features = false, version = "12.0.0" }
+pallet-society = { path = "substrate/frame/society", default-features = false, version = "37.0.0" }
+pallet-staking = { path = "substrate/frame/staking", default-features = false, version = "37.0.0" }
+pallet-staking-reward-curve = { path = "substrate/frame/staking/reward-curve", default-features = false, version = "12.0.0" }
+pallet-staking-reward-fn = { path = "substrate/frame/staking/reward-fn", default-features = false, version = "22.0.0" }
+pallet-staking-runtime-api = { path = "substrate/frame/staking/runtime-api", default-features = false, version = "22.0.0" }
+pallet-state-trie-migration = { path = "substrate/frame/state-trie-migration", default-features = false, version = "39.0.0" }
+pallet-statement = { default-features = false, path = "substrate/frame/statement" }
+pallet-sudo = { path = "substrate/frame/sudo", default-features = false, version = "37.0.0" }
+pallet-timestamp = { path = "substrate/frame/timestamp", default-features = false, version = "36.0.1" }
+pallet-tips = { path = "substrate/frame/tips", default-features = false, version = "36.0.0" }
+pallet-transaction-payment = { path = "substrate/frame/transaction-payment", default-features = false, version = "37.0.1" }
+pallet-transaction-payment-rpc = { path = "substrate/frame/transaction-payment/rpc", default-features = false, version = "40.0.0" }
+pallet-transaction-payment-rpc-runtime-api = { path = "substrate/frame/transaction-payment/rpc/runtime-api", default-features = false, version = "37.0.0" }
+pallet-transaction-storage = { default-features = false, path = "substrate/frame/transaction-storage" }
+pallet-treasury = { path = "substrate/frame/treasury", default-features = false, version = "36.0.1" }
+pallet-tx-pause = { default-features = false, path = "substrate/frame/tx-pause" }
+pallet-uniques = { path = "substrate/frame/uniques", default-features = false, version = "37.0.0" }
+pallet-utility = { path = "substrate/frame/utility", default-features = false, version = "37.0.1" }
+pallet-vesting = { path = "substrate/frame/vesting", default-features = false, version = "37.0.0" }
+pallet-whitelist = { path = "substrate/frame/whitelist", default-features = false, version = "36.0.0" }
+parity-bytes = { version = "0.1.2", default-features = false }
+parity-db = { version = "0.4.12" }
+parity-util-mem = { version = "0.12.0" }
+parity-wasm = { version = "0.45.0" }
+parking_lot = { version = "0.12.1", default-features = false }
+partial_sort = { version = "0.2.0" }
+paste = { version = "1.0.14", default-features = false }
+pbkdf2 = { version = "0.12.2", default-features = false }
+pin-project = { version = "1.1.3" }
+platforms = { version = "3.0" }
+polkadot-sdk = { path = "umbrella", default-features = false}
+polkadot-sdk-docs = { path = "docs/sdk", version = "0.1.0" }
+polkadot-service = { path = "polkadot/node/service", default-features = false, version = "18.0.1" }
+polkavm = "0.9.3"
+polkavm-derive = "0.9.1"
+polkavm-linker = "0.9.2"
+portpicker = { version = "0.1.1" }
+pretty_assertions = { version = "1.3.0" }
+primitive-types = { version = "0.12.1", default-features = false }
+proc-macro-crate = { version = "3.0.0" }
+proc-macro-warning = { version = "1.0.0", default-features = false }
+proc-macro2 = { version = "1.0.64" }
+procfs = { version = "0.16.0" }
+prometheus = { version = "0.13.0", default-features = false }
+prometheus-endpoint = { path = "substrate/utils/prometheus", default-features = false, package = "substrate-prometheus-endpoint", version = "0.17.0" }
+prometheus-parse = { version = "0.2.2" }
+prost = { version = "0.12.4" }
+prost-build = { version = "0.12.4" }
+pyroscope = { version = "0.5.7" }
+pyroscope_pprofrs = { version = "0.2.7" }
+quick_cache = { version = "0.3" }
+quickcheck = { version = "1.0.3", default-features = false }
+quote = { version = "1.0.33" }
+rand = { version = "0.8.5", default-features = false }
+rand_chacha = { version = "0.3.1", default-features = false }
+rand_core = { version = "0.6.2" }
+rand_distr = { version = "0.4.3" }
+rand_pcg = { version = "0.3.1" }
+rayon = { version = "1.5.1" }
+rbtag = { version = "0.3" }
+ref-cast = { version = "1.0.0" }
+regex = { version = "1.10.2" }
+remote-externalities = { path = "substrate/utils/frame/remote-externalities", default-features = false, package = "frame-remote-externalities", version = "0.45.0" }
+reqwest = { version = "0.11", default-features = false }
+rlp = { version = "0.5.2", default-features = false }
+rpassword = { version = "7.0.0" }
+rstest = { version = "0.18.2" }
+rustc-hash = { version = "1.1.0" }
+rustc-hex = { version = "2.1.0", default-features = false }
+rustix = { version = "0.36.7", default-features = false }
+rustversion = { version = "1.0.6" }
+rusty-fork = { version = "0.3.0", default-features = false }
+safe-mix = { version = "1.0", default-features = false }
+sc-allocator = { path = "substrate/client/allocator", default-features = false, version = "29.0.0" }
+sc-authority-discovery = { path = "substrate/client/authority-discovery", default-features = false, version = "0.44.0" }
+sc-basic-authorship = { path = "substrate/client/basic-authorship", default-features = false, version = "0.44.0" }
+sc-block-builder = { path = "substrate/client/block-builder", default-features = false, version = "0.42.0" }
+sc-chain-spec = { path = "substrate/client/chain-spec", default-features = false, version = "37.0.0" }
+sc-chain-spec-derive = { path = "substrate/client/chain-spec/derive", default-features = false, version = "12.0.0" }
+sc-cli = { path = "substrate/client/cli", default-features = false, version = "0.46.0" }
+sc-client-api = { path = "substrate/client/api", default-features = false, version = "37.0.0" }
+sc-client-db = { path = "substrate/client/db", default-features = false, version = "0.44.0" }
+sc-consensus = { path = "substrate/client/consensus/common", default-features = false, version = "0.43.0" }
+sc-consensus-aura = { path = "substrate/client/consensus/aura", default-features = false, version = "0.44.0" }
+sc-consensus-babe = { path = "substrate/client/consensus/babe", default-features = false, version = "0.44.0" }
+sc-consensus-babe-rpc = { path = "substrate/client/consensus/babe/rpc", default-features = false, version = "0.44.0" }
+sc-consensus-beefy = { path = "substrate/client/consensus/beefy", default-features = false, version = "23.0.0" }
+sc-consensus-beefy-rpc = { path = "substrate/client/consensus/beefy/rpc", default-features = false, version = "23.0.0" }
+sc-consensus-epochs = { path = "substrate/client/consensus/epochs", default-features = false, version = "0.43.0" }
+sc-consensus-grandpa = { path = "substrate/client/consensus/grandpa", default-features = false, version = "0.29.1" }
+sc-consensus-grandpa-rpc = { path = "substrate/client/consensus/grandpa/rpc", default-features = false, version = "0.29.0" }
+sc-consensus-manual-seal = { path = "substrate/client/consensus/manual-seal", default-features = false, version = "0.45.0" }
+sc-consensus-pow = { path = "substrate/client/consensus/pow", default-features = false, version = "0.43.0" }
+sc-consensus-slots = { path = "substrate/client/consensus/slots", default-features = false, version = "0.43.0" }
+sc-executor = { path = "substrate/client/executor", default-features = false, version = "0.40.0" }
+sc-executor-common = { path = "substrate/client/executor/common", default-features = false, version = "0.35.0" }
+sc-executor-polkavm = { path = "substrate/client/executor/polkavm", default-features = false, version = "0.32.0" }
+sc-executor-wasmtime = { path = "substrate/client/executor/wasmtime", default-features = false, version = "0.35.0" }
+sc-informant = { path = "substrate/client/informant", default-features = false, version = "0.43.0" }
+sc-keystore = { path = "substrate/client/keystore", default-features = false, version = "33.0.0" }
+sc-mixnet = { path = "substrate/client/mixnet", default-features = false, version = "0.14.0" }
+sc-network = { path = "substrate/client/network", default-features = false, version = "0.44.1" }
+sc-network-common = { path = "substrate/client/network/common", default-features = false, version = "0.43.0" }
+sc-network-gossip = { path = "substrate/client/network-gossip", default-features = false, version = "0.44.0" }
+sc-network-light = { path = "substrate/client/network/light", default-features = false, version = "0.43.0" }
+sc-network-statement = { default-features = false, path = "substrate/client/network/statement" }
+sc-network-sync = { path = "substrate/client/network/sync", default-features = false, version = "0.43.0" }
+sc-network-test = { path = "substrate/client/network/test" }
+sc-network-transactions = { path = "substrate/client/network/transactions", default-features = false, version = "0.43.0" }
+sc-network-types = { path = "substrate/client/network/types", default-features = false, version = "0.12.1" }
+sc-offchain = { path = "substrate/client/offchain", default-features = false, version = "39.0.0" }
+sc-proposer-metrics = { path = "substrate/client/proposer-metrics", default-features = false, version = "0.18.0" }
+sc-rpc = { path = "substrate/client/rpc", default-features = false, version = "39.0.0" }
+sc-rpc-api = { path = "substrate/client/rpc-api", default-features = false, version = "0.43.0" }
+sc-rpc-server = { path = "substrate/client/rpc-servers", default-features = false, version = "16.0.2" }
+sc-rpc-spec-v2 = { path = "substrate/client/rpc-spec-v2", default-features = false, version = "0.44.0" }
+sc-runtime-test = { path = "substrate/client/executor/runtime-test" }
+sc-service = { path = "substrate/client/service", default-features = false, version = "0.45.0" }
+sc-service-test = { path = "substrate/client/service/test" }
+sc-state-db = { path = "substrate/client/state-db", default-features = false, version = "0.36.0" }
+sc-statement-store = { default-features = false, path = "substrate/client/statement-store" }
+sc-storage-monitor = { path = "substrate/client/storage-monitor", default-features = false, version = "0.22.0" }
+sc-sync-state-rpc = { path = "substrate/client/sync-state-rpc", default-features = false, version = "0.44.0" }
+sc-sysinfo = { path = "substrate/client/sysinfo", default-features = false, version = "37.0.0" }
+sc-telemetry = { path = "substrate/client/telemetry", default-features = false, version = "24.0.0" }
+sc-tracing = { path = "substrate/client/tracing", default-features = false, version = "37.0.0" }
+sc-tracing-proc-macro = { path = "substrate/client/tracing/proc-macro", default-features = false, version = "11.0.0" }
+sc-transaction-pool = { path = "substrate/client/transaction-pool", default-features = false, version = "37.0.0" }
+sc-transaction-pool-api = { path = "substrate/client/transaction-pool/api", default-features = false, version = "37.0.0" }
+sc-utils = { path = "substrate/client/utils", default-features = false, version = "17.0.0" }
+scale-info = { version = "2.11.1", default-features = false }
+schemars = { version = "0.8.13", default-features = false }
+schnellru = { version = "0.2.1" }
+schnorrkel = { version = "0.11.4", default-features = false }
+seccompiler = { version = "0.4.0" }
+secp256k1 = { version = "0.28.0", default-features = false }
+secrecy = { version = "0.8.0", default-features = false }
+separator = { version = "0.4.1" }
+serde = { version = "1.0.197", default-features = false }
+serde-big-array = { version = "0.3.2" }
+serde_derive = { version = "1.0.117" }
+serde_json = { version = "1.0.121", default-features = false }
+serde_yaml = { version = "0.9" }
+serial_test = { version = "2.0.0" }
+sha1 = { version = "0.10.6" }
+sha2 = { version = "0.10.7", default-features = false }
+sha3 = { version = "0.10.0", default-features = false }
+slotmap = { version = "1.0" }
+smallvec = { version = "1.11.0", default-features = false }
+smoldot = { version = "0.11.0", default-features = false }
+smoldot-light = { version = "0.9.0", default-features = false }
+soketto = { version = "0.7.1" }
+sp-api = { path = "substrate/primitives/api", default-features = false, version = "34.0.0" }
+sp-api-proc-macro = { path = "substrate/primitives/api/proc-macro", default-features = false, version = "20.0.0" }
+sp-application-crypto = { path = "substrate/primitives/application-crypto", default-features = false, version = "38.0.0" }
+sp-arithmetic = { path = "substrate/primitives/arithmetic", default-features = false, version = "26.0.0" }
+sp-authority-discovery = { path = "substrate/primitives/authority-discovery", default-features = false, version = "34.0.0" }
+sp-block-builder = { path = "substrate/primitives/block-builder", default-features = false, version = "34.0.0" }
+sp-blockchain = { path = "substrate/primitives/blockchain", default-features = false, version = "37.0.1" }
+sp-consensus = { path = "substrate/primitives/consensus/common", default-features = false, version = "0.40.0" }
+sp-consensus-aura = { path = "substrate/primitives/consensus/aura", default-features = false, version = "0.40.0" }
+sp-consensus-babe = { path = "substrate/primitives/consensus/babe", default-features = false, version = "0.40.0" }
+sp-consensus-beefy = { path = "substrate/primitives/consensus/beefy", default-features = false, version = "22.0.0" }
+sp-consensus-grandpa = { path = "substrate/primitives/consensus/grandpa", default-features = false, version = "21.0.0" }
+sp-consensus-pow = { path = "substrate/primitives/consensus/pow", default-features = false, version = "0.40.0" }
+sp-consensus-sassafras = { path = "substrate/primitives/consensus/sassafras", default-features = false, version = "0.3.4" }
+sp-consensus-slots = { path = "substrate/primitives/consensus/slots", default-features = false, version = "0.40.0" }
+sp-core = { path = "substrate/primitives/core", default-features = false, version = "34.0.0" }
+sp-core-hashing = { default-features = false, path = "substrate/deprecated/hashing" }
+sp-core-hashing-proc-macro = { default-features = false, path = "substrate/deprecated/hashing/proc-macro" }
+sp-crypto-ec-utils = { default-features = false, path = "substrate/primitives/crypto/ec-utils" }
+sp-crypto-hashing = { path = "substrate/primitives/crypto/hashing", default-features = false, version = "0.1.0" }
+sp-crypto-hashing-proc-macro = { path = "substrate/primitives/crypto/hashing/proc-macro", default-features = false, version = "0.1.0" }
+sp-database = { path = "substrate/primitives/database", default-features = false, version = "10.0.0" }
+sp-debug-derive = { path = "substrate/primitives/debug-derive", default-features = false, version = "14.0.0" }
+sp-externalities = { path = "substrate/primitives/externalities", default-features = false, version = "0.29.0" }
+sp-genesis-builder = { path = "substrate/primitives/genesis-builder", default-features = false, version = "0.15.0" }
+sp-inherents = { path = "substrate/primitives/inherents", default-features = false, version = "34.0.0" }
+sp-io = { path = "substrate/primitives/io", default-features = false, version = "38.0.0" }
+sp-keyring = { path = "substrate/primitives/keyring", default-features = false, version = "39.0.0" }
+sp-keystore = { path = "substrate/primitives/keystore", default-features = false, version = "0.40.0" }
+sp-maybe-compressed-blob = { path = "substrate/primitives/maybe-compressed-blob", default-features = false, version = "11.0.0" }
+sp-metadata-ir = { path = "substrate/primitives/metadata-ir", default-features = false, version = "0.7.0" }
+sp-mixnet = { path = "substrate/primitives/mixnet", default-features = false, version = "0.12.0" }
+sp-mmr-primitives = { path = "substrate/primitives/merkle-mountain-range", default-features = false, version = "34.0.0" }
+sp-npos-elections = { path = "substrate/primitives/npos-elections", default-features = false, version = "34.0.0" }
+sp-offchain = { path = "substrate/primitives/offchain", default-features = false, version = "34.0.0" }
+sp-panic-handler = { path = "substrate/primitives/panic-handler", default-features = false, version = "13.0.0" }
+sp-rpc = { path = "substrate/primitives/rpc", default-features = false, version = "32.0.0" }
+sp-runtime = { path = "substrate/primitives/runtime", default-features = false, version = "39.0.3" }
+sp-runtime-interface = { path = "substrate/primitives/runtime-interface", default-features = false, version = "28.0.0" }
+sp-runtime-interface-proc-macro = { path = "substrate/primitives/runtime-interface/proc-macro", default-features = false, version = "18.0.0" }
+sp-runtime-interface-test-wasm = { path = "substrate/primitives/runtime-interface/test-wasm", version = "2.0.0" }
+sp-runtime-interface-test-wasm-deprecated = { path = "substrate/primitives/runtime-interface/test-wasm-deprecated", version = "2.0.0" }
+sp-session = { path = "substrate/primitives/session", default-features = false, version = "35.0.0" }
+sp-staking = { path = "substrate/primitives/staking", default-features = false, version = "34.0.0" }
+sp-state-machine = { path = "substrate/primitives/state-machine", default-features = false, version = "0.43.0" }
+sp-statement-store = { path = "substrate/primitives/statement-store", default-features = false, version = "18.0.0" }
+sp-std = { path = "substrate/primitives/std", default-features = false, version = "14.0.0" }
+sp-storage = { path = "substrate/primitives/storage", default-features = false, version = "21.0.0" }
+sp-test-primitives = { path = "substrate/primitives/test-primitives" }
+sp-timestamp = { path = "substrate/primitives/timestamp", default-features = false, version = "34.0.0" }
+sp-tracing = { path = "substrate/primitives/tracing", default-features = false, version = "17.0.0" }
+sp-transaction-pool = { path = "substrate/primitives/transaction-pool", default-features = false, version = "34.0.0" }
+sp-transaction-storage-proof = { path = "substrate/primitives/transaction-storage-proof", default-features = false, version = "34.0.0" }
+sp-trie = { path = "substrate/primitives/trie", default-features = false, version = "37.0.0" }
+sp-version = { path = "substrate/primitives/version", default-features = false, version = "37.0.0" }
+sp-version-proc-macro = { path = "substrate/primitives/version/proc-macro", default-features = false, version = "14.0.0" }
+sp-wasm-interface = { path = "substrate/primitives/wasm-interface", default-features = false, version = "21.0.0" }
+sp-weights = { path = "substrate/primitives/weights", default-features = false, version = "31.0.0" }
+spinners = { version = "4.1.0" }
+ss58-registry = { version = "1.34.0", default-features = false }
+ssz_rs = { version = "0.9.0", default-features = false }
+ssz_rs_derive = { version = "0.9.0", default-features = false }
+static_assertions = { version = "1.1.0", default-features = false }
+static_init = { version = "1.0.3" }
+structopt = { version = "0.3" }
+strum = { version = "0.26.2", default-features = false }
+subkey = { path = "substrate/bin/utils/subkey", default-features = false, version = "19.0.0" }
+substrate-bip39 = { path = "substrate/utils/substrate-bip39", default-features = false, version = "0.6.0" }
+substrate-build-script-utils = { path = "substrate/utils/build-script-utils", default-features = false, version = "11.0.0" }
+substrate-cli-test-utils = { path = "substrate/test-utils/cli" }
+substrate-frame-rpc-support = { default-features = false, path = "substrate/utils/frame/rpc/support" }
+substrate-frame-rpc-system = { path = "substrate/utils/frame/rpc/system", default-features = false, version = "38.0.0" }
+substrate-rpc-client = { path = "substrate/utils/frame/rpc/client", default-features = false, version = "0.43.0" }
+substrate-state-trie-migration-rpc = { path = "substrate/utils/frame/rpc/state-trie-migration-rpc", default-features = false, version = "37.0.0" }
+substrate-test-client = { path = "substrate/test-utils/client", version = "2.0.1" }
+substrate-test-runtime = { path = "substrate/test-utils/runtime", version = "2.0.0" }
+substrate-test-runtime-client = { path = "substrate/test-utils/runtime/client", version = "2.0.0" }
+substrate-test-runtime-transaction-pool = { path = "substrate/test-utils/runtime/transaction-pool" }
+substrate-test-utils = { path = "substrate/test-utils" }
+substrate-wasm-builder = { path = "substrate/utils/wasm-builder", default-features = false, version = "24.0.0" }
+syn = { version = "2.0.53" }
+sysinfo = { version = "0.30" }
+tar = { version = "0.4" }
+tempfile = { version = "3.8.1" }
+test-log = { version = "0.2.14" }
+test-pallet = { path = "substrate/frame/support/test/pallet", default-features = false, package = "frame-support-test-pallet", version = "4.0.0" }
+thiserror = { version = "1.0.48" }
+thousands = { version = "0.2.0" }
+threadpool = { version = "1.7" }
+tikv-jemalloc-ctl = { version = "0.5.0" }
+tikv-jemallocator = { version = "0.5.0" }
+time = { version = "0.3" }
+tiny-keccak = { version = "2.0.2" }
+tokio = { version = "1.37.0", default-features = false }
+tokio-retry = { version = "0.3.0" }
+tokio-stream = { version = "0.1.14" }
+tokio-test = { version = "0.4.2" }
+tokio-tungstenite = { version = "0.20.1" }
+tokio-util = { version = "0.7.8" }
+toml = { version = "0.8.8" }
+toml_edit = { version = "0.19" }
+tower = { version = "0.4.13" }
+tower-http = { version = "0.5.2" }
+tracing = { version = "0.1.37", default-features = false }
+tracing-core = { version = "0.1.32", default-features = false }
+tracing-futures = { version = "0.2.4" }
+tracing-log = { version = "0.2.0" }
+tracing-subscriber = { version = "0.3.18" }
+trie-bench = { version = "0.39.0" }
+trie-db = { version = "0.29.0", default-features = false }
+trie-root = { version = "0.18.0", default-features = false }
+trie-standardmap = { version = "0.16.0" }
+trybuild = { version = "1.0.88" }
+tt-call = { version = "1.0.8" }
+tuplex = { version = "0.1", default-features = false }
+twox-hash = { version = "1.6.3", default-features = false }
+unsigned-varint = { version = "0.7.2" }
+url = { version = "2.4.0" }
+void = { version = "1.0.2" }
+w3f-bls = { version = "0.1.3", default-features = false }
+wait-timeout = { version = "0.2" }
+walkdir = { version = "2.4.0" }
+wasm-bindgen-test = { version = "0.3.19" }
+wasm-instrument = { version = "0.4", default-features = false }
+wasm-opt = { version = "0.116" }
+wasm-timer = { version = "0.2.5" }
+wasmi = { version = "0.32.3", default-features = false }
+wasmtime = { version = "8.0.1", default-features = false }
+wat = { version = "1.0.0" }
+x25519-dalek = { version = "2.0" }
+zeroize = { version = "1.7.0", default-features = false }
+zstd = { version = "0.12.4", default-features = false }
+
+
+# Frontier Client
+fc-api = { path = "client/api" }
+fc-cli = { path = "client/cli", default-features = false }
+fc-consensus = { path = "client/consensus" }
+fc-db = { path = "client/db", default-features = false }
+fc-mapping-sync = { path = "client/mapping-sync", default-features = false }
+fc-rpc = { path = "client/rpc", default-features = false }
+fc-rpc-core = { path = "client/rpc-core" }
+fc-rpc-v2 = { path = "client/rpc-v2" }
+fc-rpc-v2-api = { path = "client/rpc-v2/api" }
+fc-rpc-v2-types = { path = "client/rpc-v2/types" }
+fc-storage = { path = "client/storage" }
+# Frontier Primitive
+fp-account = { path = "primitives/account", default-features = false }
+fp-consensus = { path = "primitives/consensus", default-features = false }
+fp-dynamic-fee = { path = "primitives/dynamic-fee", default-features = false }
+fp-ethereum = { path = "primitives/ethereum", default-features = false }
+fp-evm = { path = "primitives/evm", default-features = false }
+fp-rpc = { path = "primitives/rpc", default-features = false }
+fp-self-contained = { path = "primitives/self-contained", default-features = false }
+fp-storage = { path = "primitives/storage", default-features = false }
+# Frontier FRAME
+pallet-base-fee = { path = "frame/base-fee", default-features = false }
+pallet-dynamic-fee = { path = "frame/dynamic-fee", default-features = false }
+pallet-ethereum = { path = "frame/ethereum", default-features = false }
+pallet-evm = { path = "frame/evm", default-features = false }
+pallet-evm-chain-id = { path = "frame/evm-chain-id", default-features = false }
+pallet-evm-precompile-modexp = { path = "frame/evm/precompile/modexp", default-features = false }
+pallet-evm-precompile-sha3fips = { path = "frame/evm/precompile/sha3fips", default-features = false }
+pallet-evm-precompile-simple = { path = "frame/evm/precompile/simple", default-features = false }
+pallet-evm-test-vector-support = { path = "frame/evm/test-vector-support" }
+pallet-hotfix-sufficients = { path = "frame/hotfix-sufficients", default-features = false }
+pallet-counter={path="frame/pallet-counter",default-features = false}
+# Frontier Utility
+precompile-utils = { path = "precompiles", default-features = false }
+
+#others
+evm = { version = "0.41.1", default-features = false }
+num_enum = { version = "0.7.2", default-features = false }
+xcm = { package = "staging-xcm", git = "https://github.com/paritytech/polkadot-sdk", branch = "stable2407", default-features = false }
+ethereum = { version = "0.15.0", default-features = false }
+bn = { package = "substrate-bn", version = "0.6", default-features = false }
+ark-ff = { version = "0.4.0", default-features = false }
+ark-std = { version = "0.4.0", default-features = false }
+similar-asserts = "1.5.0"
+sqlx = { version = "0.7.4", default-features = false, features = ["macros"] }
+const-hex = { version = "1.12", default-features = false, features = ["alloc"] }
+
+
+
+[profile.release]
+# Polkadot runtime requires unwinding.
+panic = "unwind"
+opt-level = 3
+
+# make sure dev builds with backtrace do not slow us down
+[profile.dev.package.backtrace]
+inherits = "release"
+
+[profile.production]
+inherits = "release"
+lto = true
+codegen-units = 1
+
+[profile.testnet]
+inherits = "release"
+debug = 1               # debug symbols are useful for profilers
+debug-assertions = true
+overflow-checks = true
+
+# The list of dependencies below (which can be both direct and indirect dependencies) are crates
+# that are suspected to be CPU-intensive, and that are unlikely to require debugging (as some of
+# their debug info might be missing) or to require to be frequently recompiled. We compile these
+# dependencies with `opt-level=3` even in "dev" mode in order to make "dev" mode more usable.
+# The majority of these crates are cryptographic libraries.
+#
+# If you see an error mentioning "profile package spec ... did not match any packages", it
+# probably concerns this list.
+#
+# This list is ordered alphabetically.
+[profile.dev.package]
+blake2 = { opt-level = 3 }
+blake2b_simd = { opt-level = 3 }
+chacha20poly1305 = { opt-level = 3 }
+cranelift-codegen = { opt-level = 3 }
+cranelift-wasm = { opt-level = 3 }
+crc32fast = { opt-level = 3 }
+crossbeam-deque = { opt-level = 3 }
+crypto-mac = { opt-level = 3 }
+curve25519-dalek = { opt-level = 3 }
+ed25519-dalek = { opt-level = 3 }
+flate2 = { opt-level = 3 }
+futures-channel = { opt-level = 3 }
+hash-db = { opt-level = 3 }
+hashbrown = { opt-level = 3 }
+hmac = { opt-level = 3 }
+httparse = { opt-level = 3 }
+integer-sqrt = { opt-level = 3 }
+keccak = { opt-level = 3 }
+libm = { opt-level = 3 }
+librocksdb-sys = { opt-level = 3 }
+libsecp256k1 = { opt-level = 3 }
+libz-sys = { opt-level = 3 }
+mio = { opt-level = 3 }
+nalgebra = { opt-level = 3 }
+num-bigint = { opt-level = 3 }
+parking_lot = { opt-level = 3 }
+parking_lot_core = { opt-level = 3 }
+percent-encoding = { opt-level = 3 }
+polkavm-linker = { opt-level = 3 }
+primitive-types = { opt-level = 3 }
+reed-solomon-novelpoly = { opt-level = 3 }
+ring = { opt-level = 3 }
+rustls = { opt-level = 3 }
+sha2 = { opt-level = 3 }
+sha3 = { opt-level = 3 }
+smallvec = { opt-level = 3 }
+snow = { opt-level = 3 }
+substrate-bip39 = { opt-level = 3 }
+twox-hash = { opt-level = 3 }
+uint = { opt-level = 3 }
+wasmi = { opt-level = 3 }
+x25519-dalek = { opt-level = 3 }
+yamux = { opt-level = 3 }
+zeroize = { opt-level = 3 }
