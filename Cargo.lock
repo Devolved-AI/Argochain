@@ -4937,6 +4937,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "keyring"
+version = "3.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f8fe839464d4e4b37d756d7e910063696af79a7e877282cb1825e4ec5f10833"
+dependencies = [
+ "log",
+]
+
+[[package]]
 name = "keystream"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -14103,6 +14112,7 @@ dependencies = [
  "frame-system-rpc-runtime-api",
  "futures",
  "jsonrpsee",
+ "keyring",
  "log",
  "nix 0.28.0",
  "node-primitives",

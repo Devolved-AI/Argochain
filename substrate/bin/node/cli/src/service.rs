@@ -33,12 +33,14 @@ use crate::Cli;
 use fc_storage::StorageOverrideHandler;
 use fc_consensus::FrontierBlockImport;
 use sc_network::Litep2pNetworkBackend;
+use sp_core::U256;
+// use babe_consensus_data_provider::BabeConsensusDataProvider;
 
 use codec::Encode;
 use frame_benchmarking_cli::SUBSTRATE_REFERENCE_HARDWARE;
 use frame_system_rpc_runtime_api::AccountNonceApi;
 use futures::prelude::*;
-use argochain_runtime::RuntimeApi;
+use argochain_runtime::{RuntimeApi,TransactionConverter};
 use node_primitives::{Block,Nonce,Hash};
 use sc_client_api::{Backend, BlockBackend};
 use sc_consensus_babe::{self, SlotProportion,BabeWorkerHandle};
@@ -174,7 +176,7 @@ pub fn create_extrinsic(
 }
 
 /// Creates a new partial node.
-pub fn new_partial(
+pub fn new_partial<NB>(
 	config: &Configuration,
 	eth_config: &EthConfiguration,
 	mixnet_config: Option<&sc_mixnet::Config>,
@@ -308,190 +310,190 @@ pub fn new_partial(
 	)
 	.map_err(|e| ServiceError::Other(format!("Statement store error: {:?}", e)))?;
 
-	let (mixnet_api, mixnet_api_backend) = mixnet_config.map(sc_mixnet::Api::new).unzip();
+	// let (mixnet_api, mixnet_api_backend) = mixnet_config.map(sc_mixnet::Api::new).unzip();
 
 	
-    let (rpc_extensions_builder, rpc_setup, frontier_backend, pubsub_notification_sinks) = {
-        let (_, grandpa_link, _, _) = &import_setup;
+    // let (rpc_extensions_builder, rpc_setup, frontier_backend, pubsub_notification_sinks) = {
+    //     let (_, grandpa_link, _, _) = &import_setup;
 
-        let justification_stream = grandpa_link.justification_stream();
-        let shared_authority_set = grandpa_link.shared_authority_set().clone();
-        let shared_voter_state = grandpa::SharedVoterState::empty();
-        let shared_voter_state2 = shared_voter_state.clone();
+    //     let justification_stream = grandpa_link.justification_stream();
+    //     let shared_authority_set = grandpa_link.shared_authority_set().clone();
+    //     let shared_voter_state = grandpa::SharedVoterState::empty();
+    //     let shared_voter_state2 = shared_voter_state.clone();
 
-        let finality_proof_provider = grandpa::FinalityProofProvider::new_for_service(
-            backend.clone(),
-            Some(shared_authority_set.clone()),
-        );
+    //     let finality_proof_provider = grandpa::FinalityProofProvider::new_for_service(
+    //         backend.clone(),
+    //         Some(shared_authority_set.clone()),
+    //     );
 
-        let client = client.clone();
-        let pool = transaction_pool.clone();
-        let select_chain = select_chain.clone();
-        let keystore = keystore_container.keystore();
-        let chain_spec = config.chain_spec.cloned_box();
+    //     let client = client.clone();
+    //     let pool = transaction_pool.clone();
+    //     let select_chain = select_chain.clone();
+    //     let keystore = keystore_container.keystore();
+    //     let chain_spec = config.chain_spec.cloned_box();
 
-        let net_config = sc_network::config::FullNetworkConfiguration::<
-            Block,
-            <Block as BlockT>::Hash,
-            Litep2pNetworkBackend,
-        >::new(&config.network);
+    //     let net_config = sc_network::config::FullNetworkConfiguration::<
+    //         Block,
+    //         <Block as BlockT>::Hash,
+    //         Litep2pNetworkBackend,
+    //     >::new(&config.network);
 
-        let frontier_backend = match eth_config.frontier_backend_type {
-            BackendType::KeyValue => FrontierBackend::KeyValue(Arc::new(fc_db::kv::Backend::open(
-                Arc::clone(&client),
-                &config.database,
-                &db_config_dir(&config),
-            )?)),
-            BackendType::Sql => {
-                let db_path = db_config_dir(&config).join("sql");
-                std::fs::create_dir_all(&db_path).expect("failed creating sql db directory");
-                let backend = futures::executor::block_on(fc_db::sql::Backend::new(
-                    fc_db::sql::BackendConfig::Sqlite(fc_db::sql::SqliteBackendConfig {
-                        path: Path::new("sqlite:///")
-                            .join(db_path)
-                            .join("frontier.db3")
-                            .to_str()
-                            .unwrap(),
-                        create_if_missing: true,
-                        thread_count: eth_config.frontier_sql_backend_thread_count,
-                        cache_size: eth_config.frontier_sql_backend_cache_size,
-                    }),
-                    eth_config.frontier_sql_backend_pool_size,
-                    std::num::NonZeroU32::new(eth_config.frontier_sql_backend_num_ops_timeout),
-                    storage_override.clone(),
-                ))
-                .unwrap_or_else(|err| panic!("failed creating sql backend: {:?}", err));
-                FrontierBackend::Sql(Arc::new(backend))
-            }
-        };
+    //     let frontier_backend = match eth_config.frontier_backend_type {
+    //         BackendType::KeyValue => FrontierBackend::KeyValue(Arc::new(fc_db::kv::Backend::open(
+    //             Arc::clone(&client),
+    //             &config.database,
+    //             &db_config_dir(&config),
+    //         )?)),
+    //         BackendType::Sql => {
+    //             let db_path = db_config_dir(&config).join("sql");
+    //             std::fs::create_dir_all(&db_path).expect("failed creating sql db directory");
+    //             let backend = futures::executor::block_on(fc_db::sql::Backend::new(
+    //                 fc_db::sql::BackendConfig::Sqlite(fc_db::sql::SqliteBackendConfig {
+    //                     path: Path::new("sqlite:///")
+    //                         .join(db_path)
+    //                         .join("frontier.db3")
+    //                         .to_str()
+    //                         .unwrap(),
+    //                     create_if_missing: true,
+    //                     thread_count: eth_config.frontier_sql_backend_thread_count,
+    //                     cache_size: eth_config.frontier_sql_backend_cache_size,
+    //                 }),
+    //                 eth_config.frontier_sql_backend_pool_size,
+    //                 std::num::NonZeroU32::new(eth_config.frontier_sql_backend_num_ops_timeout),
+    //                 storage_override.clone(),
+    //             ))
+    //             .unwrap_or_else(|err| panic!("failed creating sql backend: {:?}", err));
+    //             FrontierBackend::Sql(Arc::new(backend))
+    //         }
+    //     };
 
-        let frontier_backend1 = Arc::new(frontier_backend);
-        let frontier_backend2 = frontier_backend1.clone();
-        // todo warp_sync_params
+    //     let frontier_backend1 = Arc::new(frontier_backend);
+    //     let frontier_backend2 = frontier_backend1.clone();
+    //     // todo warp_sync_params
 
-        let metrics = N::register_notification_metrics(
-            config.prometheus_config.as_ref().map(|cfg| &cfg.registry),
-        );
+    //     let metrics = N::register_notification_metrics(
+    //         config.prometheus_config.as_ref().map(|cfg| &cfg.registry),
+    //     );
 
-        let prometheus_registry = config.prometheus_registry().cloned();
+    //     let prometheus_registry = config.prometheus_registry().cloned();
 
-        let block_data_cache = Arc::new(fc_rpc::EthBlockDataCacheTask::new(
-            task_manager.spawn_handle(),
-            storage_override.clone(),
-            eth_config.eth_log_block_cache,
-            eth_config.eth_statuses_cache,
-            prometheus_registry.clone(),
-        ));
-        let pubsub_notification_sinks: fc_mapping_sync::EthereumBlockNotificationSinks<
-            fc_mapping_sync::EthereumBlockNotification<Block>,
-        > = Default::default();
-        let pubsub_notification_sinks1 = Arc::new(pubsub_notification_sinks);
-        let pubsub_notification_sinks2 = pubsub_notification_sinks1.clone();
+    //     let block_data_cache = Arc::new(fc_rpc::EthBlockDataCacheTask::new(
+    //         task_manager.spawn_handle(),
+    //         storage_override.clone(),
+    //         eth_config.eth_log_block_cache,
+    //         eth_config.eth_statuses_cache,
+    //         prometheus_registry.clone(),
+    //     ));
+    //     let pubsub_notification_sinks: fc_mapping_sync::EthereumBlockNotificationSinks<
+    //         fc_mapping_sync::EthereumBlockNotification<Block>,
+    //     > = Default::default();
+    //     let pubsub_notification_sinks1 = Arc::new(pubsub_notification_sinks);
+    //     let pubsub_notification_sinks2 = pubsub_notification_sinks1.clone();
 
-        let rpc_backend = backend.clone();
-        // let eth_backend = backend.clone();
-        let rpc_statement_store = statement_store.clone();
+    //     let rpc_backend = backend.clone();
+    //     // let eth_backend = backend.clone();
+    //     let rpc_statement_store = statement_store.clone();
 
-        let target_gas_price = eth_config.target_gas_price;
-        let slot_duration = import_setup.2.config().slot_duration().clone();
-        let pending_create_inherent_data_providers = move |_, ()| async move {
-            let current = sp_timestamp::InherentDataProvider::from_system_time();
-            let next_slot = current.timestamp().as_millis() + slot_duration.as_millis();
+    //     let target_gas_price = eth_config.target_gas_price;
+    //     let slot_duration = import_setup.2.config().slot_duration().clone();
+    //     let pending_create_inherent_data_providers = move |_, ()| async move {
+    //         let current = sp_timestamp::InherentDataProvider::from_system_time();
+    //         let next_slot = current.timestamp().as_millis() + slot_duration.as_millis();
 
-            let timestamp = sp_timestamp::InherentDataProvider::new(next_slot.into());
-            let slot =
-				sp_consensus_babe::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
-					*timestamp,
-					slot_duration,
-				);
-            let dynamic_fee = fp_dynamic_fee::InherentDataProvider(U256::from(target_gas_price));
-            Ok((slot, timestamp, dynamic_fee))
-        };
+    //         let timestamp = sp_timestamp::InherentDataProvider::new(next_slot.into());
+    //         let slot =
+	// 			sp_consensus_babe::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
+	// 				*timestamp,
+	// 				slot_duration,
+	// 			);
+    //         let dynamic_fee = fp_dynamic_fee::InherentDataProvider(U256::from(target_gas_price));
+    //         Ok((slot, timestamp, dynamic_fee))
+    //     };
 
-        let network = network.clone();
-        let is_authority = config.role.clone().is_authority().clone();
-        let sync_service0 = sync_service.clone();
-        let rpc_extensions_builder =
-            move |deny_unsafe, subscription_executor: node_rpc::SubscriptionTaskExecutor| {
-                let enable_dev_signer = eth_config.enable_dev_signer;
-                let max_past_logs = eth_config.max_past_logs;
-                let execute_gas_limit_multiplier = eth_config.execute_gas_limit_multiplier;
-                let eth_deps = node_rpc::EthDeps {
-                    client: client.clone(),
-                    pool: pool.clone(),
-                    graph: pool.pool().clone(),
-                    converter: Some(TransactionConverter::<Block>::default()),
-                    is_authority: is_authority,
-                    enable_dev_signer,
-                    network: network.clone(),
-                    sync: sync_service0.clone(),
-                    frontier_backend: match &*frontier_backend1.clone() {
-                        fc_db::Backend::KeyValue(b) => b.clone(),
-                        fc_db::Backend::Sql(b) => b.clone(),
-                    },
-                    storage_override: storage_override.clone(),
-                    block_data_cache: block_data_cache.clone(),
-                    filter_pool: filter_pool1.clone(),
-                    max_past_logs,
-                    fee_history_cache: fee_history_cache1.clone(),
-                    fee_history_cache_limit,
-                    execute_gas_limit_multiplier,
-                    forced_parent_hashes: None,
-                    pending_create_inherent_data_providers,
-                };
+    //     let network = network.clone();
+    //     let is_authority = config.role.clone().is_authority().clone();
+    //     let sync_service0 = sync_service.clone();
+    //     let rpc_extensions_builder =
+    //         move |deny_unsafe, subscription_executor: node_rpc::SubscriptionTaskExecutor| {
+    //             let enable_dev_signer = eth_config.enable_dev_signer;
+    //             let max_past_logs = eth_config.max_past_logs;
+    //             let execute_gas_limit_multiplier = eth_config.execute_gas_limit_multiplier;
+    //             let eth_deps = node_rpc::EthDeps {
+    //                 client: client.clone(),
+    //                 pool: pool.clone(),
+    //                 graph: pool.pool().clone(),
+    //                 converter: Some(TransactionConverter::<Block>::default()),
+    //                 is_authority: is_authority,
+    //                 enable_dev_signer,
+    //                 network: network.clone(),
+    //                 sync: sync_service0.clone(),
+    //                 frontier_backend: match &*frontier_backend1.clone() {
+    //                     fc_db::Backend::KeyValue(b) => b.clone(),
+    //                     fc_db::Backend::Sql(b) => b.clone(),
+    //                 },
+    //                 storage_override: storage_override.clone(),
+    //                 block_data_cache: block_data_cache.clone(),
+    //                 filter_pool: filter_pool1.clone(),
+    //                 max_past_logs,
+    //                 fee_history_cache: fee_history_cache1.clone(),
+    //                 fee_history_cache_limit,
+    //                 execute_gas_limit_multiplier,
+    //                 forced_parent_hashes: None,
+    //                 pending_create_inherent_data_providers,
+    //             };
 
-                let deps = node_rpc::FullDeps {
-                    client: client.clone(),
-                    pool: pool.clone(),
-                    select_chain: select_chain.clone(),
-                    chain_spec: chain_spec.cloned_box(),
-                    deny_unsafe,
-                    babe: node_rpc::BabeDeps {
-                        keystore: keystore.clone(),
-                        babe_worker_handle: babe_worker_handle.clone(),
-                    },
-                    grandpa: node_rpc::GrandpaDeps {
-                        shared_voter_state: shared_voter_state.clone(),
-                        shared_authority_set: shared_authority_set.clone(),
-                        justification_stream: justification_stream.clone(),
-                        subscription_executor: subscription_executor.clone(),
-                        finality_provider: finality_proof_provider.clone(),
-                    },
-                    beefy: node_rpc::BeefyDeps::<beefy_primitives::ecdsa_crypto::AuthorityId> {
-                        beefy_finality_proof_stream: beefy_rpc_links
-                            .from_voter_justif_stream
-                            .clone(),
-                        beefy_best_block_stream: beefy_rpc_links
-                            .from_voter_best_beefy_stream
-                            .clone(),
-                        subscription_executor: subscription_executor.clone(),
-                    },
-                    statement_store: rpc_statement_store.clone(),
-                    backend: rpc_backend.clone(),
-                    // mixnet_api: mixnet_api.as_ref().cloned(),
-                    eth: eth_deps,
-                };
-                let pending_consenus_data_provider = Box::new(BabeConsensusDataProvider::new(
-                    client.clone(),
-                    keystore.clone(),
-                ));
+    //             let deps = node_rpc::FullDeps {
+    //                 client: client.clone(),
+    //                 pool: pool.clone(),
+    //                 select_chain: select_chain.clone(),
+    //                 chain_spec: chain_spec.cloned_box(),
+    //                 deny_unsafe,
+    //                 babe: node_rpc::BabeDeps {
+    //                     keystore: keystore.clone(),
+    //                     babe_worker_handle: babe_worker_handle.clone(),
+    //                 },
+    //                 grandpa: node_rpc::GrandpaDeps {
+    //                     shared_voter_state: shared_voter_state.clone(),
+    //                     shared_authority_set: shared_authority_set.clone(),
+    //                     justification_stream: justification_stream.clone(),
+    //                     subscription_executor: subscription_executor.clone(),
+    //                     finality_provider: finality_proof_provider.clone(),
+    //                 },
+    //                 beefy: node_rpc::BeefyDeps::<beefy_primitives::ecdsa_crypto::AuthorityId> {
+    //                     beefy_finality_proof_stream: beefy_rpc_links
+    //                         .from_voter_justif_stream
+    //                         .clone(),
+    //                     beefy_best_block_stream: beefy_rpc_links
+    //                         .from_voter_best_beefy_stream
+    //                         .clone(),
+    //                     subscription_executor: subscription_executor.clone(),
+    //                 },
+    //                 statement_store: rpc_statement_store.clone(),
+    //                 backend: rpc_backend.clone(),
+    //                 // mixnet_api: mixnet_api.as_ref().cloned(),
+    //                 eth: eth_deps,
+    //             };
+    //             let pending_consenus_data_provider = Box::new(BabeConsensusDataProvider::new(
+    //                 client.clone(),
+    //                 keystore.clone(),
+    //             ));
 
-                node_rpc::create_full(
-                    deps,
-                    subscription_executor,
-                    pubsub_notification_sinks1.clone(),
-                    pending_consenus_data_provider,
-                )
-                .map_err(Into::into)
-            };
+    //             node_rpc::create_full(
+    //                 deps,
+    //                 subscription_executor,
+    //                 pubsub_notification_sinks1.clone(),
+    //                 pending_consenus_data_provider,
+    //             )
+    //             .map_err(Into::into)
+    //         };
 
-        (
-            rpc_extensions_builder,
-            shared_voter_state2,
-            frontier_backend2,
-            pubsub_notification_sinks2,
-        )
-    };
+    //     (
+    //         rpc_extensions_builder,
+    //         shared_voter_state2,
+    //         frontier_backend2,
+    //         pubsub_notification_sinks2,
+    //     )
+    // };
 
 	Ok(sc_service::PartialComponents {
 		client,
@@ -674,30 +676,210 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 
     let eth_backend = backend.clone();
     let eth_storage_override = storage_override.clone();
+	let (rpc_extensions_builder, rpc_setup, frontier_backend, pubsub_notification_sinks) = {
+        let (_, grandpa_link, _, _) = &import_setup;
 
-	if let Some(mixnet_config) = mixnet_config {
-		let mixnet = sc_mixnet::run(
-			mixnet_config,
-			mixnet_api_backend.expect("Mixnet API backend created if mixnet enabled"),
-			client.clone(),
-			sync_service.clone(),
-			network.clone(),
-			mixnet_protocol_name,
-			transaction_pool.clone(),
-			Some(keystore_container.keystore()),
-			mixnet_notification_service
-				.expect("`NotificationService` exists since mixnet was enabled; qed"),
-		);
-		task_manager.spawn_handle().spawn("mixnet", None, mixnet);
-	}
+        let justification_stream = grandpa_link.justification_stream();
+        let shared_authority_set = grandpa_link.shared_authority_set().clone();
+        let shared_voter_state = grandpa::SharedVoterState::empty();
+        let shared_voter_state2 = shared_voter_state.clone();
 
+        let finality_proof_provider = grandpa::FinalityProofProvider::new_for_service(
+            backend.clone(),
+            Some(shared_authority_set.clone()),
+        );
+
+        let client = client.clone();
+        let pool = transaction_pool.clone();
+        let select_chain = select_chain.clone();
+        let keystore = keystore_container.keystore();
+        let chain_spec = config.chain_spec.cloned_box();
+
+        let net_config = sc_network::config::FullNetworkConfiguration::<
+            Block,
+            <Block as BlockT>::Hash,
+            Litep2pNetworkBackend,
+        >::new(&config.network);
+
+        let frontier_backend = match eth_config.frontier_backend_type {
+            BackendType::KeyValue => FrontierBackend::KeyValue(Arc::new(fc_db::kv::Backend::open(
+                Arc::clone(&client),
+                &config.database,
+                &db_config_dir(&config),
+            )?)),
+            BackendType::Sql => {
+                let db_path = db_config_dir(&config).join("sql");
+                std::fs::create_dir_all(&db_path).expect("failed creating sql db directory");
+                let backend = futures::executor::block_on(fc_db::sql::Backend::new(
+                    fc_db::sql::BackendConfig::Sqlite(fc_db::sql::SqliteBackendConfig {
+                        path: Path::new("sqlite:///")
+                            .join(db_path)
+                            .join("frontier.db3")
+                            .to_str()
+                            .unwrap(),
+                        create_if_missing: true,
+                        thread_count: eth_config.frontier_sql_backend_thread_count,
+                        cache_size: eth_config.frontier_sql_backend_cache_size,
+                    }),
+                    eth_config.frontier_sql_backend_pool_size,
+                    std::num::NonZeroU32::new(eth_config.frontier_sql_backend_num_ops_timeout),
+                    storage_override.clone(),
+                ))
+                .unwrap_or_else(|err| panic!("failed creating sql backend: {:?}", err));
+                FrontierBackend::Sql(Arc::new(backend))
+            }
+        };
+
+        let frontier_backend1 = Arc::new(frontier_backend);
+        let frontier_backend2 = frontier_backend1.clone();
+        // todo warp_sync_params
+
+        let metrics = N::register_notification_metrics(
+            config.prometheus_config.as_ref().map(|cfg| &cfg.registry),
+        );
+
+        let prometheus_registry = config.prometheus_registry().cloned();
+
+        let block_data_cache = Arc::new(fc_rpc::EthBlockDataCacheTask::new(
+            task_manager.spawn_handle(),
+            storage_override.clone(),
+            eth_config.eth_log_block_cache,
+            eth_config.eth_statuses_cache,
+            prometheus_registry.clone(),
+        ));
+        let pubsub_notification_sinks: fc_mapping_sync::EthereumBlockNotificationSinks<
+            fc_mapping_sync::EthereumBlockNotification<Block>,
+        > = Default::default();
+        let pubsub_notification_sinks1 = Arc::new(pubsub_notification_sinks);
+        let pubsub_notification_sinks2 = pubsub_notification_sinks1.clone();
+
+        let rpc_backend = backend.clone();
+        // let eth_backend = backend.clone();
+        let rpc_statement_store = statement_store.clone();
+
+        let target_gas_price = eth_config.target_gas_price;
+        let slot_duration = import_setup.2.config().slot_duration().clone();
+        let pending_create_inherent_data_providers = move |_, ()| async move {
+            let current = sp_timestamp::InherentDataProvider::from_system_time();
+            let next_slot = current.timestamp().as_millis() + slot_duration.as_millis();
+
+            let timestamp = sp_timestamp::InherentDataProvider::new(next_slot.into());
+            let slot =
+				sp_consensus_babe::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
+					*timestamp,
+					slot_duration,
+				);
+            let dynamic_fee = fp_dynamic_fee::InherentDataProvider(U256::from(target_gas_price));
+            Ok((slot, timestamp, dynamic_fee))
+        };
+
+        let network = network.clone();
+        let is_authority = config.role.clone().is_authority().clone();
+        let sync_service0 = sync_service.clone();
+        let rpc_extensions_builder =
+            move |deny_unsafe, subscription_executor: node_rpc::SubscriptionTaskExecutor| {
+                let enable_dev_signer = eth_config.enable_dev_signer;
+                let max_past_logs = eth_config.max_past_logs;
+                let execute_gas_limit_multiplier = eth_config.execute_gas_limit_multiplier;
+                let eth_deps = node_rpc::EthDeps {
+                    client: client.clone(),
+                    pool: pool.clone(),
+                    graph: pool.pool().clone(),
+                    converter: Some(TransactionConverter),
+                    is_authority: is_authority,
+                    enable_dev_signer,
+                    network: network.clone(),
+                    sync: sync_service0.clone(),
+                    frontier_backend: match &*frontier_backend1.clone() {
+                        fc_db::Backend::KeyValue(b) => b.clone(),
+                        fc_db::Backend::Sql(b) => b.clone(),
+                    },
+                    storage_override: storage_override.clone(),
+                    block_data_cache: block_data_cache.clone(),
+                    filter_pool: filter_pool1.clone(),
+                    max_past_logs,
+                    fee_history_cache: fee_history_cache1.clone(),
+                    fee_history_cache_limit,
+                    execute_gas_limit_multiplier,
+                    forced_parent_hashes: None,
+                    pending_create_inherent_data_providers,
+                };
+
+                let deps = node_rpc::FullDeps {
+                    client: client.clone(),
+                    pool: pool.clone(),
+                    select_chain: select_chain.clone(),
+                    chain_spec: chain_spec.cloned_box(),
+                    deny_unsafe,
+                    babe: node_rpc::BabeDeps {
+                        keystore: keystore.clone(),
+                        babe_worker_handle: babe_worker_handle.clone(),
+                    },
+                    grandpa: node_rpc::GrandpaDeps {
+                        shared_voter_state: shared_voter_state.clone(),
+                        shared_authority_set: shared_authority_set.clone(),
+                        justification_stream: justification_stream.clone(),
+                        subscription_executor: subscription_executor.clone(),
+                        finality_provider: finality_proof_provider.clone(),
+                    },
+                    beefy: node_rpc::BeefyDeps::<beefy_primitives::ecdsa_crypto::AuthorityId> {
+                        beefy_finality_proof_stream: beefy_rpc_links
+                            .from_voter_justif_stream
+                            .clone(),
+                        beefy_best_block_stream: beefy_rpc_links
+                            .from_voter_best_beefy_stream
+                            .clone(),
+                        subscription_executor: subscription_executor.clone(),
+                    },
+                    statement_store: rpc_statement_store.clone(),
+                    backend: rpc_backend.clone(),
+                    // mixnet_api: mixnet_api.as_ref().cloned(),
+                    eth: eth_deps,
+                };
+                // let pending_consenus_data_provider = Box::new(BabeConsensusDataProvider::new(
+                //     client.clone(),
+                //     keystore.clone(),
+                // ));
+
+                node_rpc::create_full(
+                    deps,
+                    subscription_executor,
+                    pubsub_notification_sinks1.clone(),
+                )
+                .map_err(Into::into)
+            };
+
+        (
+            rpc_extensions_builder,
+            shared_voter_state2,
+            frontier_backend2,
+            pubsub_notification_sinks2,
+        )
+    };
+
+	// if let Some(mixnet_config) = mixnet_config {
+	// 	let mixnet = sc_mixnet::run(
+	// 		mixnet_config,
+	// 		mixnet_api_backend.expect("Mixnet API backend created if mixnet enabled"),
+	// 		client.clone(),
+	// 		sync_service.clone(),
+	// 		network.clone(),
+	// 		mixnet_protocol_name,
+	// 		transaction_pool.clone(),
+	// 		Some(keystore_container.keystore()),
+	// 		mixnet_notification_service
+	// 			.expect("`NotificationService` exists since mixnet was enabled; qed"),
+	// 	);
+	// 	task_manager.spawn_handle().spawn("mixnet", None, mixnet);
+	// }
+	let shared_voter_state = rpc_setup;
 	let rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
 		config,
 		backend: backend.clone(),
 		client: client.clone(),
 		keystore: keystore_container.keystore(),
 		network: network.clone(),
-		rpc_builder: Box::new(rpc_builder),
+		rpc_builder: Box::new(rpc_extensions_builder),
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
 		system_rpc_tx,
@@ -705,6 +887,19 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		sync_service: sync_service.clone(),
 		telemetry: telemetry.as_mut(),
 	})?;
+
+	// spawn_frontier_tasks(
+    //     &task_manager,
+    //     client.clone(),
+    //     eth_backend.clone(),
+    //     frontier_backend.clone(),
+    //     filter_pool,
+    //     eth_storage_override.clone(),
+    //     fee_history_cache,
+    //     fee_history_cache_limit,
+    //     sync_service.clone(),
+    //     pubsub_notification_sinks,
+    // );
 
 	if let Some(hwbench) = hwbench {
 		sc_sysinfo::print_hwbench(&hwbench);
@@ -733,91 +928,93 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 	(with_startup_data)(&block_import, &babe_link);
 
 	if let sc_service::config::Role::Authority { .. } = &role {
-		let proposer = sc_basic_authorship::ProposerFactory::new(
-			task_manager.spawn_handle(),
-			client.clone(),
-			transaction_pool.clone(),
-			prometheus_registry.as_ref(),
-			telemetry.as_ref().map(|x| x.handle()),
-		);
+        let proposer = sc_basic_authorship::ProposerFactory::new(
+            task_manager.spawn_handle(),
+            client.clone(),
+            transaction_pool.clone(),
+            prometheus_registry.as_ref(),
+            telemetry.as_ref().map(|x| x.handle()),
+        );
 
-		let client_clone = client.clone();
-		let slot_duration = babe_link.config().slot_duration();
-		let babe_config = sc_consensus_babe::BabeParams {
-			keystore: keystore_container.keystore(),
-			client: client.clone(),
-			select_chain,
-			env: proposer,
-			block_import,
-			sync_oracle: sync_service.clone(),
-			justification_sync_link: sync_service.clone(),
-			create_inherent_data_providers: move |parent, ()| {
-				let client_clone = client_clone.clone();
-				async move {
-					let timestamp = sp_timestamp::InherentDataProvider::from_system_time();
+        let client_clone = client.clone();
+        let slot_duration = import_setup.2.config().slot_duration().clone();
+        let babe_config = sc_consensus_babe::BabeParams {
+            keystore: keystore_container.keystore(),
+            client: client.clone(),
+            select_chain,
+            env: proposer,
+            block_import: import_setup.0.clone(),
+            sync_oracle: sync_service.clone(),
+            justification_sync_link: sync_service.clone(),
+            create_inherent_data_providers: move |parent, ()| {
+                let client_clone = client_clone.clone();
+                async move {
+                    let timestamp = sp_timestamp::InherentDataProvider::from_system_time();
 
-					let slot =
+                    let slot =
 						sp_consensus_babe::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
 							*timestamp,
 							slot_duration,
 						);
 
-					let storage_proof =
-						sp_transaction_storage_proof::registration::new_data_provider(
-							&*client_clone,
-							&parent,
-						)?;
+                    let storage_proof =
+                        sp_transaction_storage_proof::registration::new_data_provider(
+                            &*client_clone,
+                            &parent,
+                        )?;
 
-					Ok((slot, timestamp, storage_proof))
-				}
-			},
-			force_authoring,
-			backoff_authoring_blocks,
-			babe_link,
-			block_proposal_slot_portion: SlotProportion::new(0.5),
-			max_block_proposal_slot_portion: None,
-			telemetry: telemetry.as_ref().map(|x| x.handle()),
-		};
+                    Ok((slot, timestamp, storage_proof))
+                }
+            },
+            force_authoring,
+            backoff_authoring_blocks,
+            babe_link: import_setup.2.clone(),
+            block_proposal_slot_portion: SlotProportion::new(0.5),
+            max_block_proposal_slot_portion: None,
+            telemetry: telemetry.as_ref().map(|x| x.handle()),
+        };
 
-		let babe = sc_consensus_babe::start_babe(babe_config)?;
-		task_manager.spawn_essential_handle().spawn_blocking(
-			"babe-proposer",
-			Some("block-authoring"),
-			babe,
-		);
-	}
+        let babe = sc_consensus_babe::start_babe(babe_config)?;
+        task_manager.spawn_essential_handle().spawn_blocking(
+            "babe-proposer",
+            Some("block-authoring"),
+            babe,
+        );
+    }
 
-	// Spawn authority discovery module.
-	if role.is_authority() {
-		let authority_discovery_role =
-			sc_authority_discovery::Role::PublishAndDiscover(keystore_container.keystore());
-		let dht_event_stream =
-			network.event_stream("authority-discovery").filter_map(|e| async move {
-				match e {
-					Event::Dht(e) => Some(e),
-					_ => None,
-				}
-			});
-		let (authority_discovery_worker, _service) =
-			sc_authority_discovery::new_worker_and_service_with_config(
-				sc_authority_discovery::WorkerConfig {
-					publish_non_global_ips: auth_disc_publish_non_global_ips,
-					public_addresses: auth_disc_public_addresses,
-					..Default::default()
-				},
-				client.clone(),
-				Arc::new(network.clone()),
-				Box::pin(dht_event_stream),
-				authority_discovery_role,
-				prometheus_registry.clone(),
-			);
+    // Spawn authority discovery module.
+    if role.is_authority() {
+        let authority_discovery_role =
+            sc_authority_discovery::Role::PublishAndDiscover(keystore_container.keystore());
+        let dht_event_stream =
+            network
+                .event_stream("authority-discovery")
+                .filter_map(|e| async move {
+                    match e {
+                        Event::Dht(e) => Some(e),
+                        _ => None,
+                    }
+                });
+        let (authority_discovery_worker, _service) =
+            sc_authority_discovery::new_worker_and_service_with_config(
+                sc_authority_discovery::WorkerConfig {
+                    publish_non_global_ips: auth_disc_publish_non_global_ips,
+                    public_addresses: auth_disc_public_addresses,
+                    ..Default::default()
+                },
+                client.clone(),
+                Arc::new(network.clone()),
+                Box::pin(dht_event_stream),
+                authority_discovery_role,
+                prometheus_registry.clone(),
+            );
 
-		task_manager.spawn_handle().spawn(
-			"authority-discovery-worker",
-			Some("networking"),
-			authority_discovery_worker.run(),
-		);
-	}
+        task_manager.spawn_handle().spawn(
+            "authority-discovery-worker",
+            Some("networking"),
+            authority_discovery_worker.run(),
+        );
+    }
 
 	// if the node isn't actively participating in consensus then it doesn't
 	// need a keystore, regardless of which protocol we use below.
@@ -961,32 +1158,34 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 }
 
 /// Builds a new service for a full client.
-pub fn new_full(config: Configuration, cli: Cli) -> Result<TaskManager, ServiceError> {
+pub fn new_full(config: Configuration,   eth_config: EthConfiguration,cli: Cli) -> Result<TaskManager, ServiceError> {
 	let mixnet_config = cli.mixnet_params.config(config.role.is_authority());
 	let database_path = config.database.path().map(Path::to_path_buf);
 
 	let task_manager = match config.network.network_backend {
-		sc_network::config::NetworkBackendType::Libp2p => {
-			let task_manager = new_full_base::<sc_network::NetworkWorker<_, _>>(
-				config,
-				mixnet_config,
-				cli.no_hardware_benchmarks,
-				|_, _| (),
-			)
-			.map(|NewFullBase { task_manager, .. }| task_manager)?;
-			task_manager
-		},
-		sc_network::config::NetworkBackendType::Litep2p => {
-			let task_manager = new_full_base::<sc_network::Litep2pNetworkBackend>(
-				config,
-				mixnet_config,
-				cli.no_hardware_benchmarks,
-				|_, _| (),
-			)
-			.map(|NewFullBase { task_manager, .. }| task_manager)?;
-			task_manager
-		},
-	};
+        sc_network::config::NetworkBackendType::Libp2p => {
+            let task_manager = new_full_base::<sc_network::NetworkWorker<_, _>>(
+                config,
+                eth_config,
+                mixnet_config,
+                cli.no_hardware_benchmarks,
+                |_, _| (),
+            )
+            .map(|NewFullBase { task_manager, .. }| task_manager)?;
+            task_manager
+        }
+        sc_network::config::NetworkBackendType::Litep2p => {
+            let task_manager = new_full_base::<sc_network::Litep2pNetworkBackend>(
+                config,
+                eth_config,
+                mixnet_config,
+                cli.no_hardware_benchmarks,
+                |_, _| (),
+            )
+            .map(|NewFullBase { task_manager, .. }| task_manager)?;
+            task_manager
+        }
+    };
 
 	if let Some(database_path) = database_path {
 		sc_storage_monitor::StorageMonitorService::try_spawn(

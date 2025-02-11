@@ -659,7 +659,11 @@ impl pallet_indices::Config for Runtime {
 	type WeightInfo = pallet_indices::weights::SubstrateWeight<Runtime>;
 }
 
+
+
+
 parameter_types! {
+	pub const EXISTENTIAL_DEPOSIT: u128 = 1 * ARGO;
 	pub const ExistentialDeposit: Balance = 1 * ARGO;
 	// For weight estimation, we assume that the most locks on an individual account will be 50.
 	// This number may need to be adjusted in the future if this assumption no longer holds true.

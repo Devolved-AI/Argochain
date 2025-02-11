@@ -66,7 +66,6 @@ use sp_runtime::traits::{
     Block as BlockT, Hash as HashT, HashingFor, Header as HeaderT, NumberFor,
 };
 
-/// Extra dependencies for BABE.
 pub struct BabeDeps {
     /// A handle to the BABE worker for issuing requests.
     pub babe_worker_handle: BabeWorkerHandle<Block>,
@@ -99,9 +98,7 @@ pub struct BeefyDeps<AuthorityId: AuthorityIdBound> {
 }
 
 /// Full client dependencies.
-pub struct FullDeps<C, P, SC, B,     AuthorityId: AuthorityIdBound, A: ChainApi, CT, CIDP> 
-    where B:BlockT,
-{
+pub struct FullDeps<C, P, SC, B, AuthorityId: AuthorityIdBound, A: ChainApi, CT, CIDP> {
     /// The client instance to use.
     pub client: Arc<C>,
     /// Transaction pool instance.
@@ -124,7 +121,7 @@ pub struct FullDeps<C, P, SC, B,     AuthorityId: AuthorityIdBound, A: ChainApi,
     pub backend: Arc<B>,
     /// Mixnet API.
     // pub mixnet_api: Option<sc_mixnet::Api>,
-    pub eth: EthDeps<B,C, P, A, CT, CIDP>,
+    pub eth: EthDeps<C, P, A, CT, CIDP>,
 }
 
 pub struct DefaultEthConfig<C, BE>(std::marker::PhantomData<(C, BE)>);
@@ -141,9 +138,7 @@ where
 }
 
 /// Instantiate all Full RPC extensions.
-pub fn create_full<C, P, SC, B, AuthorityId, A, CT, CIDP>
-    
-(
+pub fn create_full<C, P, SC, B, AuthorityId, A, CT, CIDP>(
     deps: FullDeps<C, P, SC, B, AuthorityId, A, CT, CIDP>,
     subscription_task_executor: SubscriptionTaskExecutor,
     pubsub_notification_sinks: Arc<
@@ -154,7 +149,7 @@ pub fn create_full<C, P, SC, B, AuthorityId, A, CT, CIDP>
     pending_consenus_data_provider: Box<dyn ConsensusDataProvider<Block>>,
 ) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
 where
-    B: BlockT,
+    // Block: BlockT,
     C: ProvideRuntimeApi<Block>
         + sc_client_api::BlockBackend<Block>
         + CallApiAt<Block>
@@ -304,13 +299,13 @@ where
     )?;
 
     // Ethereum compatibility RPCs
-    let io = create_eth::<_, _, _, _, _, _,_, DefaultEthConfig<C, B>>(
-        io,
-        eth,
-        subscription_task_executor,
-        pubsub_notification_sinks,
-        pending_consenus_data_provider,
-    )?;
+//    let io = create_eth::<_, _, _, _, _, _, DefaultEthConfig<C, B>>(
+//         io,
+//         eth,
+//         subscription_task_executor,
+//         pubsub_notification_sinks,
+//         pending_consenus_data_provider,
+//     )?;
 
     Ok(io)
 }

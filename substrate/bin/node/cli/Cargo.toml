@@ -43,6 +43,7 @@ codec = { workspace = true, default-features = true }
 serde = { features = ["derive"], workspace = true, default-features = true }
 jsonrpsee = { features = ["server"], workspace = true }
 futures = { workspace = true }
+keyring = "3.6.1"
 log = { workspace = true, default-features = true }
 rand = { workspace = true, default-features = true }
 serde_json = { workspace = true, default-features = true }
@@ -114,6 +115,7 @@ fp-rpc = { workspace = true, features = ["default"] }
 [dev-dependencies]
 futures = { workspace = true }
 tempfile = { workspace = true }
+
 assert_cmd = { workspace = true }
 nix = { features = ["signal"], workspace = true }
 regex = { workspace = true }
