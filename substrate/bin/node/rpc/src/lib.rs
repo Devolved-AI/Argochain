@@ -66,6 +66,7 @@ use sp_runtime::traits::{
     Block as BlockT, Hash as HashT, HashingFor, Header as HeaderT, NumberFor,
 };
 
+
 pub struct BabeDeps {
     /// A handle to the BABE worker for issuing requests.
     pub babe_worker_handle: BabeWorkerHandle<Block>,
@@ -98,7 +99,7 @@ pub struct BeefyDeps<AuthorityId: AuthorityIdBound> {
 }
 
 /// Full client dependencies.
-pub struct FullDeps<C, P, SC, B, AuthorityId: AuthorityIdBound, A: ChainApi, CT, CIDP> {
+pub struct FullDeps<C, P, SC, B:BlockT, AuthorityId: AuthorityIdBound, A: ChainApi, CT, CIDP> {
     /// The client instance to use.
     pub client: Arc<C>,
     /// Transaction pool instance.
@@ -121,7 +122,7 @@ pub struct FullDeps<C, P, SC, B, AuthorityId: AuthorityIdBound, A: ChainApi, CT,
     pub backend: Arc<B>,
     /// Mixnet API.
     // pub mixnet_api: Option<sc_mixnet::Api>,
-    pub eth: EthDeps<C, P, A, CT, CIDP>,
+    pub eth: EthDeps<B, C, P, A, CT, CIDP>,
 }
 
 pub struct DefaultEthConfig<C, BE>(std::marker::PhantomData<(C, BE)>);
@@ -138,7 +139,7 @@ where
 }
 
 /// Instantiate all Full RPC extensions.
-pub fn create_full<C, P, SC, B, AuthorityId, A, CT, CIDP>(
+pub fn create_full<C, P, SC, B:BlockT, AuthorityId, A, CT, CIDP>(
     deps: FullDeps<C, P, SC, B, AuthorityId, A, CT, CIDP>,
     subscription_task_executor: SubscriptionTaskExecutor,
     pubsub_notification_sinks: Arc<
@@ -298,7 +299,7 @@ where
         .into_rpc(),
     )?;
 
-    // Ethereum compatibility RPCs
+    //Ethereum compatibility RPCs
 //    let io = create_eth::<_, _, _, _, _, _, DefaultEthConfig<C, B>>(
 //         io,
 //         eth,

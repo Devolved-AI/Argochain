@@ -35,6 +35,7 @@ use sc_service::PartialComponents;
 use sp_keyring::Sr25519Keyring;
 use sp_runtime::traits::HashingFor;
 // use sp_keyring::sr25519::Keyring;
+// use argochain_runtime::EXISTENTIAL_DEPOSIT;
 
 use std::sync::Arc;
 

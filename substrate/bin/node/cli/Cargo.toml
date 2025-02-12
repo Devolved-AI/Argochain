@@ -43,7 +43,7 @@ codec = { workspace = true, default-features = true }
 serde = { features = ["derive"], workspace = true, default-features = true }
 jsonrpsee = { features = ["server"], workspace = true }
 futures = { workspace = true }
-keyring = "3.6.1"
+# keyring = "3.6.1"
 log = { workspace = true, default-features = true }
 rand = { workspace = true, default-features = true }
 serde_json = { workspace = true, default-features = true }
@@ -128,7 +128,8 @@ wait-timeout = { workspace = true }
 wat = { workspace = true }
 serde_json = { workspace = true, default-features = true }
 scale-info = { features = ["derive", "serde"], workspace = true, default-features = true }
-
+ecdsa-keyring = {workspace = true}
+babe-consensus-data-provider={workspace = true}
 # These testing-only dependencies are not exported by the Polkadot-SDK crate:
 node-testing = { path = "../testing" }
 substrate-cli-test-utils = { path = "../../../test-utils/cli" }

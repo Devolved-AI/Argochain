@@ -836,10 +836,10 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
                     // mixnet_api: mixnet_api.as_ref().cloned(),
                     eth: eth_deps,
                 };
-                // let pending_consenus_data_provider = Box::new(BabeConsensusDataProvider::new(
-                //     client.clone(),
-                //     keystore.clone(),
-                // ));
+                let pending_consenus_data_provider = Box::new(BabeConsensusDataProvider::new(
+                    client.clone(),
+                    keystore.clone(),
+                ));
 
                 node_rpc::create_full(
                     deps,

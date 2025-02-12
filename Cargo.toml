@@ -39,6 +39,8 @@ members = [
 	"client/db",
 	"client/storage",
 	"client/mapping-sync",
+	"client/ecdsa-keyring",
+	"client/babe-consensus-data-provide",
 	"primitives/account",
 	"primitives/consensus",
 	"primitives/dynamic-fee",
@@ -950,6 +952,8 @@ zstd = { version = "0.12.4", default-features = false }
 
 
 # Frontier Client
+babe-consensus-data-provide={path = "client/babe-consensus-data-provide",default-features = false}
+ecdsa-keyring = { path = "client/ecdsa-keyring",default-features = false}
 fc-api = { path = "client/api" }
 fc-cli = { path = "client/cli", default-features = false }
 fc-consensus = { path = "client/consensus" }
@@ -996,6 +1000,7 @@ ark-std = { version = "0.4.0", default-features = false }
 similar-asserts = "1.5.0"
 sqlx = { version = "0.7.4", default-features = false, features = ["macros"] }
 const-hex = { version = "1.12", default-features = false, features = ["alloc"] }
+
 
 
 
