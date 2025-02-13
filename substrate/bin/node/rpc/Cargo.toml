@@ -83,6 +83,10 @@ sp-inherents = { workspace=true }
 sc-network-sync = { workspace=true }
 sc-transaction-pool = { workspace=true }
 sp-consensus-aura = { workspace=true }
+sc-consensus-manual-seal={workspace = true}
+sc-service={workspace = true}
+futures={workspace = true}
+
 
 
 

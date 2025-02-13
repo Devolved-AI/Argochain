@@ -46,8 +46,6 @@ pub use cli::EthConfiguration;
 #[cfg(feature = "cli")]
 mod client;
 #[cfg(feature = "cli")]
-mod rpc;
-#[cfg(feature = "cli")]
 pub use cli::*;
 #[cfg(feature = "cli")]
 pub use command::*;

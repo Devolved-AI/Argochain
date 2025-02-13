@@ -112,6 +112,10 @@ fp-dynamic-fee = { workspace = true, features = ["default"] }
 fp-evm = { workspace = true, features = ["default"] }
 fp-rpc = { workspace = true, features = ["default"] }
 
+
+
+
+
 [dev-dependencies]
 futures = { workspace = true }
 tempfile = { workspace = true }
@@ -128,8 +132,6 @@ wait-timeout = { workspace = true }
 wat = { workspace = true }
 serde_json = { workspace = true, default-features = true }
 scale-info = { features = ["derive", "serde"], workspace = true, default-features = true }
-ecdsa-keyring = {workspace = true}
-babe-consensus-data-provider={workspace = true}
 # These testing-only dependencies are not exported by the Polkadot-SDK crate:
 node-testing = { path = "../testing" }
 substrate-cli-test-utils = { path = "../../../test-utils/cli" }
@@ -140,6 +142,9 @@ clap = { optional = true, workspace = true }
 clap_complete = { optional = true, workspace = true }
 node-inspect = { optional = true, workspace = true, default-features = true }
 polkadot-sdk = { features = ["frame-benchmarking-cli", "sc-cli", "sc-storage-monitor", "substrate-build-script-utils"], optional = true, workspace = true, default-features = true }
+
+
+
 
 [features]
 default = ["cli"]
