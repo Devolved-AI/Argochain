@@ -106,7 +106,7 @@ pub struct BeefyDeps<AuthorityId: AuthorityIdBound> {
 }
 
 /// Full client dependencies.
-pub struct FullDeps<SC, AuthorityId: AuthorityIdBound, B: BlockT, C, P, A: ChainApi, CT, CIDP> {
+pub struct FullDeps<SC, AuthorityId: AuthorityIdBound, B, C, P, A: ChainApi, CT, CIDP> {
     /// The client instance to use.
     pub client: Arc<C>,
     /// Transaction pool instance.
@@ -128,9 +128,9 @@ pub struct FullDeps<SC, AuthorityId: AuthorityIdBound, B: BlockT, C, P, A: Chain
     /// The backend used by the node.
     pub backend: Arc<B>,
     /// Mixnet API.
-    pub mixnet_api: Option<sc_mixnet::Api>,
+    // pub mixnet_api: Option<sc_mixnet::Api>,
     /// Manual seal command sink
-    pub command_sink: Option<mpsc::Sender<EngineCommand<Hash>>>,
+    // pub command_sink: Option<mpsc::Sender<EngineCommand<Hash>>>,
     /// Ethereum-compatibility specific dependencies.
     pub eth: EthDeps< C, P, A, CT, CIDP>,
 }
@@ -149,7 +149,7 @@ where
 }
 
 /// Instantiate all Full RPC extensions.
-pub fn create_full<B:BlockT, C, P, BE, A, CT, CIDP,SC, AuthorityId>(
+pub fn create_full<B, C, P, BE, A, CT, CIDP,SC, AuthorityId>(
 	deps: FullDeps<SC, AuthorityId, B, C, P, A, CT, CIDP>,
 	subscription_task_executor: SubscriptionTaskExecutor,
 	pubsub_notification_sinks: Arc<
@@ -216,8 +216,8 @@ where
         beefy,
         statement_store,
         backend,
-        mixnet_api,
-		command_sink,
+        // mixnet_api,
+		// command_sink,
         eth,
     } = deps;
 
@@ -277,10 +277,10 @@ where
 		sc_rpc::statement::StatementStore::new(statement_store, deny_unsafe).into_rpc();
 	io.merge(statement_store)?;
 
-	if let Some(mixnet_api) = mixnet_api {
-		let mixnet = sc_rpc::mixnet::Mixnet::new(mixnet_api).into_rpc();
-		io.merge(mixnet)?;
-	}
+	// if let Some(mixnet_api) = mixnet_api {
+	// 	let mixnet = sc_rpc::mixnet::Mixnet::new(mixnet_api).into_rpc();
+	// 	io.merge(mixnet)?;
+	// }
 
 	io.merge(
 		Beefy::<Block, AuthorityId>::new(
@@ -291,13 +291,13 @@ where
 		.into_rpc(),
 	)?;
 
-	if let Some(command_sink) = command_sink {
-		io.merge(
-			// We provide the rpc handler with the sending end of the channel to allow the rpc
-			// send EngineCommands to the background block authorship task.
-			ManualSeal::new(command_sink).into_rpc(),
-		)?;
-	}
+	// if let Some(command_sink) = command_sink {
+	// 	io.merge(
+	// 		// We provide the rpc handler with the sending end of the channel to allow the rpc
+	// 		// send EngineCommands to the background block authorship task.
+	// 		ManualSeal::new(command_sink).into_rpc(),
+	// 	)?;
+	// }
 
 	// Ethereum compatibility RPCs
 	// let io = create_eth::< _, _, _, _, _, _, DefaultEthConfig<C, BE>>(

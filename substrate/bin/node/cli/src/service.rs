@@ -311,6 +311,7 @@ pub fn new_partial<NB>(
 		&task_manager.spawn_handle(),
 	)
 	.map_err(|e| ServiceError::Other(format!("Statement store error: {:?}", e)))?;
+
 	Ok(sc_service::PartialComponents {
 		client,
 		backend,
@@ -659,12 +660,12 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 				// 	_,
                 // ));
 
-                // node_rpc::create_full(
-                //     deps,
-                //     subscription_executor,
-                //     pubsub_notification_sinks1.clone(),
-                // )
-                // .map_err(Into::into)
+                node_rpc::create_full(
+                    deps,
+                    subscription_executor,
+                    pubsub_notification_sinks1.clone(),
+                )
+                .map_err(Into::into)
             };
 
         (

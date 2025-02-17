@@ -6,9 +6,9 @@ use sp_runtime::traits::{Block as BlockT, MaybeDisplay};
 use crate::eth::EthCompatRuntimeApiCollection;
 
 /// Full backend.
-pub type FullBackend<B> = sc_service::TFullBackend<B>;
+pub type FullBackend<BlockT> = sc_service::TFullBackend<BlockT>;
 /// Full client.
-pub type FullClient<B, RA, HF> = sc_service::TFullClient<B, RA, WasmExecutor<HF>>;
+pub type FullClient<BlockT, RA, HF> = sc_service::TFullClient<BlockT, RA, WasmExecutor<HF>>;
 
 /// A set of APIs that every runtime must implement.
 pub trait BaseRuntimeApiCollection<Block: BlockT>:

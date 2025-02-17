@@ -27,7 +27,6 @@ use crate::{
 use frame_benchmarking_cli::*;
 use argochain_runtime::{ExistentialDeposit, RuntimeApi,EXISTENTIAL_DEPOSIT};
 use node_primitives::Block;
-use ecdsa_keyring::Keyring;
 // use keyring::*;
 use sc_cli::{Result, SubstrateCli};
 use sc_network::{Litep2pNetworkBackend, NetworkBackend};
@@ -162,11 +161,11 @@ pub fn run() -> Result<()> {
                         // Register the *Remark* and *TKA* builders.
                         let ext_factory = ExtrinsicFactory(vec![
                             Box::new(RemarkBuilder::new(client.clone())),
-                            Box::new(TransferKeepAliveBuilder::new(
-                                client.clone(),
-                                Keyring::Alith.pair().public().into(),
-                                EXISTENTIAL_DEPOSIT,
-                            )),
+                            // Box::new(TransferKeepAliveBuilder::new(
+                            //     client.clone(),
+                            //     Keyring::Alith.pair().public().into(),
+                            //     ExistentialDeposit,
+                            // )),
                         ]);
 
                         cmd.run(client, inherent_benchmark_data()?, Vec::new(), &ext_factory)
