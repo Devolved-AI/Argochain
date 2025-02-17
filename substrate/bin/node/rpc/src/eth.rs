@@ -81,6 +81,7 @@ pub fn create_eth< C, BE, P, A, CT, CIDP, EC>(
 ) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
 where
 	// B: BlockT,
+	C::Api: AuraApi<Block, sp_consensus_aura::sr25519::AuthorityId>,
 	C: CallApiAt<Block> + ProvideRuntimeApi<Block>,
 	C::Api: BlockBuilderApi<Block>
 		+ ConvertTransactionRuntimeApi<Block>
@@ -145,7 +146,7 @@ where
 			execute_gas_limit_multiplier,
 			forced_parent_hashes,
 			pending_create_inherent_data_providers,
-			Some(BabeConsensusDataProvider),
+			Some(Box::new(AuraConsensusDataProvider::new(client.clone()))),
 		)
 		.replace_config::<EC>()
 		.into_rpc(),

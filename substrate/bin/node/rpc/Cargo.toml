@@ -86,6 +86,7 @@ sp-consensus-aura = { workspace=true }
 sc-consensus-manual-seal={workspace = true}
 sc-service={workspace = true}
 futures={workspace = true}
+sc-consensus-epochs={workspace = true}
 
 
 
