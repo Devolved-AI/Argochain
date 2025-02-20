@@ -39,6 +39,8 @@ members = [
 	"client/db",
 	"client/storage",
 	"client/mapping-sync",
+	"client/babe-consensus-data-provider",
+	"client/ecdsa-keyring",
 	"primitives/account",
 	"primitives/consensus",
 	"primitives/dynamic-fee",
@@ -335,7 +337,9 @@ members = [
 ]
 
 default-members = [
-	"substrate/bin/node/cli",
+	"substrate/bin/node/cli","client/babe-consensus-data-provider",
+	"client/ecdsa-keyring",
+
 ]
 
 [workspace.lints.rust]
