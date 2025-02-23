@@ -6496,6 +6496,7 @@ dependencies = [
 name = "node-primitives"
 version = "2.0.0"
 dependencies = [
+ "fp-account",
  "sp-core",
  "sp-runtime",
 ]
@@ -14206,9 +14207,11 @@ dependencies = [
  "argochain-runtime",
  "array-bytes",
  "assert_cmd",
+ "babe-consensus-data-provider",
  "clap",
  "clap_complete",
  "criterion",
+ "ecdsa-keyring",
  "fc-api",
  "fc-cli",
  "fc-consensus",

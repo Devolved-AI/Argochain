@@ -35,7 +35,7 @@ use fc_consensus::FrontierBlockImport;
 
 use sc_network::Litep2pNetworkBackend;
 use sp_core::U256;
-// use babe_consensus_data_provider::BabeConsensusDataProvider;
+use babe_consensus_data_provider::BabeConsensusDataProvider;
 
 use codec::Encode;
 use frame_benchmarking_cli::SUBSTRATE_REFERENCE_HARDWARE;
@@ -211,7 +211,9 @@ pub fn new_partial<NB>(
 		),
 	>,
 	ServiceError,
-> {
+> 	where
+		NB: sc_network::NetworkBackend<Block, <Block as BlockT>::Hash>,
+ {
 	let telemetry = config
 		.telemetry_endpoints
 		.clone()
@@ -381,17 +383,17 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		}))
 		.flatten();
 
-	let sc_service::PartialComponents {
-		client,
-		backend,
-		mut task_manager,
-		import_queue,
-		keystore_container,
-		select_chain,
-		transaction_pool,
-		other:
-			(import_setup, mut telemetry, statement_store, babe_worker_handle, beefy_rpc_links),
-	} = new_partial(&config, &eth_config, mixnet_config.as_ref())?;
+		let sc_service::PartialComponents {
+			client,
+			backend,
+			mut task_manager,
+			import_queue,
+			keystore_container,
+			select_chain,
+			transaction_pool,
+			other: (import_setup, mut telemetry, statement_store, babe_worker_handle, beefy_rpc_links),
+		} = new_partial::<N>(&config, &eth_config, mixnet_config.as_ref())?;
+	
 
 	let metrics = N::register_notification_metrics(
 		config.prometheus_config.as_ref().map(|cfg| &cfg.registry),
@@ -653,17 +655,16 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
                     // mixnet_api: mixnet_api.as_ref().cloned(),
                     eth: eth_deps,
                 };
-                // let pending_consenus_data_provider = Box::new(BabeConsensusDataProvider::new(
-                //     client.clone(),
-                //     keystore.clone(),
-				// 	_,
-				// 	_,
-                // ));
+				let pending_consenus_data_provider = Box::new(BabeConsensusDataProvider::new(
+                    client.clone(),
+                    keystore.clone(),
+                ));
 
-                node_rpc::create_full(
+				node_rpc::create_full(
                     deps,
                     subscription_executor,
                     pubsub_notification_sinks1.clone(),
+                    pending_consenus_data_provider,
                 )
                 .map_err(Into::into)
             };
@@ -692,33 +693,35 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 	// 	task_manager.spawn_handle().spawn("mixnet", None, mixnet);
 	// }
 	let shared_voter_state = rpc_setup;
+	let network1 = network.clone();
 	let rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
-		config,
-		backend: backend.clone(),
-		client: client.clone(),
-		keystore: keystore_container.keystore(),
-		network: network.clone(),
-		rpc_builder: Box::new(rpc_extensions_builder),
-		transaction_pool: transaction_pool.clone(),
-		task_manager: &mut task_manager,
-		system_rpc_tx,
-		tx_handler_controller,
-		sync_service: sync_service.clone(),
-		telemetry: telemetry.as_mut(),
-	})?;
+        config,
+        backend: backend.clone(),
+        client: client.clone(),
+        keystore: keystore_container.keystore(),
+        network: network1,
+        rpc_builder: Box::new(rpc_extensions_builder),
+        transaction_pool: transaction_pool.clone(),
+        task_manager: &mut task_manager,
+        system_rpc_tx,
+        tx_handler_controller,
+        sync_service: sync_service.clone(),
+        telemetry: telemetry.as_mut(),
+    })?;
 
-	// spawn_frontier_tasks(
-    //     &task_manager,
-    //     client.clone(),
-    //     eth_backend.clone(),
-    //     frontier_backend.clone(),
-    //     filter_pool,
-    //     eth_storage_override.clone(),
-    //     fee_history_cache,
-    //     fee_history_cache_limit,
-    //     sync_service.clone(),
-    //     pubsub_notification_sinks,
-    // );
+
+	spawn_frontier_tasks(
+        &task_manager,
+        client.clone(),
+        eth_backend.clone(),
+        frontier_backend.clone(),
+        filter_pool,
+        eth_storage_override.clone(),
+        fee_history_cache,
+        fee_history_cache_limit,
+        sync_service.clone(),
+        pubsub_notification_sinks,
+    );
 
 	if let Some(hwbench) = hwbench {
 		sc_sysinfo::print_hwbench(&hwbench);
@@ -742,9 +745,8 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		}
 	}
 
-	let (block_import, grandpa_link, babe_link, beefy_links) = import_setup;
 
-	(with_startup_data)(&block_import, &babe_link);
+	(with_startup_data)(&import_setup.0, &import_setup.2);
 
 	if let sc_service::config::Role::Authority { .. } = &role {
         let proposer = sc_basic_authorship::ProposerFactory::new(
@@ -857,7 +859,7 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		network_params,
 		min_block_delta: 8,
 		prometheus_registry: prometheus_registry.clone(),
-		links: beefy_links,
+		links: import_setup.3.clone(),
 		on_demand_justifications_handler: beefy_on_demand_justifications_handler,
 		is_authority: role.is_authority(),
 	};
@@ -902,7 +904,7 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		// could lead to finality stalls.
 		let grandpa_params = grandpa::GrandpaParams {
 			config: grandpa_config,
-			link: grandpa_link,
+			link: import_setup.1,
 			network: network.clone(),
 			sync: Arc::new(sync_service.clone()),
 			notification_service: grandpa_notification_service,

@@ -42,7 +42,7 @@ mod eth;
 #[cfg(feature = "cli")]
 pub mod service;
 #[cfg(feature = "cli")]
-pub use cli::EthConfiguration;
+pub use eth::EthConfiguration;
 #[cfg(feature = "cli")]
 mod client;
 #[cfg(feature = "cli")]

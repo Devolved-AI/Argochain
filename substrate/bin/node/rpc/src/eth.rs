@@ -16,10 +16,8 @@ use sc_transaction_pool_api::TransactionPool;
 use sp_api::{CallApiAt, ProvideRuntimeApi};
 use sp_block_builder::BlockBuilder as BlockBuilderApi;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
-use sp_consensus_aura::{sr25519::AuthorityId as AuraId, AuraApi};
 use sp_core::H256;
 use sp_inherents::CreateInherentDataProviders;
-use sc_consensus_manual_seal::consensus::babe::BabeConsensusDataProvider;
 use sp_runtime::traits::Block as BlockT;
 use node_primitives::Block;
 // Frontier

@@ -53,6 +53,8 @@ node-rpc.workspace = true
 node-primitives.workspace = true
 node-primitives.default-features = true
 node-inspect = { optional = true, workspace = true, default-features = true }
+babe-consensus-data-provider = {path = "../../../../client/babe-consensus-data-provider"}
+ecdsa-keyring = {path = "../../../../client/ecdsa-keyring"}
 
 # Substrate
 prometheus-endpoint = { package = "substrate-prometheus-endpoint", workspace = true }
