@@ -2052,7 +2052,7 @@ const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
 pub const WEIGHT_MILLISECS_PER_BLOCK: u64 = 2000;
 
 parameter_types! {
-	pub const ChainId: u64 = 1295;
+	pub const ChainId: u64 = 42;
 	pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
 	pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
 	pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
@@ -3791,27 +3791,24 @@ impl_runtime_apis! {
 }
 
 #[derive(Clone)]
-pub struct TransactionConverter;
+pub struct TransactionConverter<B>(PhantomData<B>);
 
-
-
-impl fp_rpc::ConvertTransaction<UncheckedExtrinsic> for TransactionConverter {
-    fn convert_transaction(&self, transaction: pallet_ethereum::Transaction) -> UncheckedExtrinsic {
-        UncheckedExtrinsic::new_unsigned(
-            pallet_ethereum::Call::<Runtime>::transact { transaction }.into(),
-        )
+impl<B> Default for TransactionConverter<B> {
+    fn default() -> Self {
+        Self(PhantomData)
     }
 }
-impl fp_rpc::ConvertTransaction<opaque::UncheckedExtrinsic> for TransactionConverter {
+
+impl<B: BlockT> fp_rpc::ConvertTransaction<<B as BlockT>::Extrinsic> for TransactionConverter<B> {
     fn convert_transaction(
         &self,
         transaction: pallet_ethereum::Transaction,
-    ) -> opaque::UncheckedExtrinsic {
+    ) -> <B as BlockT>::Extrinsic {
         let extrinsic = UncheckedExtrinsic::new_unsigned(
             pallet_ethereum::Call::<Runtime>::transact { transaction }.into(),
         );
         let encoded = extrinsic.encode();
-        opaque::UncheckedExtrinsic::decode(&mut &encoded[..])
+        <B as BlockT>::Extrinsic::decode(&mut &encoded[..])
             .expect("Encoded extrinsic is always valid")
     }
 }

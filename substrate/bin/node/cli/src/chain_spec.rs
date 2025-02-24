@@ -18,7 +18,7 @@
 
 //! Substrate chain configurations.
 
-use polkadot_sdk::*;
+use polkadot_sdk::{sc_rpc_spec_v2::chain_spec, *};
 
 use argochain_runtime::{
 	constants::currency::*, wasm_binary_unwrap, Block, MaxNominations, SessionKeys, StakerStatus,
@@ -636,7 +636,6 @@ fn development_config_genesis_json() -> serde_json::Value {
 		vec![],
 		get_account_id_from_seed::<sr25519::Public>("Alice"),
 		None,
-		1295,
 	)
 }
 
@@ -655,7 +654,6 @@ pub fn development_genesis(
 	initial_nominators: Vec<AccountId>,
 	root_key: AccountId,
 	endowed_accounts: Option<Vec<AccountId>>,
-	chain_id:u32,
 ) -> serde_json::Value {
 	let (initial_authorities, endowed_accounts, num_endowed_accounts, stakers) =
 	dev_configure_accounts(initial_authorities, initial_nominators, endowed_accounts, STASH);
@@ -718,7 +716,6 @@ pub fn development_genesis(
 			"minCreateBond": 10 * ARGO,
 			"minJoinBond": 1 * ARGO,
 		},
-		// "evmChainId": { "chainId": chain_id },
 	})
 }
 
@@ -752,68 +749,68 @@ pub fn local_testnet_config() -> ChainSpec {
 		.build()
 }
 
-// #[cfg(test)]
-// pub(crate) mod tests {
-// 	use super::*;
-// 	use crate::service::{new_full_base, NewFullBase};
-// 	use sc_service_test;
-// 	use sp_runtime::BuildStorage;
+#[cfg(test)]
+pub(crate) mod tests {
+	use super::*;
+	use crate::service::{new_full_base, NewFullBase};
+	use sc_service_test;
+	use sp_runtime::BuildStorage;
 
-// 	/// Local testnet config (single validator - Alice).
-// 	pub fn integration_test_config_with_single_authority() -> ChainSpec {
-// 		ChainSpec::builder(wasm_binary_unwrap(), Default::default())
-// 			.with_name("Integration Test")
-// 			.with_id("test")
-// 			.with_chain_type(ChainType::Development)
-// 			.with_genesis_config_patch(testnet_genesis(
-// 				vec![authority_keys_from_seed("Alice")],
-// 				vec![],
-// 				get_account_id_from_seed::<sr25519::Public>("Alice"),
-// 				None,
-// 			))
-// 			.build()
-// 	}
+	/// Local testnet config (single validator - Alice).
+	pub fn integration_test_config_with_single_authority() -> ChainSpec {
+		ChainSpec::builder(wasm_binary_unwrap(), Default::default())
+			.with_name("Integration Test")
+			.with_id("test")
+			.with_chain_type(ChainType::Development)
+			.with_genesis_config_patch(testnet_genesis(
+				vec![authority_keys_from_seed("Alice")],
+				vec![],
+				get_account_id_from_seed::<sr25519::Public>("Alice"),
+				None,
+			))
+			.build()
+	}
 
-// 	/// Local testnet config (multivalidator Alice + Bob).
-// 	pub fn integration_test_config_with_two_authorities() -> ChainSpec {
-// 		ChainSpec::builder(wasm_binary_unwrap(), Default::default())
-// 			.with_name("Integration Test")
-// 			.with_id("test")
-// 			.with_chain_type(ChainType::Development)
-// 			.with_genesis_config_patch(local_testnet_genesis())
-// 			.build()
-// 	}
+	/// Local testnet config (multivalidator Alice + Bob).
+	pub fn integration_test_config_with_two_authorities() -> ChainSpec {
+		ChainSpec::builder(wasm_binary_unwrap(), Default::default())
+			.with_name("Integration Test")
+			.with_id("test")
+			.with_chain_type(ChainType::Development)
+			.with_genesis_config_patch(local_testnet_genesis())
+			.build()
+	}
 
-// 	#[test]
-// 	#[ignore]
-// 	fn test_connectivity() {
-// 		sp_tracing::try_init_simple();
+	#[test]
+	#[ignore]
+	fn test_connectivity() {
+		sp_tracing::try_init_simple();
 
-// 		sc_service_test::connectivity(integration_test_config_with_two_authorities(), |config| {
-// 			let NewFullBase { task_manager, client, network, sync, transaction_pool, .. } =
-// 				new_full_base::<sc_network::NetworkWorker<_, _>>(config, None, false, |_, _| ())?;
-// 			Ok(sc_service_test::TestNetComponents::new(
-// 				task_manager,
-// 				client,
-// 				network,
-// 				sync,
-// 				transaction_pool,
-// 			))
-// 		});
-// 	}
+		sc_service_test::connectivity(integration_test_config_with_two_authorities(), |config| {
+			let NewFullBase { task_manager, client, network, sync, transaction_pool, .. } =
+				new_full_base::<sc_network::NetworkWorker<_, _>>(config, None, false, |_, _| ())?;
+			Ok(sc_service_test::TestNetComponents::new(
+				task_manager,
+				client,
+				network,
+				sync,
+				transaction_pool,
+			))
+		});
+	}
 
-// 	#[test]
-// 	fn test_create_development_chain_spec() {
-// 		development_config().build_storage().unwrap();
-// 	}
+	#[test]
+	fn test_create_development_chain_spec() {
+		development_config().build_storage().unwrap();
+	}
 
-// 	#[test]
-// 	fn test_create_local_testnet_chain_spec() {
-// 		local_testnet_config().build_storage().unwrap();
-// 	}
+	#[test]
+	fn test_create_local_testnet_chain_spec() {
+		local_testnet_config().build_storage().unwrap();
+	}
 
-// 	#[test]
-// 	fn test_staging_test_net_chain_spec() {
-// 		staging_testnet_config().build_storage().unwrap();
-// 	}
-// }
+	#[test]
+	fn test_staging_test_net_chain_spec() {
+		staging_testnet_config().build_storage().unwrap();
+	}
+}
