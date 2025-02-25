@@ -2,7 +2,7 @@
 name = "sc-cli"
 version = "0.46.0"
 authors.workspace = true
-description = "Substrate CLI interface. (polkadot v1.15.0)"
+description = "Substrate CLI interface. "
 edition.workspace = true
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 homepage = "https://substrate.io"

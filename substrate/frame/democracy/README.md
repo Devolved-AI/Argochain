@@ -135,6 +135,4 @@ This call can only be made by the `VetoOrigin`.
 License: Apache-2.0
 
 
-## Release
 
-polkadot v1.15.0

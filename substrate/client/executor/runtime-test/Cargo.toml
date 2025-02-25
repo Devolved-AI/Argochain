@@ -8,7 +8,7 @@ license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 publish = false
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "sc-runtime-test (polkadot v1.15.0)"
+description = "sc-runtime-test "
 
 [lints]
 workspace = true

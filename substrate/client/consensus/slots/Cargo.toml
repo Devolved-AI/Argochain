@@ -2,7 +2,7 @@
 name = "sc-consensus-slots"
 version = "0.43.0"
 authors.workspace = true
-description = "Generic slots-based utilities for consensus (polkadot v1.15.0)"
+description = "Generic slots-based utilities for consensus "
 edition.workspace = true
 build = "build.rs"
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"

@@ -7,7 +7,7 @@ license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
 publish = false
-description = "sp-test-primitives (polkadot v1.15.0)"
+description = "sp-test-primitives "
 
 [lints]
 workspace = true

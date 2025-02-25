@@ -25,8 +25,8 @@ pub enum BackendType {
     /// Either RocksDb or ParityDb as per inherited from the global backend settings.
     #[default]
     KeyValue,
-    /// Sql database with custom log indexing.
-    Sql,
+    // Sql database with custom log indexing.
+    // Sql,
 }
 
 /// The ethereum-compatibility configuration used to run a node.

@@ -34,6 +34,4 @@ then those filter will not be used when dispatching the schedule call.
 License: Apache 2.0
 
 
-## Release
 
-polkadot v1.15.0

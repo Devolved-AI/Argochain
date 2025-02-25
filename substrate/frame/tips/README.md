@@ -33,6 +33,4 @@ any finders fee, in case of a public (and bonded) original report.
 - `slash_tip` - Remove and slash an already-open tip.
 
 
-## Release
 
-polkadot v1.15.0

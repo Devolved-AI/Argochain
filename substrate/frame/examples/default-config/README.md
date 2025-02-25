@@ -8,6 +8,4 @@ Run `cargo doc --package pallet-default-config-example --open` to view this pall
 License: MIT-0
 
 
-## Release
 
-polkadot v1.15.0

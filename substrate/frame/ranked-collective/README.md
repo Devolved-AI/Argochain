@@ -22,6 +22,4 @@ An origin control, `EnsureRank`, ensures that the origin is a member of the coll
 least a particular rank.
 
 
-## Release
 
-polkadot v1.15.0

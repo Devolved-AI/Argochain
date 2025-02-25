@@ -6,7 +6,7 @@ edition.workspace = true
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "A crate that provides means of executing/dispatching calls into the runtime. (polkadot v1.15.0)"
+description = "A crate that provides means of executing/dispatching calls into the runtime. "
 documentation = "https://docs.rs/sc-executor"
 readme = "README.md"
 

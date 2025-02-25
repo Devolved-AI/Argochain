@@ -10,6 +10,4 @@ Run `cargo doc --package pallet-example-split --open` to view this pallet's docu
 License: MIT-0
 
 
-## Release
 
-polkadot v1.15.0

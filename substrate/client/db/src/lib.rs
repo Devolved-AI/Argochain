@@ -346,6 +346,13 @@ pub enum DatabaseSource {
 		/// Cache size in MiB. Used only by `RocksDb` variant of `DatabaseSource`.
 		cache_size: usize,
 	},
+
+	/// Load a ParityDb database from a given path.
+	ParityDb {
+		/// Path to the database.
+		path: PathBuf,
+	},
+
 	/// Load a RocksDB database from a given path. Recommended for most uses.
 	#[cfg(feature = "rocksdb")]
 	RocksDb {
@@ -355,11 +362,7 @@ pub enum DatabaseSource {
 		cache_size: usize,
 	},
 
-	/// Load a ParityDb database from a given path.
-	ParityDb {
-		/// Path to the database.
-		path: PathBuf,
-	},
+	
 
 	/// Use a custom already-open database.
 	Custom {
@@ -380,9 +383,10 @@ impl DatabaseSource {
 			// IIUC this is needed for polkadot to create its own dbs, so until it can use parity db
 			// I would think rocksdb, but later parity-db.
 			DatabaseSource::Auto { paritydb_path, .. } => Some(paritydb_path),
+			
+			DatabaseSource::ParityDb { path } => Some(path),
 			#[cfg(feature = "rocksdb")]
 			DatabaseSource::RocksDb { path, .. } => Some(path),
-			DatabaseSource::ParityDb { path } => Some(path),
 			DatabaseSource::Custom { .. } => None,
 		}
 	}
@@ -394,15 +398,16 @@ impl DatabaseSource {
 				*paritydb_path = p.into();
 				true
 			},
+			DatabaseSource::ParityDb { ref mut path } => {
+				*path = p.into();
+				true
+			},
 			#[cfg(feature = "rocksdb")]
 			DatabaseSource::RocksDb { ref mut path, .. } => {
 				*path = p.into();
 				true
 			},
-			DatabaseSource::ParityDb { ref mut path } => {
-				*path = p.into();
-				true
-			},
+			
 			DatabaseSource::Custom { .. } => false,
 		}
 	}

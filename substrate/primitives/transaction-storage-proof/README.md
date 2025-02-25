@@ -5,6 +5,4 @@ Contains types and basic code to extract storage proofs for indexed transactions
 License: Apache-2.0
 
 
-## Release
 
-polkadot v1.15.0

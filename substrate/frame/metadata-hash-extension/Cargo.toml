@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage.workspace = true
 repository.workspace = true
-description = "FRAME signed extension for verifying the metadata hash (polkadot v1.15.0)"
+description = "FRAME signed extension for verifying the metadata hash "
 
 [dependencies]
 array-bytes = { workspace = true, default-features = true }

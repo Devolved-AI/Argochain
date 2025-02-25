@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "FRAME delegated staking pallet (polkadot v1.15.0)"
+description = "FRAME delegated staking pallet "
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]

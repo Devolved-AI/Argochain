@@ -6,7 +6,7 @@ edition.workspace = true
 license.workspace = true
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "A mock network for testing pallet-contracts (polkadot v1.15.0)"
+description = "A mock network for testing pallet-contracts "
 
 [lints]
 workspace = true

@@ -2,7 +2,7 @@
 name = "sp-consensus-slots"
 version = "0.40.0"
 authors.workspace = true
-description = "Primitives for slots-based consensus (polkadot v1.15.0)"
+description = "Primitives for slots-based consensus "
 edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"

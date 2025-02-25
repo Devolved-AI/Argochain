@@ -1,6 +1,6 @@
 [package]
 name = "substrate-cli-test-utils"
-description = "CLI testing utilities (polkadot v1.15.0)"
+description = "CLI testing utilities "
 version = "0.1.0"
 authors.workspace = true
 edition.workspace = true

@@ -60,6 +60,4 @@ The exposed pallet sub-command is identical as the node-integrated CLI. The only
 it needs to be prefixed with a `v1` to ensure drop-in compatibility.
 
 
-## Release
 
-polkadot v1.15.0

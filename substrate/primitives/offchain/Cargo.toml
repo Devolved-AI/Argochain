@@ -1,5 +1,5 @@
 [package]
-description = "Substrate offchain workers primitives (polkadot v1.15.0)"
+description = "Substrate offchain workers primitives "
 name = "sp-offchain"
 version = "34.0.0"
 license = "Apache-2.0"

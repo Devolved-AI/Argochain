@@ -39,6 +39,4 @@ General spending/proposal protocol:
 - `void_spend` - Void previously approved spend
 
 
-## Release
 
-polkadot v1.15.0

@@ -368,6 +368,4 @@ definitely don't want to have all cores validating network transactions, because
 all of these transactions need to be considered untrusted (potentially DoS).
 
 
-## Release
 
-polkadot v1.15.0

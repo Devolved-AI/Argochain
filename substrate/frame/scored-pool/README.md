@@ -73,6 +73,4 @@ This module depends on the [System module](https://docs.rs/frame-system/latest/f
 License: Apache-2.0
 
 
-## Release
 
-polkadot v1.15.0

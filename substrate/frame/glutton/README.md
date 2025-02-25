@@ -13,6 +13,4 @@ specific ration of the remaining weight. The rations can be set via `set_compute
 Initially the `Glutton` needs to be initialized once with `initialize_pallet`.
 
 
-## Release
 
-polkadot v1.15.0

@@ -59,6 +59,4 @@ This module depends on the [Session module](https://docs.rs/pallet-session/lates
 License: Apache-2.0
 
 
-## Release
 
-polkadot v1.15.0

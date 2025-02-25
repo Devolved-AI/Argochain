@@ -1,5 +1,5 @@
 [package]
-description = "Substrate offchain workers (polkadot v1.15.0)"
+description = "Substrate offchain workers "
 name = "sc-offchain"
 version = "39.0.0"
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"

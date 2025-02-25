@@ -2,11 +2,11 @@
 name = "staging-node-cli"
 version = "3.0.0"
 authors.workspace = true
-description = "Generic Substrate node implementation in Rust. (polkadot v1.15.0)"
+description = "Generic Substrate node implementation in Rust. "
 build = "build.rs"
 edition.workspace = true
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
-default-run = "argochain-node"
+default-run = "argochain"
 homepage = "https://substrate.io"
 repository.workspace = true
 publish = false
@@ -28,7 +28,7 @@ is-it-maintained-issue-resolution = { repository = "paritytech/polkadot-sdk" }
 is-it-maintained-open-issues = { repository = "paritytech/polkadot-sdk" }
 
 [[bin]]
-name = "argochain-node"
+name = "argochain"
 path = "bin/main.rs"
 required-features = ["cli"]
 

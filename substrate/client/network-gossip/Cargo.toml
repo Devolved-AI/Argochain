@@ -1,5 +1,5 @@
 [package]
-description = "Gossiping for the Substrate network protocol (polkadot v1.15.0)"
+description = "Gossiping for the Substrate network protocol "
 name = "sc-network-gossip"
 version = "0.44.0"
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"

@@ -25,6 +25,4 @@ If there are not, or if no prime member is set, then the motion is dropped witho
 License: Apache-2.0
 
 
-## Release
 
-polkadot v1.15.0

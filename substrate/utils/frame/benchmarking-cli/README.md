@@ -98,6 +98,4 @@ License: Apache-2.0
 [block]: src/block/README.md
 
 
-## Release
 
-polkadot v1.15.0

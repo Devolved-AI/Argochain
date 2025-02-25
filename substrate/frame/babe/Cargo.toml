@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "Consensus extension module for BABE consensus. Collects on-chain randomness from VRF outputs and manages epoch transitions. (polkadot v1.15.0)"
+description = "Consensus extension module for BABE consensus. Collects on-chain randomness from VRF outputs and manages epoch transitions. "
 readme = "README.md"
 
 [lints]

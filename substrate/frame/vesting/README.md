@@ -32,6 +32,4 @@ This module implements the `VestingSchedule` trait.
 License: Apache-2.0
 
 
-## Release
 
-polkadot v1.15.0

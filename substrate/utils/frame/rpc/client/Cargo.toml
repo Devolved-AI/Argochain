@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "Shared JSON-RPC client (polkadot v1.15.0)"
+description = "Shared JSON-RPC client "
 
 [lints]
 workspace = true

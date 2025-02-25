@@ -131,17 +131,18 @@ impl<Block: BlockT, C: HeaderBackend<Block>> Backend<Block, C> {
 			&DatabaseSettings {
 				source: match database {
 					DatabaseSource::Auto { .. } => DatabaseSource::Auto {
-						rocksdb_path: frontier_database_dir(db_config_dir, "db"),
 						paritydb_path: frontier_database_dir(db_config_dir, "paritydb"),
+						rocksdb_path: frontier_database_dir(db_config_dir, "db"),
+
 						cache_size: 0,
+					},
+					DatabaseSource::ParityDb { .. } => DatabaseSource::ParityDb {
+						path: frontier_database_dir(db_config_dir, "paritydb"),
 					},
 					#[cfg(feature = "rocksdb")]
 					DatabaseSource::RocksDb { .. } => DatabaseSource::RocksDb {
 						path: frontier_database_dir(db_config_dir, "db"),
 						cache_size: 0,
-					},
-					DatabaseSource::ParityDb { .. } => DatabaseSource::ParityDb {
-						path: frontier_database_dir(db_config_dir, "paritydb"),
 					},
 					_ => {
 						return Err(

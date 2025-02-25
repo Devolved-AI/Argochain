@@ -7,7 +7,7 @@ license = "Apache-2.0"
 publish = false
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "frame-support-test-compile-pass (polkadot v1.15.0)"
+description = "frame-support-test-compile-pass "
 
 [lints]
 workspace = true

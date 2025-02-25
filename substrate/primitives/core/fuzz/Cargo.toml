@@ -3,7 +3,7 @@ name = "sp-core-fuzz"
 version = "0.1.0"
 publish = false
 edition.workspace = true
-description = "sp-core-fuzz (polkadot v1.15.0)"
+description = "sp-core-fuzz "
 
 [lints]
 workspace = true

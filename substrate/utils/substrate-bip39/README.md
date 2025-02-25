@@ -55,6 +55,4 @@ multiple networks using that. A completely different wordlist would make their l
 providing future Substrate support.
 
 
-## Release
 
-polkadot v1.15.0

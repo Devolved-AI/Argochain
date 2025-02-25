@@ -1,5 +1,5 @@
 [package]
-description = "FRAME's mixnet pallet (polkadot v1.15.0)"
+description = "FRAME's mixnet pallet "
 name = "pallet-mixnet"
 version = "0.13.0"
 license = "Apache-2.0"

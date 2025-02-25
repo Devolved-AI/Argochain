@@ -64,6 +64,4 @@ Bounty protocol:
 - `close_bounty` - Cancel the earmark for a specific treasury amount and close the bounty.
 
 
-## Release
 
-polkadot v1.15.0

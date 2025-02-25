@@ -2,7 +2,7 @@
 name = "substrate-wasm-builder"
 version = "24.0.0"
 authors.workspace = true
-description = "Utility for building WASM binaries (polkadot v1.15.0)"
+description = "Utility for building WASM binaries "
 edition.workspace = true
 repository.workspace = true
 license = "Apache-2.0"

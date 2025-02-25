@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "Primitives for GRANDPA integration, suitable for WASM compilation. (polkadot v1.15.0)"
+description = "Primitives for GRANDPA integration, suitable for WASM compilation. "
 documentation = "https://docs.rs/sp-consensus-grandpa"
 readme = "README.md"
 

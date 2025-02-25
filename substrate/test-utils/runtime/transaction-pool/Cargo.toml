@@ -7,7 +7,7 @@ license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
 publish = false
-description = "substrate-test-runtime-transaction-pool (polkadot v1.15.0)"
+description = "substrate-test-runtime-transaction-pool "
 
 [lints]
 workspace = true

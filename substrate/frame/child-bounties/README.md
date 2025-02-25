@@ -29,6 +29,4 @@ Child Bounty protocol:
   and close the bounty.
 
 
-## Release
 
-polkadot v1.15.0

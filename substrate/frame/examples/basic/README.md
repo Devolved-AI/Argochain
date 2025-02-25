@@ -240,6 +240,4 @@ pub trait Config: <INSERT_CUSTOM_PALLET_NAME>::Config { }
 License: MIT-0
 
 
-## Release
 
-polkadot v1.15.0

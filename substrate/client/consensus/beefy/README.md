@@ -373,6 +373,4 @@ key format message at node startup. Basically something like
 TODO
 
 
-## Release
 
-polkadot v1.15.0

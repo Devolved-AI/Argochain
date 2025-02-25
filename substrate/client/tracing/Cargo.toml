@@ -6,7 +6,7 @@ authors.workspace = true
 edition.workspace = true
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "Instrumentation implementation for substrate. (polkadot v1.15.0)"
+description = "Instrumentation implementation for substrate. "
 readme = "README.md"
 
 [lints]

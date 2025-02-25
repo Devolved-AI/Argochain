@@ -8,6 +8,4 @@ unlock the NFT, an account must hold the full issuance of the asset the NFT was 
 fungible asset will not allow the unlocking of the NFT.
 
 
-## Release
 
-polkadot v1.15.0

@@ -6,7 +6,7 @@ edition.workspace = true
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "A set of common definitions that are needed for defining execution engines. (polkadot v1.15.0)"
+description = "A set of common definitions that are needed for defining execution engines. "
 documentation = "https://docs.rs/sc-executor-common/"
 readme = "README.md"
 

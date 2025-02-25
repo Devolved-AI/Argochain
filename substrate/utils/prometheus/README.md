@@ -20,6 +20,4 @@ To learn how to configure Prometheus see the Prometheus [Getting
 Started](https://prometheus.io/docs/prometheus/latest/getting_started/) guide.
 
 
-## Release
 
-polkadot v1.15.0

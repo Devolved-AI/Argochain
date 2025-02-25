@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "Paymaster (polkadot v1.15.0)"
+description = "Paymaster "
 readme = "README.md"
 
 [lints]

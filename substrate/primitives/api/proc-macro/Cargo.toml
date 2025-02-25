@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "Macros for declaring and implementing runtime apis. (polkadot v1.15.0)"
+description = "Macros for declaring and implementing runtime apis. "
 documentation = "https://docs.rs/sp-api-proc-macro"
 
 [lints]

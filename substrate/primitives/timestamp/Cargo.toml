@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "Substrate core types and inherents for timestamps. (polkadot v1.15.0)"
+description = "Substrate core types and inherents for timestamps. "
 readme = "README.md"
 
 [lints]

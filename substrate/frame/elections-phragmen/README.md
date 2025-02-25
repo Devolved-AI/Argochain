@@ -61,6 +61,4 @@ votes, `M` will keep being re-elected at the end of each round.
 License: Apache-2.0
 
 
-## Release
 
-polkadot v1.15.0

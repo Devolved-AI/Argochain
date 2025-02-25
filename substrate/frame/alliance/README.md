@@ -66,6 +66,4 @@ to update the Alliance's rule and make announcements.
 - `disband` - Disband the Alliance, remove all active members and unreserve deposits.
 
 
-## Release
 
-polkadot v1.15.0

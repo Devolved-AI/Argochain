@@ -23,6 +23,4 @@ claimed within a specified duration of time, the sender may cancel it.
 License: Apache-2.0
 
 
-## Release
 
-polkadot v1.15.0

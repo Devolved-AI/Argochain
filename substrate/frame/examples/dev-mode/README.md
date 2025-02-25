@@ -11,6 +11,4 @@ Run `cargo doc --package pallet-dev-mode --open` to view this pallet's documenta
 License: MIT-0
 
 
-## Release
 
-polkadot v1.15.0

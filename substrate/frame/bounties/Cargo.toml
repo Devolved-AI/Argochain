@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "FRAME pallet to manage bounties (polkadot v1.15.0)"
+description = "FRAME pallet to manage bounties "
 readme = "README.md"
 
 [lints]

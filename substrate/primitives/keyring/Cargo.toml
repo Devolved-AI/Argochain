@@ -6,7 +6,7 @@ edition.workspace = true
 license = "Apache-2.0"
 homepage = "https://substrate.io"
 repository.workspace = true
-description = "Keyring support code for the runtime. A set of test accounts. (polkadot v1.15.0)"
+description = "Keyring support code for the runtime. A set of test accounts. "
 documentation = "https://docs.rs/sp-keyring"
 readme = "README.md"
 

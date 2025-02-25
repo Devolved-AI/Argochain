@@ -1,5 +1,5 @@
 [package]
-description = "Substrate sync network protocol (polkadot v1.15.0)"
+description = "Substrate sync network protocol "
 name = "sc-network-sync"
 version = "0.43.0"
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"

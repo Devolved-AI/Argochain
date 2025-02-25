@@ -48,6 +48,4 @@ An in-depth description and analysis of the protocol can be found here:
 License: GPL-3.0-or-later WITH Classpath-exception-2.0
 
 
-## Release
 
-polkadot v1.15.0

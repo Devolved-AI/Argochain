@@ -8,6 +8,4 @@
 The Referenda pallet handles the administration of general stakeholder voting.
 
 
-## Release
 
-polkadot v1.15.0

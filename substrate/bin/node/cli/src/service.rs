@@ -31,6 +31,7 @@ pub use crate::eth::{
 };
 use crate::Cli;
 use fc_storage::StorageOverrideHandler;
+use fc_db::kv::frontier_database_dir;
 use fc_consensus::FrontierBlockImport;
 
 use sc_network::Litep2pNetworkBackend;
@@ -43,6 +44,7 @@ use frame_system_rpc_runtime_api::AccountNonceApi;
 use futures::prelude::*;
 use argochain_runtime::{RuntimeApi,TransactionConverter};
 use node_primitives::{Block,Nonce,Hash};
+use sc_service::config::DatabaseSource;
 use sc_client_api::{Backend, BlockBackend};
 use sc_consensus_babe::{self, SlotProportion,BabeWorkerHandle};
 use sc_network::{
@@ -366,6 +368,10 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 	),
 ) -> Result<NewFullBase, ServiceError> {
 	  // let (mixnet_api, mixnet_api_backend) = mixnet_config.map(sc_mixnet::Api::new.clone()).unzip();
+	//   let mut config = config;
+	//   config.database = DatabaseSource::ParityDb {
+	// 	path: db_config_dir(&config),
+	// };
 	  let is_offchain_indexing_enabled = config.offchain_worker.indexing_enabled;
 	  let role = config.role.clone();
 	  let force_authoring = config.force_authoring;
@@ -524,32 +530,37 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		  >::new(&config.network);
   
 		  let frontier_backend = match eth_config.frontier_backend_type {
-			  BackendType::KeyValue => FrontierBackend::KeyValue(Arc::new(fc_db::kv::Backend::open(
-				  Arc::clone(&client),
-				  &config.database,
-				  &db_config_dir(&config),
-			  )?)),
-			  BackendType::Sql => {
-				  let db_path = db_config_dir(&config).join("sql");
-				  std::fs::create_dir_all(&db_path).expect("failed creating sql db directory");
-				  let backend = futures::executor::block_on(fc_db::sql::Backend::new(
-					  fc_db::sql::BackendConfig::Sqlite(fc_db::sql::SqliteBackendConfig {
-						  path: Path::new("sqlite:///")
-							  .join(db_path)
-							  .join("frontier.db3")
-							  .to_str()
-							  .unwrap(),
-						  create_if_missing: true,
-						  thread_count: eth_config.frontier_sql_backend_thread_count,
-						  cache_size: eth_config.frontier_sql_backend_cache_size,
-					  }),
-					  eth_config.frontier_sql_backend_pool_size,
-					  std::num::NonZeroU32::new(eth_config.frontier_sql_backend_num_ops_timeout),
-					  storage_override.clone(),
-				  ))
-				  .unwrap_or_else(|err| panic!("failed creating sql backend: {:?}", err));
-				  FrontierBackend::Sql(Arc::new(backend))
-			  }
+			BackendType::KeyValue => FrontierBackend::KeyValue(Arc::new(fc_db::kv::Backend::open(
+				Arc::clone(&client),
+				&DatabaseSource::Auto {
+					paritydb_path: frontier_database_dir(&db_config_dir(&config), "paritydb"),
+					rocksdb_path: frontier_database_dir(&db_config_dir(&config), "db"),
+					cache_size: 0,
+				},
+				&db_config_dir(&config),
+			)?)),
+		
+			//   BackendType::Sql => {
+			// 	  let db_path = db_config_dir(&config).join("sql");
+			// 	  std::fs::create_dir_all(&db_path).expect("failed creating sql db directory");
+			// 	  let backend = futures::executor::block_on(fc_db::sql::Backend::new(
+			// 		  fc_db::sql::BackendConfig::Sqlite(fc_db::sql::SqliteBackendConfig {
+			// 			  path: Path::new("sqlite:///")
+			// 				  .join(db_path)
+			// 				  .join("frontier.db3")
+			// 				  .to_str()
+			// 				  .unwrap(),
+			// 			  create_if_missing: true,
+			// 			  thread_count: eth_config.frontier_sql_backend_thread_count,
+			// 			  cache_size: eth_config.frontier_sql_backend_cache_size,
+			// 		  }),
+			// 		  eth_config.frontier_sql_backend_pool_size,
+			// 		  std::num::NonZeroU32::new(eth_config.frontier_sql_backend_num_ops_timeout),
+			// 		  storage_override.clone(),
+			// 	  ))
+			// 	  .unwrap_or_else(|err| panic!("failed creating sql backend: {:?}", err));
+			// 	  FrontierBackend::Sql(Arc::new(backend))
+			//   }
 		  };
   
 		  let frontier_backend1 = Arc::new(frontier_backend);
