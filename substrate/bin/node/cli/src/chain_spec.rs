@@ -30,11 +30,9 @@ use sc_telemetry::TelemetryEndpoints;
 use serde::{Deserialize, Serialize};
 use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;
 use sp_consensus_babe::AuthorityId as BabeId;
-use sp_consensus_beefy::ecdsa_crypto::AuthorityId as BeefyId;
 use sc_chain_spec::Properties;
 use sp_consensus_grandpa::AuthorityId as GrandpaId;
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public};
-use sp_mixnet::types::AuthorityId as MixnetId;
 use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
 	Perbill,
@@ -85,10 +83,9 @@ fn session_keys(
 	babe: BabeId,
 	im_online: ImOnlineId,
 	authority_discovery: AuthorityDiscoveryId,
-	mixnet: MixnetId,
-	beefy: BeefyId,
+
 ) -> SessionKeys {
-	SessionKeys { grandpa, babe, im_online, authority_discovery, mixnet, beefy }
+	SessionKeys { grandpa, babe, im_online, authority_discovery }
 }
 
 fn configure_accounts_for_staging_testnet() -> (
@@ -99,8 +96,7 @@ fn configure_accounts_for_staging_testnet() -> (
 		BabeId,
 		ImOnlineId,
 		AuthorityDiscoveryId,
-		MixnetId,
-		BeefyId,
+
 	)>,
 	AccountId,
 	Vec<(AccountId, Balance)>
@@ -125,8 +121,8 @@ fn configure_accounts_for_staging_testnet() -> (
 		BabeId,
 		ImOnlineId,
 		AuthorityDiscoveryId,
-		MixnetId,
-		BeefyId,
+		// MixnetId,
+		// BeefyId,
 	)> = vec![
 		(
 			// Validator 01
@@ -152,10 +148,7 @@ fn configure_accounts_for_staging_testnet() -> (
 			// 5EJ1tvbXDNMnMSQt5N1LHMuhZ74UodGRsHLkEhmL1U9gbdGL
 			array_bytes::hex2array_unchecked("629f61aa89835bea084ad5cc02c65fe5043d6adc4dc214837dc941f6599a5e34")
 				.unchecked_into(),
-			array_bytes::hex2array_unchecked("cefdf82ef1eb82494f7375eda9a8a20482f44b40cedfb2107fce35c5f3abc068")
-				.unchecked_into(),
-			array_bytes::hex2array_unchecked("0381917b51fc1118f5f57b73e63906d868d504f5b1a9f8233cd645cd82733f5e69")
-				.unchecked_into(),
+			
 				
 		),
 		(
@@ -182,10 +175,7 @@ fn configure_accounts_for_staging_testnet() -> (
 			// 5F9WL65F6Vb6iTzhpGFDnKrQzhn7zwoU4eyNPX4LwfD6wkXR
 			array_bytes::hex2array_unchecked("885e1f8a0b2f3a1526d294f9030b9b9f7329cd2657a81f13d9eb1391dfd20415")
 				.unchecked_into(),
-			array_bytes::hex2array_unchecked("8ce9837ac99a1d8eabff81c60532a035f5ee9024a03dfe7088254ae75cffbf06")
-				.unchecked_into(),
-			array_bytes::hex2array_unchecked("02bc728f9f8d0421a17ea4691d11a514158026e9d8b653591ab7576e176ca9b58f")
-				.unchecked_into(),
+			
 		),
 		(	
 			// Validator 03
@@ -211,10 +201,7 @@ fn configure_accounts_for_staging_testnet() -> (
 			// 5HozsyRsJDe4pGcsYPWP7cppwcRSRyEdtEF8fcdEiUc37HCc
 			array_bytes::hex2array_unchecked("fe3205c22a92b36ac37380633f5c25b540ebb58390c0e6a91f3ac2a1b8040d5f")
 				.unchecked_into(),
-			array_bytes::hex2array_unchecked("a0fcfd62d245ff4aa7acc522dcb15e09fc47d1a49e8c2a5245bdd50d555da832")
-				.unchecked_into(),
-			array_bytes::hex2array_unchecked("02acb687a59feaecdfd872be7616a6189bf0804fe57af824508c731a5742e4c40e")
-				.unchecked_into(),
+			
 		),
 		(
 			// Validator 04
@@ -240,10 +227,7 @@ fn configure_accounts_for_staging_testnet() -> (
 			// 5FjFSpmHEy2sBzCqhmAi67PaSURTU9Gou3kguwf49qjDFGmW
 			array_bytes::hex2array_unchecked("a21a5d08177dce2ad9d2bd38000aa1b0db6b6f7b5b30c9cf67eb7a8cb681ba30")
 				.unchecked_into(),
-			array_bytes::hex2array_unchecked("d0ac8ea7d521fb7ed2de962341734fe83ba81735b96e0dda9c846ce7fc779627")
-				.unchecked_into(),
-			array_bytes::hex2array_unchecked("0329726cab1fb921dbfb3d8c7c14e32b4b850142ca9105fa8a6d02cc3e78b58c97")
-				.unchecked_into(),
+			
 		),
 		(
 			// Validator 05
@@ -269,10 +253,7 @@ fn configure_accounts_for_staging_testnet() -> (
 			// 5FjFSpmHEy2sBzCqhmAi67PaSURTU9Gou3kguwf49qjDFGmW
 			array_bytes::hex2array_unchecked("a0e8f82617a4efe279794e3c5112853eaa03fd9f482d9d7c5d33400bb5c11077")
 				.unchecked_into(),
-			array_bytes::hex2array_unchecked("fe10694c216228655fb8e6514bb35efde3e6438f1d5504b9c0a5c4bec2f37e19")
-				.unchecked_into(),
-			array_bytes::hex2array_unchecked("02792962e0e1cab2d758f0c65c2451d313407d7bce1f3538e00291aa9e7a58d6de")
-				.unchecked_into(),
+			
 		),
 		(
 			// Validator 06
@@ -298,10 +279,7 @@ fn configure_accounts_for_staging_testnet() -> (
 			// 5FjFSpmHEy2sBzCqhmAi67PaSURTU9Gou3kguwf49qjDFGmW
 			array_bytes::hex2array_unchecked("244a90e9025622e1317f642b96233d51a9bd08855541e1b8b65dfa0e02b49c0c")
 				.unchecked_into(),
-			array_bytes::hex2array_unchecked("78693ec925d1226b3ceddfff5c18dfff1ba04e72fc2333cb2862d1d798798c56")
-				.unchecked_into(),
-			array_bytes::hex2array_unchecked("02de529fb04bd9fb76546febb17f4873c68e4555e23775822c30b0f0fd9594d7f4")
-				.unchecked_into(),
+			
 		),
 	];
 
@@ -365,7 +343,7 @@ where
 /// Helper function to generate stash, controller and session key from seed.
 pub fn authority_keys_from_seed(
 	seed: &str,
-) -> (AccountId, AccountId, GrandpaId, BabeId, ImOnlineId, AuthorityDiscoveryId, MixnetId, BeefyId)
+) -> (AccountId, AccountId, GrandpaId, BabeId, ImOnlineId, AuthorityDiscoveryId)
 {
 	(
 		get_account_id_from_seed::<sr25519::Public>(&format!("{}//stash", seed)),
@@ -374,8 +352,7 @@ pub fn authority_keys_from_seed(
 		get_from_seed::<BabeId>(seed),
 		get_from_seed::<ImOnlineId>(seed),
 		get_from_seed::<AuthorityDiscoveryId>(seed),
-		get_from_seed::<MixnetId>(seed),
-		get_from_seed::<BeefyId>(seed),
+
 	)
 }
 
@@ -387,8 +364,6 @@ fn configure_accounts(
 		BabeId,
 		ImOnlineId,
 		AuthorityDiscoveryId,
-		MixnetId,
-		BeefyId,
 	)>,
 	initial_nominators: Vec<AccountId>,
 	endowed_accounts: Option<Vec<(AccountId,Balance)>>,
@@ -401,8 +376,8 @@ fn configure_accounts(
 		BabeId,
 		ImOnlineId,
 		AuthorityDiscoveryId,
-		MixnetId,
-		BeefyId,
+		// MixnetId,
+		// BeefyId,
 	)>,
 	Vec<(AccountId, Balance)>,
 	usize,
@@ -463,8 +438,7 @@ fn dev_configure_accounts(
 		BabeId,
 		ImOnlineId,
 		AuthorityDiscoveryId,
-		MixnetId,
-		BeefyId,
+
 	)>,
 	initial_nominators: Vec<AccountId>,
 	endowed_accounts: Option<Vec<AccountId>>,
@@ -477,8 +451,7 @@ fn dev_configure_accounts(
 		BabeId,
 		ImOnlineId,
 		AuthorityDiscoveryId,
-		MixnetId,
-		BeefyId,
+	
 	)>,
 	Vec<AccountId>,
 	usize,
@@ -544,8 +517,7 @@ pub fn testnet_genesis(
 		BabeId,
 		ImOnlineId,
 		AuthorityDiscoveryId,
-		MixnetId,
-		BeefyId,
+
 	)>,
 	initial_nominators: Vec<AccountId>,
 	root_key: AccountId,
@@ -591,8 +563,6 @@ pub fn testnet_genesis(
 							x.3.clone(),
 							x.4.clone(),
 							x.5.clone(),
-							x.6.clone(),
-							x.7.clone(),
 						),
 					)
 				})
@@ -626,7 +596,6 @@ pub fn testnet_genesis(
 			"minCreateBond": 10 * ARGO,
 			"minJoinBond": 1 * ARGO,
 		},
-		// "evmChainId": { "chainId": chain_id },
 	})
 }
 
@@ -648,8 +617,7 @@ pub fn development_genesis(
 		BabeId,
 		ImOnlineId,
 		AuthorityDiscoveryId,
-		MixnetId,
-		BeefyId,
+
 	)>,
 	initial_nominators: Vec<AccountId>,
 	root_key: AccountId,
@@ -674,8 +642,6 @@ pub fn development_genesis(
 							x.3.clone(),
 							x.4.clone(),
 							x.5.clone(),
-							x.6.clone(),
-							x.7.clone(),
 						),
 					)
 				})

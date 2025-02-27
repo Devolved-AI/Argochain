@@ -195,7 +195,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 2,
-	state_version: 2,
+	state_version: 1,
 };
 pub mod opaque {
     use super::*;
@@ -759,8 +759,8 @@ impl_opaque_keys! {
 		pub babe: Babe,
 		pub im_online: ImOnline,
 		pub authority_discovery: AuthorityDiscovery,
-		pub mixnet: Mixnet,
-		pub beefy: Beefy,
+		// pub mixnet: Mixnet,
+		// pub beefy: Beefy,
 	}
 }
 
@@ -1484,47 +1484,7 @@ parameter_types! {
 	pub CodeHashLockupDepositPercent: Perbill = Perbill::from_percent(30);
 }
 
-// impl pallet_contracts::Config for Runtime {
-// 	type Time = Timestamp;
-// 	type Randomness = RandomnessCollectiveFlip;
-// 	type Currency = Balances;
-// 	type RuntimeEvent = RuntimeEvent;
-// 	type RuntimeCall = RuntimeCall;
-// 	/// The safest default is to allow no calls at all.
-// 	///
-// 	/// Runtimes should whitelist dispatchables that are allowed to be called from contracts
-// 	/// and make sure they are stable. Dispatchables exposed to contracts are not allowed to
-// 	/// change because that would break already deployed contracts. The `Call` structure itself
-// 	/// is not allowed to change the indices of existing pallets, too.
-// 	type CallFilter = Nothing;
-// 	type DepositPerItem = DepositPerItem;
-// 	type DepositPerByte = DepositPerByte;
-// 	type DefaultDepositLimit = DefaultDepositLimit;
-// 	type CallStack = [pallet_contracts::Frame<Self>; 5];
-// 	type WeightPrice = pallet_transaction_payment::Pallet<Self>;
-// 	type WeightInfo = pallet_contracts::weights::SubstrateWeight<Self>;
-// 	type ChainExtension = ();
-// 	type Schedule = Schedule;
-// 	type AddressGenerator = pallet_contracts::DefaultAddressGenerator;
-// 	type MaxCodeLen = ConstU32<{ 123 * 1024 }>;
-// 	type MaxStorageKeyLen = ConstU32<128>;
-// 	type UnsafeUnstableInterface = ConstBool<false>;
-// 	type UploadOrigin = EnsureSigned<Self::AccountId>;
-// 	type InstantiateOrigin = EnsureSigned<Self::AccountId>;
-// 	type MaxDebugBufferLen = ConstU32<{ 2 * 1024 * 1024 }>;
-// 	type MaxTransientStorageSize = ConstU32<{ 1 * 1024 * 1024 }>;
-// 	type RuntimeHoldReason = RuntimeHoldReason;
-// 	#[cfg(not(feature = "runtime-benchmarks"))]
-// 	type Migrations = ();
-// 	#[cfg(feature = "runtime-benchmarks")]
-// 	type Migrations = pallet_contracts::migration::codegen::BenchMigrations;
-// 	type MaxDelegateDependencies = ConstU32<32>;
-// 	type CodeHashLockupDepositPercent = CodeHashLockupDepositPercent;
-// 	type Debug = ();
-// 	type Environment = ();
-// 	type ApiVersion = ();
-// 	type Xcm = ();
-// }
+
 
 impl pallet_sudo::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
@@ -1741,21 +1701,11 @@ impl pallet_mmr::Config for Runtime {
 	const INDEXING_PREFIX: &'static [u8] = b"mmr";
 	type Hashing = Keccak256;
 	type LeafData = pallet_mmr::ParentNumberAndHash<Self>;
-	type OnNewRoot = pallet_beefy_mmr::DepositBeefyDigest<Runtime>;
+	type OnNewRoot = ();
 	type BlockHashProvider = pallet_mmr::DefaultBlockHashProvider<Runtime>;
 	type WeightInfo = ();
 }
 
-parameter_types! {
-	pub LeafVersion: MmrLeafVersion = MmrLeafVersion::new(0, 0);
-}
-
-impl pallet_beefy_mmr::Config for Runtime {
-	type LeafVersion = LeafVersion;
-	type BeefyAuthorityToMerkleLeaf = pallet_beefy_mmr::BeefyEcdsaToEthereum;
-	type LeafExtra = Vec<u8>;
-	type BeefyDataProvider = ();
-}
 
 parameter_types! {
 	pub const LotteryPalletId: PalletId = PalletId(*b"py/lotto");
@@ -2377,29 +2327,6 @@ impl pallet_broker::Config for Runtime {
 	type PriceAdapter = pallet_broker::CenterTargetPrice<Balance>;
 }
 
-parameter_types! {
-	pub const MixnetNumCoverToCurrentBlocks: BlockNumber = 3;
-	pub const MixnetNumRequestsToCurrentBlocks: BlockNumber = 3;
-	pub const MixnetNumCoverToPrevBlocks: BlockNumber = 3;
-	pub const MixnetNumRegisterStartSlackBlocks: BlockNumber = 3;
-	pub const MixnetNumRegisterEndSlackBlocks: BlockNumber = 3;
-	pub const MixnetRegistrationPriority: TransactionPriority = ImOnlineUnsignedPriority::get() - 1;
-}
-
-impl pallet_mixnet::Config for Runtime {
-	type MaxAuthorities = MaxAuthorities;
-	type MaxExternalAddressSize = ConstU32<128>;
-	type MaxExternalAddressesPerMixnode = ConstU32<16>;
-	type NextSessionRotation = Babe;
-	type NumCoverToCurrentBlocks = MixnetNumCoverToCurrentBlocks;
-	type NumRequestsToCurrentBlocks = MixnetNumRequestsToCurrentBlocks;
-	type NumCoverToPrevBlocks = MixnetNumCoverToPrevBlocks;
-	type NumRegisterStartSlackBlocks = MixnetNumRegisterStartSlackBlocks;
-	type NumRegisterEndSlackBlocks = MixnetNumRegisterEndSlackBlocks;
-	type RegistrationPriority = MixnetRegistrationPriority;
-	type MinMixnodes = ConstU32<7>; // Low to allow small testing networks
-}
-
 /// Dynamic parameters that can be changed at runtime through the
 /// `pallet_parameters::set_parameter`.
 #[dynamic_params(RuntimeParameters, pallet_parameters::Parameters::<Runtime>)]
@@ -2601,16 +2528,12 @@ mod runtime {
 	#[runtime::pallet_index(40)]
 	pub type PoolAssets = pallet_assets::Pallet<Runtime, Instance2>;
 
-	#[runtime::pallet_index(41)]
-	pub type Beefy = pallet_beefy::Pallet<Runtime>;
 
 	// MMR leaf construction must be after session in order to have a leaf's next_auth_set
 	// refer to block<N>. See issue polkadot-fellows/runtimes#160 for details.
 	#[runtime::pallet_index(42)]
 	pub type Mmr = pallet_mmr::Pallet<Runtime>;
 
-	#[runtime::pallet_index(43)]
-	pub type MmrLeaf = pallet_beefy_mmr::Pallet<Runtime>;
 
 	#[runtime::pallet_index(44)]
 	pub type Lottery = pallet_lottery::Pallet<Runtime>;
@@ -2705,8 +2628,8 @@ mod runtime {
 	#[runtime::pallet_index(74)]
 	pub type TasksExample = pallet_example_tasks::Pallet<Runtime>;
 
-	#[runtime::pallet_index(75)]
-	pub type Mixnet = pallet_mixnet::Pallet<Runtime>;
+	// #[runtime::pallet_index(75)]
+	// pub type Mixnet = pallet_mixnet::Pallet<Runtime>;
 
 	#[runtime::pallet_index(76)]
 	pub type Parameters = pallet_parameters::Pallet<Runtime>;
@@ -2769,22 +2692,6 @@ pub type SignedExtra = (
 	frame_metadata_hash_extension::CheckMetadataHash<Runtime>,
 );
 
-/// Unchecked extrinsic type as expected by this runtime.
-// pub type UncheckedExtrinsic =
-// 	generic::UncheckedExtrinsic<Address, RuntimeCall, Signature, SignedExtra>;
-// /// The payload being signed in transactions.
-// pub type SignedPayload = generic::SignedPayload<RuntimeCall, SignedExtra>;
-// /// Extrinsic type that has already been checked.
-// pub type CheckedExtrinsic = generic::CheckedExtrinsic<AccountId, RuntimeCall, SignedExtra>;
-// /// Executive: handles dispatch to the various modules.
-// pub type Executive = frame_executive::Executive<
-// 	Runtime,
-// 	Block,
-// 	frame_system::ChainContext<Runtime>,
-// 	Runtime,
-// 	AllPalletsWithSystem,
-// 	Migrations,
-// >;
 
 // We don't have a limit in the Relay Chain.
 const IDENTITY_MIGRATION_KEY_LIMIT: u64 = u64::MAX;
@@ -2804,22 +2711,6 @@ type EventRecord = frame_system::EventRecord<
 	<Runtime as frame_system::Config>::Hash,
 >;
 
-parameter_types! {
-	pub const BeefySetIdSessionEntries: u32 = BondingDuration::get() * SessionsPerEra::get();
-}
-
-impl pallet_beefy::Config for Runtime {
-	type BeefyId = BeefyId;
-	type MaxAuthorities = MaxAuthorities;
-	type MaxNominators = ConstU32<0>;
-	type MaxSetIdSessionEntries = BeefySetIdSessionEntries;
-	type OnNewValidatorSet = MmrLeaf;
-	type AncestryHelper = MmrLeaf;
-	type WeightInfo = ();
-	type KeyOwnerProof = <Historical as KeyOwnerProofSystem<(KeyTypeId, BeefyId)>>::Proof;
-	type EquivocationReportSystem =
-		pallet_beefy::EquivocationReportSystem<Self, Offences, Historical, ReportLongevity>;
-}
 
 /// MMR helper types.
 mod mmr {
@@ -2846,7 +2737,6 @@ mod benches {
 		[pallet_child_bounties, ChildBounties]
 		[pallet_collective, Council]
 		[pallet_conviction_voting, ConvictionVoting]
-		// [pallet_contracts, Contracts]
 		[pallet_core_fellowship, CoreFellowship]
 		[tasks_example, TasksExample]
 		[pallet_democracy, Democracy]
@@ -3129,79 +3019,7 @@ impl_runtime_apis! {
 		}
 	}
 
-	// impl pallet_contracts::ContractsApi<Block, AccountId, Balance, BlockNumber, Hash, EventRecord> for Runtime
-	// {
-	// 	fn call(
-	// 		origin: AccountId,
-	// 		dest: AccountId,
-	// 		value: Balance,
-	// 		gas_limit: Option<Weight>,
-	// 		storage_deposit_limit: Option<Balance>,
-	// 		input_data: Vec<u8>,
-	// 	) -> pallet_contracts::ContractExecResult<Balance, EventRecord> {
-	// 		let gas_limit = gas_limit.unwrap_or(RuntimeBlockWeights::get().max_block);
-	// 		Contracts::bare_call(
-	// 			origin,
-	// 			dest,
-	// 			value,
-	// 			gas_limit,
-	// 			storage_deposit_limit,
-	// 			input_data,
-	// 			pallet_contracts::DebugInfo::UnsafeDebug,
-	// 			pallet_contracts::CollectEvents::UnsafeCollect,
-	// 			pallet_contracts::Determinism::Enforced,
-	// 		)
-	// 	}
 
-	// 	fn instantiate(
-	// 		origin: AccountId,
-	// 		value: Balance,
-	// 		gas_limit: Option<Weight>,
-	// 		storage_deposit_limit: Option<Balance>,
-	// 		code: pallet_contracts::Code<Hash>,
-	// 		data: Vec<u8>,
-	// 		salt: Vec<u8>,
-	// 	) -> pallet_contracts::ContractInstantiateResult<AccountId, Balance, EventRecord>
-	// 	{
-	// 		let gas_limit = gas_limit.unwrap_or(RuntimeBlockWeights::get().max_block);
-	// 		Contracts::bare_instantiate(
-	// 			origin,
-	// 			value,
-	// 			gas_limit,
-	// 			storage_deposit_limit,
-	// 			code,
-	// 			data,
-	// 			salt,
-	// 			pallet_contracts::DebugInfo::UnsafeDebug,
-	// 			pallet_contracts::CollectEvents::UnsafeCollect,
-	// 		)
-	// 	}
-
-	// 	fn upload_code(
-	// 		origin: AccountId,
-	// 		code: Vec<u8>,
-	// 		storage_deposit_limit: Option<Balance>,
-	// 		determinism: pallet_contracts::Determinism,
-	// 	) -> pallet_contracts::CodeUploadResult<Hash, Balance>
-	// 	{
-	// 		Contracts::bare_upload_code(
-	// 			origin,
-	// 			code,
-	// 			storage_deposit_limit,
-	// 			determinism,
-	// 		)
-	// 	}
-
-	// 	fn get_storage(
-	// 		address: AccountId,
-	// 		key: Vec<u8>,
-	// 	) -> pallet_contracts::GetStorageResult {
-	// 		Contracts::get_storage(
-	// 			address,
-	// 			key
-	// 		)
-	// 	}
-	// }
 
 	impl pallet_transaction_payment_rpc_runtime_api::TransactionPaymentApi<
 		Block,
@@ -3301,41 +3119,6 @@ impl_runtime_apis! {
 		}
 	}
 
-	#[api_version(4)]
-	impl sp_consensus_beefy::BeefyApi<Block, BeefyId> for Runtime {
-		fn beefy_genesis() -> Option<BlockNumber> {
-			pallet_beefy::GenesisBlock::<Runtime>::get()
-		}
-
-		fn validator_set() -> Option<sp_consensus_beefy::ValidatorSet<BeefyId>> {
-			Beefy::validator_set()
-		}
-
-		fn submit_report_double_voting_unsigned_extrinsic(
-			equivocation_proof: sp_consensus_beefy::DoubleVotingProof<
-				BlockNumber,
-				BeefyId,
-				BeefySignature,
-			>,
-			key_owner_proof: sp_consensus_beefy::OpaqueKeyOwnershipProof,
-		) -> Option<()> {
-			let key_owner_proof = key_owner_proof.decode()?;
-
-			Beefy::submit_unsigned_double_voting_report(
-				equivocation_proof,
-				key_owner_proof,
-			)
-		}
-
-		fn generate_key_ownership_proof(
-			_set_id: sp_consensus_beefy::ValidatorSetId,
-			authority_id: BeefyId,
-		) -> Option<sp_consensus_beefy::OpaqueKeyOwnershipProof> {
-			Historical::prove((sp_consensus_beefy::KEY_TYPE, authority_id))
-				.map(|p| p.encode())
-				.map(sp_consensus_beefy::OpaqueKeyOwnershipProof::new)
-		}
-	}
 
 	impl pallet_mmr::primitives::MmrApi<
 		Block,
@@ -3387,23 +3170,6 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl sp_mixnet::runtime_api::MixnetApi<Block> for Runtime {
-		fn session_status() -> sp_mixnet::types::SessionStatus {
-			Mixnet::session_status()
-		}
-
-		fn prev_mixnodes() -> Result<Vec<sp_mixnet::types::Mixnode>, sp_mixnet::types::MixnodesErr> {
-			Mixnet::prev_mixnodes()
-		}
-
-		fn current_mixnodes() -> Result<Vec<sp_mixnet::types::Mixnode>, sp_mixnet::types::MixnodesErr> {
-			Mixnet::current_mixnodes()
-		}
-
-		fn maybe_register(session_index: sp_mixnet::types::SessionIndex, mixnode: sp_mixnet::types::Mixnode) -> bool {
-			Mixnet::maybe_register(session_index, mixnode)
-		}
-	}
 
 	impl sp_session::SessionKeys<Block> for Runtime {
 		fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {

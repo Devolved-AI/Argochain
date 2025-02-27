@@ -96,17 +96,17 @@ pub struct GrandpaDeps<B> {
 }
 
 /// Dependencies for BEEFY
-pub struct BeefyDeps<AuthorityId: AuthorityIdBound> {
-    /// Receives notifications about finality proof events from BEEFY.
-    pub beefy_finality_proof_stream: BeefyVersionedFinalityProofStream<Block, AuthorityId>,
-    /// Receives notifications about best block events from BEEFY.
-    pub beefy_best_block_stream: BeefyBestBlockStream<Block>,
-    /// Executor to drive the subscription manager in the BEEFY RPC handler.
-    pub subscription_executor: SubscriptionTaskExecutor,
-}
+// pub struct BeefyDeps<AuthorityId: AuthorityIdBound> {
+//     /// Receives notifications about finality proof events from BEEFY.
+//     pub beefy_finality_proof_stream: BeefyVersionedFinalityProofStream<Block, AuthorityId>,
+//     /// Receives notifications about best block events from BEEFY.
+//     pub beefy_best_block_stream: BeefyBestBlockStream<Block>,
+//     /// Executor to drive the subscription manager in the BEEFY RPC handler.
+//     pub subscription_executor: SubscriptionTaskExecutor,
+// }
 
 /// Full client dependencies.
-pub struct FullDeps<C, P, SC, B, AuthorityId: AuthorityIdBound, A: ChainApi, CT, CIDP> {
+pub struct FullDeps<C, P, SC, B, A: ChainApi, CT, CIDP> {
     /// The client instance to use.
     pub client: Arc<C>,
     /// Transaction pool instance.
@@ -122,14 +122,14 @@ pub struct FullDeps<C, P, SC, B, AuthorityId: AuthorityIdBound, A: ChainApi, CT,
     /// GRANDPA specific dependencies.
     pub grandpa: GrandpaDeps<B>,
     /// BEEFY specific dependencies.
-    pub beefy: BeefyDeps<AuthorityId>,
+    // pub beefy: BeefyDeps<AuthorityId>,
     /// Shared statement store reference.
     pub statement_store: Arc<dyn sp_statement_store::StatementStore>,
     /// The backend used by the node.
     pub backend: Arc<B>,
     /// Mixnet API.
     // pub mixnet_api: Option<sc_mixnet::Api>,
-    pub eth: EthDeps<C, P, A, CT, CIDP>,
+    pub eth: EthDeps<C, P, A,CT, CIDP>,
 }
 
 pub struct DefaultEthConfig<C, BE>(std::marker::PhantomData<(C, BE)>);
@@ -146,8 +146,8 @@ where
 }
 
 /// Instantiate all Full RPC extensions.
-pub fn create_full<C, P, SC, B, AuthorityId, A, CT, CIDP>(
-    deps: FullDeps<C, P, SC, B, AuthorityId, A, CT, CIDP>,
+pub fn create_full<C, P, SC, B, A, CT, CIDP>(
+    deps: FullDeps<C, P, SC, B, A, CT, CIDP>,
     subscription_task_executor: SubscriptionTaskExecutor,
     pubsub_notification_sinks: Arc<
         fc_mapping_sync::EthereumBlockNotificationSinks<
@@ -183,8 +183,8 @@ where
     B: sc_client_api::Backend<Block> + Send + Sync + 'static,
     B::State: sc_client_api::backend::StateBackend<sp_runtime::traits::HashingFor<Block>>,
     B::Blockchain: BlockchainBackend<Block>,
-    AuthorityId: AuthorityIdBound,
-    <AuthorityId as RuntimeAppPublic>::Signature: Send + Sync,
+    // AuthorityId: AuthorityIdBound,
+    // <AuthorityId as RuntimeAppPublic>::Signature: Send + Sync,
     A: ChainApi<Block = Block> + 'static,
     CIDP: CreateInherentDataProviders<Block, ()> + Send + 'static,
     CT: fp_rpc::ConvertTransaction<<Block as BlockT>::Extrinsic> + Send + Sync + 'static,
@@ -192,11 +192,11 @@ where
     use mmr_rpc::{Mmr, MmrApiServer};
     use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApiServer};
     use sc_consensus_babe_rpc::{Babe, BabeApiServer};
-    use sc_consensus_beefy_rpc::{Beefy, BeefyApiServer};
+    // use sc_consensus_beefy_rpc::{Beefy, BeefyApiServer};
     use sc_consensus_grandpa_rpc::{Grandpa, GrandpaApiServer};
     use sc_rpc::{
         dev::{Dev, DevApiServer},
-        mixnet::MixnetApiServer,
+        // mixnet::MixnetApiServer,
         statement::StatementApiServer,
     };
     use sc_rpc_spec_v2::chain_spec::{ChainSpec, ChainSpecApiServer};
@@ -211,7 +211,7 @@ where
         deny_unsafe,
         babe,
         grandpa,
-        beefy,
+        // beefy,
         statement_store,
         backend,
         // mixnet_api,
@@ -297,17 +297,17 @@ where
     // 	io.merge(mixnet)?;
     // }
 
-    io.merge(
-        Beefy::<Block, AuthorityId>::new(
-            beefy.beefy_finality_proof_stream,
-            beefy.beefy_best_block_stream,
-            beefy.subscription_executor,
-        )?
-        .into_rpc(),
-    )?;
+    // io.merge(
+    //     Beefy::<Block, AuthorityId>::new(
+    //         beefy.beefy_finality_proof_stream,
+    //         beefy.beefy_best_block_stream,
+    //         beefy.subscription_executor,
+    //     )?
+    //     .into_rpc(),
+    // )?;
 
     // Ethereum compatibility RPCs
-    let io = create_eth::<_, _, _, _, _, _, DefaultEthConfig<C, B>>(
+    let io = create_eth::<_, _,_,_,_, _, DefaultEthConfig<C, B>>(
         io,
         eth,
         subscription_task_executor,

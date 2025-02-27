@@ -21,7 +21,6 @@
 //! Service implementation. Specialized wrapper over substrate service.
 
 use polkadot_sdk::{
-    sc_consensus_beefy as beefy, sc_consensus_beefy::BeefyRPCLinks,
     sc_consensus_grandpa as grandpa, sp_consensus_beefy as beefy_primitives, *,
 };
 
@@ -85,13 +84,7 @@ type FullBackend = sc_service::TFullBackend<Block>;
 type FullSelectChain = sc_consensus::LongestChain<FullBackend, Block>;
 type FullGrandpaBlockImport =
 	grandpa::GrandpaBlockImport<FullBackend, Block, FullClient, FullSelectChain>;
-type FullBeefyBlockImport<InnerBlockImport> = beefy::import::BeefyBlockImport<
-	Block,
-	FullBackend,
-	FullClient,
-	InnerBlockImport,
-	beefy_primitives::ecdsa_crypto::AuthorityId,
->;
+
 
 /// The transaction pool type definition.
 pub type TransactionPool = sc_transaction_pool::FullPool<Block, FullClient>;
@@ -196,20 +189,15 @@ pub fn new_partial<NB>(
 				sc_consensus_babe::BabeBlockImport<
 					Block,
 					FullClient,
-					 FullBeefyBlockImport<
-                        FrontierBlockImport<Block, FullGrandpaBlockImport, FullClient>,
-                    >,
+                    FullGrandpaBlockImport,
+                    
 				>,
 				grandpa::LinkHalf<Block, FullClient, FullSelectChain>,
 				sc_consensus_babe::BabeLink<Block>,
-				beefy::BeefyVoterLinks<Block, beefy_primitives::ecdsa_crypto::AuthorityId>,
 			),
-			// grandpa::SharedVoterState,
 			Option<Telemetry>,
 			Arc<StatementStore>,
-			// Option<sc_mixnet::ApiBackend>,
 			BabeWorkerHandle<Block>,
-            BeefyRPCLinks<Block, Public>,
 		),
 	>,
 	ServiceError,
@@ -265,17 +253,10 @@ pub fn new_partial<NB>(
 
     let justification_import = grandpa_block_import.clone();
 
-    let (beefy_block_import, beefy_voter_links, beefy_rpc_links) =
-        beefy::beefy_block_import_and_links(
-            frontier_block_import,
-            backend.clone(),
-            client.clone(),
-            config.prometheus_registry().cloned(),
-        );
 
     let (block_import, babe_link) = sc_consensus_babe::block_import(
         sc_consensus_babe::configuration(&*client)?,
-        beefy_block_import,
+        grandpa_block_import,
         client.clone(),
     )?;
 
@@ -304,7 +285,7 @@ pub fn new_partial<NB>(
             offchain_tx_pool_factory: OffchainTransactionPoolFactory::new(transaction_pool.clone()),
         })?;
 
-    let import_setup = (block_import, grandpa_link, babe_link, beefy_voter_links);
+    let import_setup = (block_import, grandpa_link, babe_link);
     let statement_store = sc_statement_store::Store::new_shared(
         &config.data_path,
         Default::default(),
@@ -324,14 +305,10 @@ pub fn new_partial<NB>(
         import_queue,
         transaction_pool,
         other: (
-            // rpc_extensions_builder,
             import_setup,
-            // rpc_setup,
             telemetry,
             statement_store,
-            // mixnet_api_backend,
             babe_worker_handle,
-            beefy_rpc_links,
         ),
     })
 }
@@ -362,16 +339,11 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		&sc_consensus_babe::BabeBlockImport<
 			Block,
 			FullClient,
-			FullBeefyBlockImport<FrontierBlockImport<Block, FullGrandpaBlockImport, FullClient>>,
+			FullGrandpaBlockImport,
 		>,
 		&sc_consensus_babe::BabeLink<Block>,
 	),
 ) -> Result<NewFullBase, ServiceError> {
-	  // let (mixnet_api, mixnet_api_backend) = mixnet_config.map(sc_mixnet::Api::new.clone()).unzip();
-	//   let mut config = config;
-	//   config.database = DatabaseSource::ParityDb {
-	// 	path: db_config_dir(&config),
-	// };
 	  let is_offchain_indexing_enabled = config.offchain_worker.indexing_enabled;
 	  let role = config.role.clone();
 	  let force_authoring = config.force_authoring;
@@ -397,7 +369,7 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		  keystore_container,
 		  select_chain,
 		  transaction_pool,
-		  other: (import_setup, mut telemetry, statement_store, babe_worker_handle, beefy_rpc_links),
+		  other: (import_setup, mut telemetry, statement_store, babe_worker_handle),
 	  } = new_partial::<N>(&config, &eth_config, mixnet_config.as_ref())?;
   
 	  let metrics = N::register_notification_metrics(
@@ -425,28 +397,6 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 			  Arc::clone(&peer_store_handle),
 		  );
 	  net_config.add_notification_protocol(grandpa_protocol_config);
-  
-	  let beefy_gossip_proto_name =
-		  beefy::gossip_protocol_name(&genesis_hash, config.chain_spec.fork_id());
-	  // `beefy_on_demand_justifications_handler` is given to `beefy-gadget` task to be run,
-	  // while `beefy_req_resp_cfg` is added to `config.network.request_response_protocols`.
-	  let (beefy_on_demand_justifications_handler, beefy_req_resp_cfg) =
-		  beefy::communication::request_response::BeefyJustifsRequestHandler::new::<_, N>(
-			  &genesis_hash,
-			  config.chain_spec.fork_id(),
-			  client.clone(),
-			  prometheus_registry.clone(),
-		  );
-  
-	  let (beefy_notification_config, beefy_notification_service) =
-		  beefy::communication::beefy_peers_set_config::<_, N>(
-			  beefy_gossip_proto_name.clone(),
-			  metrics.clone(),
-			  Arc::clone(&peer_store_handle),
-		  );
-  
-	  net_config.add_notification_protocol(beefy_notification_config);
-	  net_config.add_request_response_protocol(beefy_req_resp_cfg);
   
 	  let (statement_handler_proto, statement_config) =
 		  sc_network_statement::StatementHandlerPrototype::new::<_, _, N>(
@@ -505,7 +455,7 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 	  let eth_storage_override = storage_override.clone();
   
 	  let (rpc_extensions_builder, rpc_setup, frontier_backend, pubsub_notification_sinks) = {
-		  let (_, grandpa_link, _, _) = &import_setup;
+		  let (_, grandpa_link, _) = &import_setup;
   
 		  let justification_stream = grandpa_link.justification_stream();
 		  let shared_authority_set = grandpa_link.shared_authority_set().clone();
@@ -540,27 +490,7 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 				&db_config_dir(&config),
 			)?)),
 		
-			//   BackendType::Sql => {
-			// 	  let db_path = db_config_dir(&config).join("sql");
-			// 	  std::fs::create_dir_all(&db_path).expect("failed creating sql db directory");
-			// 	  let backend = futures::executor::block_on(fc_db::sql::Backend::new(
-			// 		  fc_db::sql::BackendConfig::Sqlite(fc_db::sql::SqliteBackendConfig {
-			// 			  path: Path::new("sqlite:///")
-			// 				  .join(db_path)
-			// 				  .join("frontier.db3")
-			// 				  .to_str()
-			// 				  .unwrap(),
-			// 			  create_if_missing: true,
-			// 			  thread_count: eth_config.frontier_sql_backend_thread_count,
-			// 			  cache_size: eth_config.frontier_sql_backend_cache_size,
-			// 		  }),
-			// 		  eth_config.frontier_sql_backend_pool_size,
-			// 		  std::num::NonZeroU32::new(eth_config.frontier_sql_backend_num_ops_timeout),
-			// 		  storage_override.clone(),
-			// 	  ))
-			// 	  .unwrap_or_else(|err| panic!("failed creating sql backend: {:?}", err));
-			// 	  FrontierBackend::Sql(Arc::new(backend))
-			//   }
+			
 		  };
   
 		  let frontier_backend1 = Arc::new(frontier_backend);
@@ -655,18 +585,9 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 						  subscription_executor: subscription_executor.clone(),
 						  finality_provider: finality_proof_provider.clone(),
 					  },
-					  beefy: node_rpc::BeefyDeps::<beefy_primitives::ecdsa_crypto::AuthorityId> {
-						  beefy_finality_proof_stream: beefy_rpc_links
-							  .from_voter_justif_stream
-							  .clone(),
-						  beefy_best_block_stream: beefy_rpc_links
-							  .from_voter_best_beefy_stream
-							  .clone(),
-						  subscription_executor: subscription_executor.clone(),
-					  },
+					
 					  statement_store: rpc_statement_store.clone(),
 					  backend: rpc_backend.clone(),
-					  // mixnet_api: mixnet_api.as_ref().cloned(),
 					  eth: eth_deps,
 				  };
 				  let pending_consenus_data_provider = Box::new(BabeConsensusDataProvider::new(
@@ -843,35 +764,7 @@ pub fn new_full_base<N: NetworkBackend<Block, <Block as BlockT>::Hash>>(
 		  None
 	  };
   
-	  // beefy is enabled if its notification service exists
-	  let network_params = beefy::BeefyNetworkParams {
-		  network: Arc::new(network.clone()),
-		  sync: sync_service.clone(),
-		  gossip_protocol_name: beefy_gossip_proto_name,
-		  justifications_protocol_name: beefy_on_demand_justifications_handler.protocol_name(),
-		  notification_service: beefy_notification_service,
-		  _phantom: core::marker::PhantomData::<Block>,
-	  };
-	  let beefy_params = beefy::BeefyParams {
-		  client: client.clone(),
-		  backend: backend.clone(),
-		  payload_provider: sp_consensus_beefy::mmr::MmrRootProvider::new(client.clone()),
-		  runtime: client.clone(),
-		  key_store: keystore.clone(),
-		  network_params,
-		  min_block_delta: 8,
-		  prometheus_registry: prometheus_registry.clone(),
-		  links: import_setup.3.clone(),
-		  on_demand_justifications_handler: beefy_on_demand_justifications_handler,
-		  is_authority: role.is_authority(),
-	  };
-  
-	  let beefy_gadget = beefy::start_beefy_gadget::<_, _, _, _, _, _, _, _>(beefy_params);
-	  // BEEFY is part of consensus, if it fails we'll bring the node down with it to make sure it
-	  // is noticed.
-	  task_manager
-		  .spawn_essential_handle()
-		  .spawn_blocking("beefy-gadget", None, beefy_gadget);
+	
 	  // When offchain indexing is enabled, MMR gadget should also run.
 	  if is_offchain_indexing_enabled {
 		  task_manager.spawn_essential_handle().spawn_blocking(
