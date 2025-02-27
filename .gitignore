@@ -38,3 +38,5 @@ rls*.log
 runtime/wasm/target/
 substrate.code-workspace
 target/
+.cargo
+.config
