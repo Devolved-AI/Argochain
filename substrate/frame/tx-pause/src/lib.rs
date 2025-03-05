@@ -333,3 +333,4 @@ impl<T: Config> From<Error<T>> for frame_support::traits::TransactionPauseError 
 		}
 	}
 }
+

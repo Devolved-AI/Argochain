@@ -185,6 +185,7 @@ pub mod pallet {
 		type WeightInfo: WeightInfo;
 	}
 
+
 	#[pallet::error]
 	pub enum Error<T> {
 		/// The safe-mode is (already or still) entered.

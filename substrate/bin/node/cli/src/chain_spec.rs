@@ -311,19 +311,42 @@ fn staging_testnet_config_genesis() -> serde_json::Value {
 }
 
 /// Staging testnet config.
+// pub fn staging_testnet_config() -> ChainSpec {
+// 	ChainSpec::builder(wasm_binary_unwrap(), Default::default())
+// 		.with_name("Argochain")
+// 		.with_id("Argochain")
+// 		.with_properties(properties())
+// 		.with_chain_type(ChainType::Live)
+// 		.with_genesis_config_patch(staging_testnet_config_genesis())
+// 		.with_telemetry_endpoints(
+// 			TelemetryEndpoints::new(vec![(STAGING_TELEMETRY_URL.to_string(), 0)])
+// 				.expect("Staging telemetry url is valid; qed"),
+// 		)
+// 		.build()
+// }
 pub fn staging_testnet_config() -> ChainSpec {
+	let mut properties = Properties::new();
+	properties.insert("tokenSymbol".into(), "AGC".into());
+	properties.insert("tokenDecimals".into(), 18.into());
+	properties.insert("ss58Format".into(), 33.into());
+
+	let boot_nodes = vec![];
+
 	ChainSpec::builder(wasm_binary_unwrap(), Default::default())
-		.with_name("Staging Testnet")
-		.with_id("staging_testnet")
-		.with_properties(properties())
+		.with_name("ArgoChain")
+		.with_id("argochain")
 		.with_chain_type(ChainType::Live)
 		.with_genesis_config_patch(staging_testnet_config_genesis())
+		.with_boot_nodes(boot_nodes)
 		.with_telemetry_endpoints(
 			TelemetryEndpoints::new(vec![(STAGING_TELEMETRY_URL.to_string(), 0)])
 				.expect("Staging telemetry url is valid; qed"),
 		)
+		.with_properties(properties)
 		.build()
 }
+
+
 
 /// Helper function to generate a crypto pair from seed.
 pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {

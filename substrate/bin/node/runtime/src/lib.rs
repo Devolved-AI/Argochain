@@ -191,7 +191,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	// and set impl_version to 0. If only runtime
 	// implementation changes and behavior does not, then leave spec_version as
 	// is and increment impl_version.
-	spec_version: 4,
+	spec_version: 101,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 2,
@@ -207,6 +207,46 @@ pub mod opaque {
     /// Opaque block identifier type.
     pub type BlockId = generic::BlockId<Block>;
 }
+
+use frame_support::{traits::OnRuntimeUpgrade, storage::unhashed};
+
+pub struct MigrateToVersion101;
+
+impl OnRuntimeUpgrade for MigrateToVersion101 {
+    fn on_runtime_upgrade() -> Weight {
+        log::warn!("🔄 Running migration for spec_version 101...");
+
+        let key = b"GenesisBuilder_get_preset"; // ✅ Keep the same key name
+
+        // ✅ Check if the key exists
+        if unhashed::exists(key) {
+            log::warn!("✅ Found 'GenesisBuilder_get_preset', migrating...");
+
+            // ✅ Retrieve old data safely
+            if let Some(old_data) = unhashed::get::<Vec<u8>>(key) {
+                log::warn!("📥 Loaded existing 'GenesisBuilder_get_preset' data.");
+
+                // ✅ Store it back to ensure it's available post-upgrade
+                unhashed::put(key, &old_data);
+                log::warn!("✅ Successfully migrated 'GenesisBuilder_get_preset' data.");
+            } else {
+                log::warn!("⚠️ 'GenesisBuilder_get_preset' exists but has no data. Skipping migration.");
+            }
+        } else {
+            log::warn!("🚨 'GenesisBuilder_get_preset' not found. Creating a default entry...");
+
+            // ✅ If missing, add a default preset (modify if needed)
+            let default_data: Vec<u8> = vec![]; // Adjust this based on your validator setup
+            unhashed::put(key, &default_data);
+            log::warn!("✅ Created default 'GenesisBuilder_get_preset'.");
+        }
+
+        log::warn!("✅ Migration to spec_version 101 completed successfully.");
+        Weight::from_parts(5_000_000, 0) // Adjust weight for minimal changes
+    }
+}
+
+
 
 /// The BABE epoch configuration at genesis.
 pub const BABE_GENESIS_EPOCH_CONFIG: sp_consensus_babe::BabeEpochConfiguration =
@@ -435,7 +475,6 @@ impl pallet_safe_mode::Config for Runtime {
 	type Notify = ();
 	type WeightInfo = pallet_safe_mode::weights::SubstrateWeight<Runtime>;
 }
-
 #[derive_impl(frame_system::config_preludes::SolochainDefaultConfig)]
 impl frame_system::Config for Runtime {
 	type BaseCallFilter = InsideBoth<SafeMode, TxPause>;
@@ -454,6 +493,7 @@ impl frame_system::Config for Runtime {
 	type SS58Prefix = ConstU16<42>;
 	type MaxConsumers = ConstU32<16>;
 	type MultiBlockMigrator = MultiBlockMigrations;
+	// type OnRuntimeUpgrade = MigrateToVersion101;
 }
 
 impl pallet_insecure_randomness_collective_flip::Config for Runtime {}
@@ -998,7 +1038,7 @@ impl pallet_election_provider_multi_phase::Config for Runtime {
 	type SignedMaxRefunds = ConstU32<3>;
 	type SignedDepositWeight = ();
 	type SignedMaxWeight = MinerMaxWeight;
-	type SlashHandler = (); // burn slashes
+	type SlashHandler = Treasury; // burn slashes
 	type RewardHandler = (); // nothing to do upon rewards
 	type DataProvider = Staking;
 	type Fallback = onchain::OnChainExecution<OnChainSeqPhragmen>;
@@ -1356,7 +1396,7 @@ impl pallet_membership::Config<pallet_membership::Instance1> for Runtime {
 
 parameter_types! {
 	pub const SpendPeriod: BlockNumber = 1 * DAYS;
-	pub const Burn: Permill = Permill::from_percent(50);
+	pub const Burn: Permill = Permill::from_percent(0);
 	pub const TipCountdown: BlockNumber = 1 * DAYS;
 	pub const TipFindersFee: Percent = Percent::from_percent(20);
 	pub const TipReportDepositBase: Balance = 1 * ARGO;
@@ -1377,7 +1417,7 @@ impl pallet_treasury::Config for Runtime {
 	>;
 	type RuntimeEvent = RuntimeEvent;
 	type SpendPeriod = SpendPeriod;
-	type Burn = Burn;
+	type Burn = ();
 	type BurnDestination = ();
 	type SpendFunds = Bounties;
 	type WeightInfo = pallet_treasury::weights::SubstrateWeight<Runtime>;
@@ -3593,6 +3633,7 @@ pub type Executive = frame_executive::Executive<
     frame_system::ChainContext<Runtime>,
     Runtime,
     AllPalletsWithSystem,
+	(MigrateToVersion101,),
 >;
 
 impl fp_self_contained::SelfContainedCall for RuntimeCall {
