@@ -3,13 +3,13 @@
   "id": "argochain",
   "chainType": "Live",
   "bootNodes": [
-    "/ip4/127.0.0.1/tcp/30433/p2p/12D3KooWCPjjLPYfS9UvNVrLie9bK1u3Juxb1Zvhb6MBCYAurjXi"
+    "/ip4/3.6.207.119/tcp/30333/p2p/12D3KooWFdCDdgiNibccPLX9kkq8tqNpmqZQQ8ucohGd5Q89dKeu",
+    "/ip4/3.1.59.124/tcp/30334/p2p/12D3KooWAuv4qvFErW4SirSKKqHew1ZzN6aSpn8PYfTzeu3LwJ96",
+    "/ip4/13.202.107.21/tcp/30335/p2p/12D3KooWFjAYQpQZ6p1VRzfCzAUybFxVySQPke3VCN6TcxLYfX8t",
+    "/ip4/18.136.230.218/tcp/30336/p2p/12D3KooWHpUso7zeRy5XJKtgzhe5d6SxjfRkdWfbS7oXuXyk8s2g"
   ],
   "telemetryEndpoints": [
-    [
-      "/dns/telemetry.polkadot.io/tcp/443/x-parity-wss/%2Fsubmit%2F",
-      0
-    ]
+    ["/dns/telemetry.polkadot.io/tcp/443/x-parity-wss/%2Fsubmit%2F", 0]
   ],
   "protocolId": null,
   "properties": {
