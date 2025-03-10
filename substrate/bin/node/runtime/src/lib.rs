@@ -2042,7 +2042,7 @@ const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
 pub const WEIGHT_MILLISECS_PER_BLOCK: u64 = 2000;
 
 parameter_types! {
-	pub const ChainId: u64 = 42;
+	pub const ChainId: u64 = 1298;
 	pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
 	pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
 	pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
@@ -3633,7 +3633,7 @@ pub type Executive = frame_executive::Executive<
     frame_system::ChainContext<Runtime>,
     Runtime,
     AllPalletsWithSystem,
-	(MigrateToVersion101,),
+	// (MigrateToVersion101,),
 >;
 
 impl fp_self_contained::SelfContainedCall for RuntimeCall {

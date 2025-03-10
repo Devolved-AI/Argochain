@@ -1,0 +1,5 @@
+version=8
+salt=b0013a01b4b5238bdefdc4ffa1447dc008b20b5afa0c47c1afc73cfe4c83e4dd
+col0=preimage: false, uniform: false, refc: false, compression: 0, ordered: false
+col1=preimage: true, uniform: true, refc: false, compression: 0, ordered: false
+col2=preimage: false, uniform: false, refc: false, compression: 0, ordered: false

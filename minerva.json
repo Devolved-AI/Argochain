@@ -3,7 +3,7 @@
   "id": "argochain",
   "chainType": "Live",
   "bootNodes": [
-    "/ip4/127.0.0.1/tcp/30433/p2p/12D3KooWPPk7Y7ztXUwffYPPUFBu1SxkQudEH6G1qqD5THKBP7Ng"
+    "/ip4/127.0.0.1/tcp/30433/p2p/12D3KooWCPjjLPYfS9UvNVrLie9bK1u3Juxb1Zvhb6MBCYAurjXi"
   ],
   "telemetryEndpoints": [
     ["/dns/telemetry.polkadot.io/tcp/443/x-parity-wss/%2Fsubmit%2F", 0]
