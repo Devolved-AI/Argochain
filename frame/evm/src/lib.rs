@@ -505,6 +505,8 @@ pub mod pallet {
 		Reentrancy,
 		/// EIP-3607,
 		TransactionMustComeFromEOA,
+		/// Balance conversion overflow
+		BalanceConversionOverflow,
 		/// Undefined error.
 		Undefined,
 	}
@@ -927,11 +929,11 @@ impl<T: Config> Pallet<T> {
 		T::FindAuthor::find_author(pre_runtime_digests).unwrap_or_default()
 	}
 
-	fn u256_to_balance(value: U256) -> BalanceOf<T> {
-        value.low_u128().try_into().unwrap_or_else(|_| Zero::zero())
+	fn u256_to_balance(value: U256) -> Result<BalanceOf<T>, Error<T>> {
+        value.low_u128().try_into().map_err(|_| Error::<T>::BalanceConversionOverflow)
     }
 
-	pub fn mutate_balance(address: H160, delta: U256, add: bool) {
+	pub fn mutate_balance(address: H160, delta: U256, add: bool) -> Result<(), Error<T>> {
         let account_id = T::AddressMapping::into_account_id(address);
     
         let current_balance = T::Currency::free_balance(&account_id);
@@ -943,20 +945,21 @@ impl<T: Config> Pallet<T> {
         let delta_with_decimals = delta.saturating_mul(U256::exp10(18));
     
         if add {
-            balance_u256 = balance_u256.saturating_add(delta);
-           info!("Adding delta (with decimals): {:?}", delta);
+            balance_u256 = balance_u256.saturating_add(delta_with_decimals);
+           info!("Adding delta (with decimals): {:?}", delta_with_decimals);
         } else {
-            balance_u256 = balance_u256.saturating_sub(delta);
+            balance_u256 = balance_u256.saturating_sub(delta_with_decimals);
            info!("Subtracting delta (with decimals): {:?}", delta_with_decimals);
         }
     
        info!("Balance after mutation (U256) for address {:?}: {:?}", address, balance_u256);
     
-        let new_balance = Self::u256_to_balance(balance_u256);
+        let new_balance = Self::u256_to_balance(balance_u256)?;
     
        info!("Balance after mutation (native type) for address {:?}: {:?}", address, new_balance);
     
         T::Currency::make_free_balance_be(&account_id, new_balance);
+        Ok(())
     }
 }
 

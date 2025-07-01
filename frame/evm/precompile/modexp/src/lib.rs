@@ -274,7 +274,9 @@ mod tests {
 				assert_eq!(precompile_result.output.len(), 0);
 			}
 			Err(_) => {
-				panic!("Modexp::execute() returned error"); // TODO: how to pass error on?
+				return Err(PrecompileFailure::Error {
+					exit_status: ExitError::Other("Modexp::execute() returned error".into()),
+				});
 			}
 		}
 	}
@@ -304,7 +306,9 @@ mod tests {
 				assert_eq!(precompile_result.output, vec![0x00]);
 			}
 			Err(_) => {
-				panic!("Modexp::execute() returned error"); // TODO: how to pass error on?
+				return Err(PrecompileFailure::Error {
+					exit_status: ExitError::Other("Modexp::execute() returned error".into()),
+				});
 			}
 		}
 	}
@@ -376,7 +380,9 @@ mod tests {
 				assert_eq!(result, expected);
 			}
 			Err(_) => {
-				panic!("Modexp::execute() returned error"); // TODO: how to pass error on?
+				return Err(PrecompileFailure::Error {
+					exit_status: ExitError::Other("Modexp::execute() returned error".into()),
+				});
 			}
 		}
 	}
@@ -413,7 +419,9 @@ mod tests {
 				assert_eq!(result, expected);
 			}
 			Err(_) => {
-				panic!("Modexp::execute() returned error"); // TODO: how to pass error on?
+				return Err(PrecompileFailure::Error {
+					exit_status: ExitError::Other("Modexp::execute() returned error".into()),
+				});
 			}
 		}
 	}
@@ -448,7 +456,9 @@ mod tests {
 				assert_eq!(result, expected);
 			}
 			Err(_) => {
-				panic!("Modexp::execute() returned error"); // TODO: how to pass error on?
+				return Err(PrecompileFailure::Error {
+					exit_status: ExitError::Other("Modexp::execute() returned error".into()),
+				});
 			}
 		}
 	}

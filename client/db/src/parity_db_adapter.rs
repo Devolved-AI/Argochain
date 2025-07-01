@@ -20,13 +20,8 @@ use sp_database::{error::DatabaseError, Change, ColumnId, Transaction};
 
 use crate::Database;
 
-fn handle_err<T>(result: parity_db::Result<T>) -> T {
-	match result {
-		Ok(r) => r,
-		Err(e) => {
-			panic!("Critical database error: {:?}", e);
-		}
-	}
+fn handle_err<T>(result: parity_db::Result<T>) -> Result<T, DatabaseError> {
+	result.map_err(|e| DatabaseError::Other(format!("{:?}", e)))
 }
 
 pub struct DbAdapter(pub parity_db::Db);

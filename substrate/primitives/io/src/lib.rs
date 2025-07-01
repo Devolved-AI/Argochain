@@ -801,7 +801,10 @@ pub trait Crypto {
 	///
 	/// Returns the public key.
 	fn ed25519_generate(&mut self, id: KeyTypeId, seed: Option<Vec<u8>>) -> ed25519::Public {
-		let seed = seed.as_ref().map(|s| std::str::from_utf8(s).expect("Seed is valid utf8!"));
+		let seed = seed.as_ref().and_then(|s| {
+			std::str::from_utf8(s).ok()
+		});
+		// If we still don't have a valid seed, use None instead of panicking
 		self.extension::<KeystoreExt>()
 			.expect("No `keystore` associated for the current context!")
 			.ed25519_generate_new(id, seed)

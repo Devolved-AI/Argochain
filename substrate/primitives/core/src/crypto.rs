@@ -42,12 +42,13 @@ pub use crate::{
 	crypto_bytes::{CryptoBytes, PublicBytes, SignatureBytes},
 };
 
-/// The root phrase for our publicly known keys.
-pub const DEV_PHRASE: &str =
-	"bottom drive obey lake curtain smoke basket hold race lonely fit walk";
+
 
 /// The address of the associated root phrase for our publicly known keys.
 pub const DEV_ADDRESS: &str = "5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV";
+
+/// The phrase of the associated root phrase for our publicly known keys.
+pub const DEV_PHRASE: &str = "bottom drive obey lake curtain smoke basket hold race lonely fit walk";
 
 /// The length of the junction identifier. Note that this is also referred to as the
 /// `CHAIN_CODE_LENGTH` in the context of Schnorrkel.
@@ -94,6 +95,9 @@ pub enum SecretStringError {
 	/// The seed has an invalid length.
 	#[cfg_attr(feature = "std", error("Invalid seed length"))]
 	InvalidSeedLength,
+	/// The seed contains invalid UTF-8.
+	#[cfg_attr(feature = "std", error("Invalid UTF-8 in seed"))]
+	InvalidUtf8,
 	/// The derivation path was invalid (e.g. contains soft junctions when they are not supported).
 	#[cfg_attr(feature = "std", error("Invalid path"))]
 	InvalidPath,
@@ -789,7 +793,7 @@ impl alloc::str::FromStr for SecretUri {
 
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
 		let cap = AddressUri::parse(s)?;
-		let phrase = cap.phrase.unwrap_or(DEV_PHRASE);
+		let phrase = cap.phrase.unwrap_or(DEV_ADDRESS);
 
 		Ok(Self {
 			phrase: SecretString::from_str(phrase).expect("Returns infallible error; qed"),

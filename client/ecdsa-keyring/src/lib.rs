@@ -30,7 +30,6 @@ use fp_account::AccountId20;
 #[cfg(feature = "std")]
 use sp_core::ecdsa::Signature;
 use sp_core::{
-    crypto::DEV_PHRASE,
     ecdsa::{Pair, Public},
     hex2array, ByteArray, Pair as PairT, H256,
 };
@@ -41,6 +40,9 @@ use strum::IntoEnumIterator;
 extern crate alloc;
 use alloc::{format, str::FromStr, string::String, vec::Vec};
 use bip39;
+
+/// Define the standard Substrate development phrase locally, since it's not available in sp_core
+pub const DEV_PHRASE: &str = "bottom drive obey lake curtain smoke basket hold race lonely fit walk";
 
 /// Set of test accounts.
 #[derive(
@@ -222,7 +224,6 @@ pub mod test {
     use bip39::{Language, Mnemonic, MnemonicType, Seed};
     use derivation_path::DerivationPath;
     use hex::{self, FromHex, ToHex};
-    use sp_core::crypto::DEV_PHRASE;
     use sp_core::ecdsa::Public;
     use sp_core::hex2array;
     use sp_keyring::sr25519::ParseKeyringError;

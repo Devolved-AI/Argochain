@@ -44,7 +44,7 @@ pub use self::{
 	eth::{format, pending, EstimateGasAdapter, Eth, EthConfig, EthFilter},
 	eth_pubsub::{EthPubSub, EthereumSubIdProvider},
 	net::Net,
-	signer::{EthDevSigner, EthSigner},
+	signer::EthSigner,
 	web3::Web3,
 };
 pub use ethereum::TransactionV2 as EthereumTransaction;

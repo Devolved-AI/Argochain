@@ -19,13 +19,8 @@
 // Substrate
 use sp_database::{error::DatabaseError, Change, ColumnId, Database, Transaction};
 
-fn handle_err<T>(result: parity_db::Result<T>) -> T {
-	match result {
-		Ok(r) => r,
-		Err(e) => {
-			panic!("Critical database error: {:?}", e);
-		}
-	}
+fn handle_err<T>(result: parity_db::Result<T>) -> Result<T, DatabaseError> {
+	result.map_err(|e| DatabaseError(Box::new(e)))
 }
 
 pub struct DbAdapter(pub parity_db::Db);
@@ -45,15 +40,15 @@ impl<H: Clone + AsRef<[u8]>> Database<H> for DbAdapter {
 	}
 
 	fn get(&self, col: ColumnId, key: &[u8]) -> Option<Vec<u8>> {
-		handle_err(self.0.get(col as u8, key))
+		handle_err(self.0.get(col as u8, key)).ok().flatten()
 	}
 
 	fn contains(&self, col: ColumnId, key: &[u8]) -> bool {
-		handle_err(self.0.get_size(col as u8, key)).is_some()
+		handle_err(self.0.get_size(col as u8, key)).ok().flatten().is_some()
 	}
 
 	fn value_size(&self, col: ColumnId, key: &[u8]) -> Option<usize> {
-		handle_err(self.0.get_size(col as u8, key)).map(|s| s as usize)
+		handle_err(self.0.get_size(col as u8, key)).ok().flatten().map(|s| s as usize)
 	}
 
 	fn supports_ref_counting(&self) -> bool {

@@ -255,10 +255,12 @@ pub struct AccountInfo {
 	pub private_key: H256,
 }
 
+use sp_core::testing::SR25519; // Or any other mechanism for test key generation
+
 fn address_build(seed: u8) -> AccountInfo {
-	let private_key = H256::from_slice(&[(seed + 1); 32]); //H256::from_low_u64_be((i + 1) as u64);
-	let secret_key = libsecp256k1::SecretKey::parse_slice(&private_key[..]).unwrap();
-	let public_key = &libsecp256k1::PublicKey::from_secret_key(&secret_key).serialize()[1..65];
+	let (account_id, _) = SR25519::pair_from_seed_slice(&[(seed + 1) as u8; 32]);
+	let private_key = H256::from_slice(&[(seed + 1); 32]);
+	let public_key = &libsecp256k1::PublicKey::from_secret_key(&libsecp256k1::SecretKey::parse_slice(&private_key[..]).unwrap()).serialize()[1..65];
 	let address = H160::from(H256::from(keccak_256(public_key)));
 
 	let mut data = [0u8; 32];

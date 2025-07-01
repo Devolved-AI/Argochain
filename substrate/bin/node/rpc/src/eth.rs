@@ -98,7 +98,7 @@ where
     EC: EthConfig<Block, C>,
 {
     use fc_rpc::{
-        Debug, DebugApiServer, Eth, EthApiServer, EthDevSigner, EthFilter, EthFilterApiServer,
+        Debug, DebugApiServer, Eth, EthApiServer, EthFilter, EthFilterApiServer,
         EthPubSub, EthPubSubApiServer, EthSigner, Net, NetApiServer, Web3, Web3ApiServer,
     };
 
@@ -124,9 +124,6 @@ where
     } = deps;
 
     let mut signers = Vec::new();
-    if enable_dev_signer {
-        signers.push(Box::new(EthDevSigner::new()) as Box<dyn EthSigner>);
-    }
 
     io.merge(
         Eth::<_, C, P, CT, BE, A, CIDP, EC>::new(

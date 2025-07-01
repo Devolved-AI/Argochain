@@ -169,14 +169,16 @@ mock_account!(
 	}
 );
 
+use sp_core::testing::SR25519; // Or any other mechanism for test key generation
+
 pub fn alith_secret_key() -> [u8; 32] {
-	hex_literal::hex!("5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133")
+	SR25519::pair_from_seed_slice(&[0; 32]).0.to_bytes()
 }
 
 pub fn baltathar_secret_key() -> [u8; 32] {
-	hex_literal::hex!("8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b")
+	SR25519::pair_from_seed_slice(&[1; 32]).0.to_bytes()
 }
 
 pub fn charleth_secret_key() -> [u8; 32] {
-	hex_literal::hex!("0b6e18cafb6ed99687ec547bd28139cafdd2bffe70e6b688025de6b445aa5c5b")
+	SR25519::pair_from_seed_slice(&[2; 32]).0.to_bytes()
 }

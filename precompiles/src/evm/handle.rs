@@ -103,27 +103,85 @@ impl<T: PrecompileHandle> PrecompileHandleExt for T {
 
 environmental::environmental!(EVM_CONTEXT: trait PrecompileHandle);
 
+/// A wrapper that holds a reference to a PrecompileHandle with proper lifetime management
+struct PrecompileHandleWrapper<'a> {
+	handle: &'a mut dyn PrecompileHandle,
+}
+
+impl<'a> PrecompileHandle for PrecompileHandleWrapper<'a> {
+	fn call(
+		&mut self,
+		address: sp_core::H160,
+		transfer: Option<evm::Transfer>,
+		input: Vec<u8>,
+		target_gas: Option<u64>,
+		is_static: bool,
+		context: &evm::Context,
+	) -> (evm::ExitReason, Vec<u8>) {
+		self.handle.call(address, transfer, input, target_gas, is_static, context)
+	}
+
+	fn record_cost(&mut self, cost: u64) -> Result<(), evm::ExitError> {
+		self.handle.record_cost(cost)
+	}
+
+	fn remaining_gas(&self) -> u64 {
+		self.handle.remaining_gas()
+	}
+
+	fn log(
+		&mut self,
+		address: sp_core::H160,
+		topics: Vec<sp_core::H256>,
+		data: Vec<u8>,
+	) -> Result<(), evm::ExitError> {
+		self.handle.log(address, topics, data)
+	}
+
+	fn code_address(&self) -> sp_core::H160 {
+		self.handle.code_address()
+	}
+
+	fn input(&self) -> &[u8] {
+		self.handle.input()
+	}
+
+	fn context(&self) -> &evm::Context {
+		self.handle.context()
+	}
+
+	fn is_static(&self) -> bool {
+		self.handle.is_static()
+	}
+
+	fn gas_limit(&self) -> Option<u64> {
+		self.handle.gas_limit()
+	}
+
+	fn record_external_cost(
+		&mut self,
+		ref_time: Option<u64>,
+		proof_size: Option<u64>,
+		storage_growth: Option<u64>,
+	) -> Result<(), fp_evm::ExitError> {
+		self.handle.record_external_cost(ref_time, proof_size, storage_growth)
+	}
+
+	fn refund_external_cost(&mut self, ref_time: Option<u64>, proof_size: Option<u64>) {
+		self.handle.refund_external_cost(ref_time, proof_size)
+	}
+}
+
 pub fn using_precompile_handle<'a, R, F: FnOnce() -> R>(
 	precompile_handle: &'a mut dyn PrecompileHandle,
 	mutator: F,
 ) -> R {
-	// # Safety
-	//
-	// unsafe rust does not mean unsafe, but "the compiler cannot guarantee the safety of the
-	// memory".
-	//
-	// The only risk here is that the lifetime 'a comes to its end while the global variable
-	// `EVM_CONTEXT` still contains the reference to the precompile handle.
-	// The `using` method guarantee that it can't happen because the global variable is freed right
-	// after the execution of the `mutator` closure (whatever the result of the execution).
-	unsafe {
-		EVM_CONTEXT::using(
-			core::mem::transmute::<&'a mut dyn PrecompileHandle, &'static mut dyn PrecompileHandle>(
-				precompile_handle,
-			),
-			mutator,
-		)
-	}
+	// Create a wrapper that implements PrecompileHandle trait
+	let mut wrapper = PrecompileHandleWrapper { handle: precompile_handle };
+	
+	// Use the environmental crate's safe using method with the wrapper
+	// The wrapper ensures proper lifetime management without unsafe transmute
+	EVM_CONTEXT::using(&mut wrapper, mutator)
 }
 
 pub fn with_precompile_handle<R, F: FnOnce(&mut dyn PrecompileHandle) -> R>(f: F) -> Option<R> {

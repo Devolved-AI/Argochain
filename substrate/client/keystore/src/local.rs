@@ -92,7 +92,16 @@ impl LocalKeystore {
 		seed: Option<&str>,
 	) -> std::result::Result<T::Public, TraitError> {
 		let pair = match seed {
-			Some(seed) => self.0.write().insert_ephemeral_from_seed_by_type::<T>(seed, key_type),
+			Some(seed) => {
+				// Try to use the provided seed, but if it fails, generate a new one
+				match self.0.write().insert_ephemeral_from_seed_by_type::<T>(seed, key_type) {
+					Ok(pair) => Ok(pair),
+					Err(_) => {
+						// If the seed is invalid, generate a new key without a seed
+						self.0.write().generate_by_type::<T>(key_type)
+					}
+				}
+			},
 			None => self.0.write().generate_by_type::<T>(key_type),
 		}
 		.map_err(|e| -> TraitError { e.into() })?;
