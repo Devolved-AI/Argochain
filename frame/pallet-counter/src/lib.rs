@@ -22,6 +22,9 @@
 
 pub use pallet::*;
 
+#[cfg(test)]
+mod tests;
+
 #[frame_support::pallet]
 pub mod pallet {
     use frame_support::{
@@ -34,6 +37,7 @@ pub mod pallet {
     use sp_core::{H160, U256, ecdsa};
     use sp_runtime::traits::SaturatedConversion;
     use codec::Encode;
+    extern crate alloc;
     #[allow(unused_imports)]
     use sp_io::crypto::secp256k1_ecdsa_recover_compressed;
     use sp_io::hashing::keccak_256;
@@ -305,9 +309,9 @@ pub mod pallet {
                 !url_patterns.iter().any(|&pattern| message_str.contains(pattern)),
                 Error::<T>::SuspiciousContent
             );
-            let blacklisted_words = ["scam", "fraud", "hack", "illegal", "phishing"];
+            // Enhanced content filtering with better bypass detection
             ensure!(
-                !blacklisted_words.iter().any(|&word| message_str.to_lowercase().contains(word)),
+                !Self::contains_suspicious_content(message_str),
                 Error::<T>::SuspiciousContent
             );
             ensure!(
@@ -415,37 +419,195 @@ pub mod pallet {
             false
         }
     
-        pub fn contains_ipv4_address(message: &str) -> bool {
-            let parts: Vec<&str> = message.split('.').collect();
-            if parts.len() == 4 {
-                for part in parts {
-                    if let Ok(num) = part.parse::<u8>() {
-                        if !(0..=255).contains(&num) {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
+        /// Enhanced suspicious content detection with bypass prevention
+        pub fn contains_suspicious_content(message: &str) -> bool {
+            let normalized = Self::normalize_text(message);
+            
+            // Enhanced blacklist with common variations and leetspeak
+            let suspicious_patterns = [
+                "scam", "sc4m", "5cam", "s(am", "sc@m",
+                "fraud", "fr4ud", "frawd", "fr@ud",
+                "hack", "h4ck", "h@ck", "hak",
+                "illegal", "1llegal", "!llegal", "il1egal",
+                "phishing", "ph1shing", "phish1ng", "fish1ng",
+                "steal", "st3al", "5teal",
+                "malware", "m4lware", "malw4re",
+                "virus", "v1rus", "v!rus",
+                "trojan", "tr0jan", "tr0j4n",
+                "ransomware", "r4nsomware", "ransom",
+                "keylogger", "k3ylogger", "keylog",
+                "spyware", "spy", "5py",
+                "exploit", "3xploit", "expl0it",
+                "backdoor", "b4ckdoor", "back_door",
+                "botnet", "b0tnet", "bot_net",
+                "ponzi", "p0nzi", "pyramid",
+                "rugpull", "rug_pull", "rug-pull",
+                "airdrop", "air_drop", "4irdrop",
+                "giveaway", "give_away", "g1veaway",
+                "doubler", "d0ubler", "double_your",
+                "investment", "1nvestment", "invest_now",
+                "guaranteed", "gu4ranteed", "guarantee",
+                "profit", "pr0fit", "profits",
+                "earning", "e4rning", "earn_money",
+                "winner", "w1nner", "you_won",
+                "congratulations", "congrats", "congratz",
+                "urgent", "urg3nt", "immediate",
+                "limited_time", "limited", "expires",
+                "crypto_giveaway", "free_crypto", "free_tokens",
+                "wallet_validation", "verify_wallet", "validate",
+                "seed_phrase", "private_key", "mnemonic",
+                "recovery_phrase", "backup_phrase",
+                "metamask", "trustwallet", "coinbase",
+                "binance", "kraken", "exchange",
+                "defi", "nft_mint", "whitelist",
+                "presale", "ico", "ido", "token_sale",
+            ];
+
+            for pattern in &suspicious_patterns {
+                if normalized.contains(pattern) {
+                    return true;
                 }
+            }
+
+            // Check for excessive punctuation or symbols (spam indicator)
+            let symbol_count = normalized.chars().filter(|c| !c.is_alphanumeric() && !c.is_whitespace()).count();
+            if symbol_count > normalized.len() / 3 {
                 return true;
             }
+
+            // Check for repeated characters (spam indicator)
+            let mut prev_char = ' ';
+            let mut repeat_count = 0;
+            for ch in normalized.chars() {
+                if ch == prev_char {
+                    repeat_count += 1;
+                    if repeat_count > 4 {
+                        return true;
+                    }
+                } else {
+                    repeat_count = 0;
+                }
+                prev_char = ch;
+            }
+
             false
+        }
+
+        /// Normalize text to prevent bypass attempts
+        fn normalize_text(text: &str) -> alloc::string::String {
+            text.to_lowercase()
+                .chars()
+                .map(|c| match c {
+                    // Normalize common leetspeak and look-alike characters
+                    '@' => 'a',
+                    '4' => 'a',
+                    '3' => 'e',
+                    '1' | '!' | 'i' => 'i',
+                    '0' => 'o',
+                    '5' | '$' => 's',
+                    '7' => 't',
+                    '8' => 'b',
+                    '9' => 'g',
+                    // Remove separators
+                    '_' | '-' | '.' | ' ' => '',
+                    // Handle parentheses and brackets
+                    '(' | ')' | '[' | ']' | '{' | '}' => '',
+                    // Keep normal characters
+                    _ => c,
+                })
+                .collect()
+        }
+
+        pub fn contains_ipv4_address(message: &str) -> bool {
+            // Enhanced IPv4 detection with better validation
+            let parts: Vec<&str> = message.split('.').collect();
+            if parts.len() != 4 {
+                return false;
+            }
+            
+            for part in parts {
+                // Check for empty parts
+                if part.is_empty() {
+                    return false;
+                }
+                
+                // Check for leading zeros (except single '0')
+                if part.len() > 1 && part.starts_with('0') {
+                    return false;
+                }
+                
+                // Parse and validate range
+                match part.parse::<u16>() {
+                    Ok(num) if num <= 255 => continue,
+                    _ => return false,
+                }
+            }
+            true
         }
     
         pub fn contains_ipv6_address(message: &str) -> bool {
-            let parts: Vec<&str> = message.split(':').collect();
-            if parts.len() > 1 && parts.len() <= 8 {
-                for part in parts {
-                    if part.is_empty() {
-                        continue;
+            // Enhanced IPv6 validation with proper RFC compliance
+            let original = message;
+            
+            // Handle compressed zeros (::)
+            let double_colon_count = original.matches("::").count();
+            if double_colon_count > 1 {
+                return false; // Only one :: allowed
+            }
+            
+            // Split on :: if present
+            let (left, right) = if double_colon_count == 1 {
+                let mut parts = original.splitn(2, "::");
+                (parts.next().unwrap_or(""), parts.next().unwrap_or(""))
+            } else {
+                (original, "")
+            };
+            
+            // Count total groups
+            let left_groups: Vec<&str> = if left.is_empty() { vec![] } else { left.split(':').collect() };
+            let right_groups: Vec<&str> = if right.is_empty() { vec![] } else { right.split(':').collect() };
+            
+            let total_groups = left_groups.len() + right_groups.len();
+            
+            // IPv6 has exactly 8 groups, unless :: is used
+            if double_colon_count == 0 && total_groups != 8 {
+                return false;
+            }
+            if double_colon_count == 1 && total_groups >= 8 {
+                return false;
+            }
+            
+            // Validate each group
+            for groups in [&left_groups, &right_groups] {
+                for group in groups {
+                    if group.is_empty() && double_colon_count == 0 {
+                        return false; // Empty groups only allowed with ::
                     }
-                    if part.len() > 4 || part.chars().any(|c| !c.is_digit(16)) {
-                        return false;
+                    if !group.is_empty() {
+                        if group.len() > 4 {
+                            return false; // Max 4 hex digits per group
+                        }
+                        if !group.chars().all(|c| c.is_ascii_hexdigit()) {
+                            return false; // Must be hex digits
+                        }
                     }
                 }
-                return true;
             }
-            false
+            
+            // Additional checks for edge cases
+            if original.starts_with(":::") || original.ends_with(":::") {
+                return false; // Triple colon not allowed
+            }
+            
+            if original.starts_with(":") && !original.starts_with("::") {
+                return false; // Single leading colon not allowed
+            }
+            
+            if original.ends_with(":") && !original.ends_with("::") {
+                return false; // Single trailing colon not allowed
+            }
+            
+            true
         }
     }
     
