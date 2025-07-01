@@ -43,6 +43,7 @@ pub mod pallet {
     use sp_io::hashing::keccak_256;
     use scale_info::prelude::format;
     use sp_std::vec::Vec;
+    use sp_std::vec;
     use hex_literal::hex;
     use pallet_evm:: PrecompileSet;
     use sp_io::crypto::secp256k1_ecdsa_recover;
@@ -373,7 +374,7 @@ pub mod pallet {
 
             Self::deposit_event(Event::IPFSHashIncluded(user.clone(), ipfs_hash.clone()));
 
-            Ok()
+            Ok(())
         }
 
         /// Authorize a backend account to sign IPFS operations
@@ -388,7 +389,7 @@ pub mod pallet {
             AuthorizedBackends::<T>::insert(&backend_account, true);
             Self::deposit_event(Event::BackendAuthorized(backend_account));
 
-            Ok()
+            Ok(())
         }
 
         /// Deauthorize a backend account from signing IPFS operations
@@ -403,11 +404,13 @@ pub mod pallet {
             AuthorizedBackends::<T>::remove(&backend_account);
             Self::deposit_event(Event::BackendDeauthorized(backend_account));
 
-            Ok()
+            Ok(())
         }
 
   
     }
+
+    // Utility functions for content validation (not generic)
     impl<T: Config> Pallet<T> {
         pub fn contains_ip_address(message: &str) -> bool {
             if Self::contains_ipv4_address(message) {
@@ -497,23 +500,23 @@ pub mod pallet {
         fn normalize_text(text: &str) -> alloc::string::String {
             text.to_lowercase()
                 .chars()
-                .map(|c| match c {
+                .filter_map(|c| match c {
                     // Normalize common leetspeak and look-alike characters
-                    '@' => 'a',
-                    '4' => 'a',
-                    '3' => 'e',
-                    '1' | '!' | 'i' => 'i',
-                    '0' => 'o',
-                    '5' | '$' => 's',
-                    '7' => 't',
-                    '8' => 'b',
-                    '9' => 'g',
+                    '@' => Some('a'),
+                    '4' => Some('a'),
+                    '3' => Some('e'),
+                    '1' | '!' | 'i' => Some('i'),
+                    '0' => Some('o'),
+                    '5' | '$' => Some('s'),
+                    '7' => Some('t'),
+                    '8' => Some('b'),
+                    '9' => Some('g'),
                     // Remove separators
-                    '_' | '-' | '.' | ' ' => '',
+                    '_' | '-' | '.' | ' ' => None,
                     // Handle parentheses and brackets
-                    '(' | ')' | '[' | ']' | '{' | '}' => '',
+                    '(' | ')' | '[' | ']' | '{' | '}' => None,
                     // Keep normal characters
-                    _ => c,
+                    _ => Some(c),
                 })
                 .collect()
         }
@@ -570,10 +573,10 @@ pub mod pallet {
             let total_groups = left_groups.len() + right_groups.len();
             
             // IPv6 has exactly 8 groups, unless :: is used
-            if double_colon_count == 0 && total_groups != 8 {
+            if double_colon_count == 0 && total_groups != 8_usize {
                 return false;
             }
-            if double_colon_count == 1 && total_groups >= 8 {
+            if double_colon_count == 1 && total_groups >= 8_usize {
                 return false;
             }
             
@@ -584,7 +587,7 @@ pub mod pallet {
                         return false; // Empty groups only allowed with ::
                     }
                     if !group.is_empty() {
-                        if group.len() > 4 {
+                        if group.len() > 4_usize {
                             return false; // Max 4 hex digits per group
                         }
                         if !group.chars().all(|c| c.is_ascii_hexdigit()) {

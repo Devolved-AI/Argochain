@@ -2111,7 +2111,8 @@ impl pallet_base_fee::Config for Runtime {
 impl pallet_counter::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type SubstrateCurrency = Balances; 
-    type EvmCurrency = Balances; 
+    type EvmCurrency = Balances;
+    type BackendOrigin = EnsureRoot<AccountId>;
 }
 
 impl pallet_nft_fractionalization::Config for Runtime {
