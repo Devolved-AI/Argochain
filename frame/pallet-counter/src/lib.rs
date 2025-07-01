@@ -1,7 +1,24 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-
-
+//! # Pallet Counter
+//!
+//! A pallet for managing token operations, EVM interactions, and IPFS hash verification.
+//!
+//! ## Overview
+//!
+//! This pallet provides functionality for:
+//! - Minting and burning tokens (root-only operations)
+//! - Locking and unlocking balances
+//! - Cross-chain transfers between Substrate and EVM
+//! - Message-based transfers with content filtering
+//! - IPFS hash verification with configurable backend authorization
+//!
+//! ## Security Features
+//!
+//! - Configurable backend authorization for IPFS operations
+//! - Signature verification for EVM-to-Substrate transfers
+//! - Content filtering for transfer messages
+//! - IP address detection in messages
 
 pub use pallet::*;
 
@@ -16,6 +33,7 @@ pub mod pallet {
     use pallet_evm::Pallet as EvmPallet;
     use sp_core::{H160, U256, ecdsa};
     use sp_runtime::traits::SaturatedConversion;
+    use codec::Encode;
     #[allow(unused_imports)]
     use sp_io::crypto::secp256k1_ecdsa_recover_compressed;
     use sp_io::hashing::keccak_256;
@@ -48,11 +66,18 @@ pub mod pallet {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
         type SubstrateCurrency: Currency<Self::AccountId> + ReservableCurrency<Self::AccountId>;
         type EvmCurrency: Currency<Self::AccountId>;
+        /// Origin that can manage authorized backend accounts
+        type BackendOrigin: frame_support::traits::EnsureOrigin<Self::RuntimeOrigin>;
     }
 
     #[pallet::storage]
     #[pallet::getter(fn locked_balance)]
     pub type LockedBalance<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, SubstrateBalanceOf<T>, ValueQuery>;
+
+    /// Storage for authorized backend accounts that can sign IPFS operations
+    #[pallet::storage]
+    #[pallet::getter(fn authorized_backends)]
+    pub type AuthorizedBackends<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, bool, ValueQuery>;
 
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
@@ -66,7 +91,10 @@ pub mod pallet {
         EvmToSubstrateTransfer(H160, T::AccountId, u128),
         TransferOfBalanceNew{ from: T::AccountId, to: T::AccountId, amount: SubstrateBalanceOf<T>, message: Vec<u8> },
         IPFSHashIncluded(T::AccountId, Vec<u8>),
-
+        /// Backend account has been authorized
+        BackendAuthorized(T::AccountId),
+        /// Backend account has been deauthorized
+        BackendDeauthorized(T::AccountId),
 
     }
 
@@ -85,6 +113,8 @@ pub mod pallet {
         InvalidIPFSHash,
         UnauthorizedBackend,
         UnauthorizedUser,
+        /// Backend account is not authorized
+        BackendNotAuthorized,
     }
 
     #[pallet::call]
@@ -301,16 +331,23 @@ pub mod pallet {
         #[pallet::call_index(8)]
         pub fn include_ipfs_hash(
             origin: OriginFor<T>,
+            backend_account: T::AccountId,
             ipfs_hash: Vec<u8>,
             backend_signature: Vec<u8>,  
         ) -> DispatchResult {
             let user = ensure_signed(origin)?;
 
-            let authorized_backend_account: AccountId32 = AccountId32::new(hex!(
-                "7c650b5b9f657ddcc7a6ddbf9147d33f3b6ffda5009658b1ee6b7e3665a99701"
-            ));
+            // Check if the backend account is authorized
+            ensure!(
+                AuthorizedBackends::<T>::get(&backend_account),
+                Error::<T>::BackendNotAuthorized
+            );
 
-            let backend_bytes: [u8; 32] = *authorized_backend_account.as_ref();
+            // Convert account to bytes for public key
+            let backend_encoded = backend_account.encode();
+            ensure!(backend_encoded.len() == 32, Error::<T>::InvalidSignature);
+            let mut backend_bytes = [0u8; 32];
+            backend_bytes.copy_from_slice(&backend_encoded[..32]);
 
             let backend_public_key = sp_core::sr25519::Public::from_raw(backend_bytes);
 
@@ -332,7 +369,37 @@ pub mod pallet {
 
             Self::deposit_event(Event::IPFSHashIncluded(user.clone(), ipfs_hash.clone()));
 
-            Ok(())
+            Ok()
+        }
+
+        /// Authorize a backend account to sign IPFS operations
+        #[pallet::weight(10_000)]
+        #[pallet::call_index(9)]
+        pub fn authorize_backend(
+            origin: OriginFor<T>,
+            backend_account: T::AccountId,
+        ) -> DispatchResult {
+            T::BackendOrigin::ensure_origin(origin)?;
+
+            AuthorizedBackends::<T>::insert(&backend_account, true);
+            Self::deposit_event(Event::BackendAuthorized(backend_account));
+
+            Ok()
+        }
+
+        /// Deauthorize a backend account from signing IPFS operations
+        #[pallet::weight(10_000)]
+        #[pallet::call_index(10)]
+        pub fn deauthorize_backend(
+            origin: OriginFor<T>,
+            backend_account: T::AccountId,
+        ) -> DispatchResult {
+            T::BackendOrigin::ensure_origin(origin)?;
+
+            AuthorizedBackends::<T>::remove(&backend_account);
+            Self::deposit_event(Event::BackendDeauthorized(backend_account));
+
+            Ok()
         }
 
   
