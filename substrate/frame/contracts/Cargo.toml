@@ -98,8 +98,6 @@ std = [
 	"sp-std/std",
 	"wasm-instrument?/std",
 	"wasmi/std",
-	"xcm-builder/std",
-	"xcm/std",
 ]
 runtime-benchmarks = [
 	"frame-benchmarking/runtime-benchmarks",
@@ -110,7 +108,6 @@ runtime-benchmarks = [
 	"rand_pcg",
 	"sp-runtime/runtime-benchmarks",
 	"wasm-instrument",
-	"xcm-builder/runtime-benchmarks",
 ]
 try-runtime = [
 	"frame-support/try-runtime",

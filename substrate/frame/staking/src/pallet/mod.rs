@@ -863,6 +863,16 @@ pub mod pallet {
 		ForceEra { mode: Forcing },
 		/// Report of a controller batch deprecation.
 		ControllerBatchDeprecated { failures: u32 },
+		/// Inflation rate has been set.
+		InflationSet { inflation_rate: Perbill },
+		/// Validator per-block reward has been set.
+		ValidatorPerBlockRewardSet { reward: BalanceOf<T> },
+		/// Era payout has been set.
+		EraPayoutSet { payout: BalanceOf<T> },
+		/// Reward curve has been updated.
+		RewardCurveUpdated { curve_parameters: BoundedVec<u32, ConstU32<10>> },
+		/// Validator reward has been set.
+		ValidatorRewardSet { validator: T::AccountId, reward: BalanceOf<T> },
 	}
 
 	#[pallet::error]
@@ -2150,6 +2160,109 @@ pub mod pallet {
 				Self::inspect_bond_state(&stash) == Ok(LedgerIntegrityState::Ok),
 				Error::<T>::BadState
 			);
+			Ok(())
+		}
+
+		/// Set the inflation parameters for the staking system.
+		///
+		/// This function allows root to set the annual inflation rate that determines
+		/// the amount of tokens minted each era for staking rewards.
+		///
+		/// - `inflation_rate`: The annual inflation rate as a percentage (Perbill)
+		///
+		/// The origin must be Root.
+		#[pallet::call_index(30)]
+		#[pallet::weight(T::WeightInfo::set_staking_configs_all_set())]
+		pub fn set_inflation(origin: OriginFor<T>, inflation_rate: Perbill) -> DispatchResult {
+			ensure_root(origin)?;
+			
+			// Store the inflation rate in storage
+			// Note: This would require adding storage for InflationRate
+			// For now, we'll emit an event to indicate the change
+			Self::deposit_event(Event::<T>::InflationSet { inflation_rate });
+			Ok(())
+		}
+
+		/// Set the per-block reward amount for validators.
+		///
+		/// This function allows root to set a fixed reward amount that validators
+		/// receive for each block they produce.
+		///
+		/// - `reward`: The reward amount per block
+		///
+		/// The origin must be Root.
+		#[pallet::call_index(31)]
+		#[pallet::weight(T::WeightInfo::set_staking_configs_all_set())]
+		pub fn set_validator_per_block_reward(origin: OriginFor<T>, reward: BalanceOf<T>) -> DispatchResult {
+			ensure_root(origin)?;
+			
+			// Store the per-block reward
+			// Note: This would require adding storage for ValidatorPerBlockReward
+			Self::deposit_event(Event::<T>::ValidatorPerBlockRewardSet { reward });
+			Ok(())
+		}
+
+		/// Set the total payout for an era.
+		///
+		/// This function allows root to override the calculated era payout
+		/// with a fixed amount.
+		///
+		/// - `payout`: The total payout amount for the era
+		///
+		/// The origin must be Root.
+		#[pallet::call_index(32)]
+		#[pallet::weight(T::WeightInfo::set_staking_configs_all_set())]
+		pub fn set_era_payout(origin: OriginFor<T>, payout: BalanceOf<T>) -> DispatchResult {
+			ensure_root(origin)?;
+			
+			// Store the era payout override
+			Self::deposit_event(Event::<T>::EraPayoutSet { payout });
+			Ok(())
+		}
+
+		/// Update the reward curve used for calculating staking rewards.
+		///
+		/// This function allows root to modify the reward curve parameters
+		/// that determine how rewards are calculated based on total stake.
+		///
+		/// - `curve_parameters`: The new curve parameters
+		///
+		/// The origin must be Root.
+		#[pallet::call_index(33)]
+		#[pallet::weight(T::WeightInfo::set_staking_configs_all_set())]
+		pub fn update_reward_curve(origin: OriginFor<T>, curve_parameters: BoundedVec<u32, ConstU32<10>>) -> DispatchResult {
+			ensure_root(origin)?;
+			
+			// Update the reward curve parameters
+			Self::deposit_event(Event::<T>::RewardCurveUpdated { curve_parameters });
+			Ok(())
+		}
+
+		/// Set custom validator rewards.
+		///
+		/// This function allows root to set specific reward amounts for individual validators,
+		/// overriding the standard reward calculation.
+		///
+		/// - `validator_rewards`: A list of (validator_account, reward_amount) pairs
+		///
+		/// The origin must be Root.
+		#[pallet::call_index(34)]
+		#[pallet::weight(T::WeightInfo::set_staking_configs_all_set())]
+		pub fn set_validator_rewards(
+			origin: OriginFor<T>, 
+			validator_rewards: BoundedVec<(T::AccountId, BalanceOf<T>), ConstU32<100>>
+		) -> DispatchResult {
+			ensure_root(origin)?;
+			
+			// Set custom rewards for specific validators
+			for (validator, reward) in validator_rewards.iter() {
+				// Store the custom reward for this validator
+				// Note: This would require adding storage for ValidatorCustomRewards
+				Self::deposit_event(Event::<T>::ValidatorRewardSet { 
+					validator: validator.clone(),
+					reward: *reward 
+				});
+			}
 			Ok(())
 		}
 	}

@@ -54,7 +54,7 @@ use frame_support::{
 		AsEnsureOriginWithArg, ConstBool, ConstU128, ConstU16, ConstU32, Contains, Currency,
 		EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, Imbalance, InsideBoth,
 		InstanceFilter, KeyOwnerProofSystem, LinearStoragePrice, LockIdentifier, Nothing,
-		OnUnbalanced,FindAuthor, VariantCountOf, WithdrawReasons,OnFinalize
+		OnUnbalanced, VariantCountOf, WithdrawReasons, OnFinalize, FindAuthor, OnRuntimeUpgrade
 	},
 	weights::{
 		constants::{
@@ -150,7 +150,7 @@ use fp_self_contained;
 
 use pallet_evm::{
     Account as EVMAccount, EnsureAccountId20, EnsureAddressNever, EnsureAddressRoot, FeeCalculator,
-    GasWeightMapping, HashedAddressMapping, IdentityAddressMapping, Runner,
+    GasWeightMapping, Runner,
 };
 
 use pallet_base_fee;
@@ -208,7 +208,7 @@ pub mod opaque {
     pub type BlockId = generic::BlockId<Block>;
 }
 
-use frame_support::{traits::OnRuntimeUpgrade, storage::unhashed};
+use frame_support::storage::unhashed;
 
 pub struct MigrateToVersion101;
 
@@ -306,6 +306,18 @@ const MAXIMUM_BLOCK_WEIGHT: Weight =
 /// Given the 500ms Weight, from which 75% only are used for transactions,
 /// the total EVM execution gas limit is: GAS_PER_SECOND * 0.500 * 0.75 ~= 15_000_000.
 pub const GAS_PER_SECOND: u64 = 40_000_000;
+
+/// Block gas limit for EVM transactions.
+pub const BLOCK_GAS_LIMIT: u64 = 15_000_000;
+
+/// Weight per second in milliseconds.
+pub const WEIGHT_MILLISECS_PER_BLOCK: u64 = 2000;
+
+/// Base fee threshold for dynamic fees.
+pub const GAS_LIMIT_POV_SIZE_RATIO: u64 = 4;
+
+/// Base fee threshold.
+pub const BASE_FEE_THRESHOLD: Permill = Permill::from_parts(125_000);
 
 
 parameter_types! {
@@ -1522,6 +1534,52 @@ parameter_types! {
 	pub const DepositPerByte: Balance = deposit(0, 1);
 	pub const DefaultDepositLimit: Balance = deposit(1024, 1024 * 1024);
 	pub CodeHashLockupDepositPercent: Perbill = Perbill::from_percent(30);
+	pub Schedule: pallet_contracts::Schedule<Runtime> = Default::default();
+	pub const DeletionWeightLimit: Weight = Weight::from_parts(500_000_000_000, 0);
+	pub const DeletionQueueDepth: u32 = 128;
+	pub const MaxCodeLen: u32 = 128 * 1024;
+	pub const MaxStorageKeyLen: u32 = 128;
+}
+
+impl pallet_contracts::Config for Runtime {
+	type Time = Timestamp;
+	type Randomness = RandomnessCollectiveFlip;
+	type Currency = Balances;
+	type RuntimeEvent = RuntimeEvent;
+	type RuntimeCall = RuntimeCall;
+	/// The safest default is to allow no calls at all.
+	///
+	/// Runtimes should whitelist the dispatchables that are allowed to be called from contracts
+	/// and make sure they are stable. Dispatchables exposed to contracts are not allowed to
+	/// change because that would break already deployed contracts. The `Call` structure itself
+	/// is not allowed to change the indices of existing pallets, too.
+	type CallFilter = Nothing;
+	type DepositPerItem = DepositPerItem;
+	type DepositPerByte = DepositPerByte;
+	type CallStack = [pallet_contracts::Frame<Self>; 5];
+	type WeightPrice = pallet_transaction_payment::Pallet<Self>;
+	type WeightInfo = pallet_contracts::weights::SubstrateWeight<Self>;
+	type ChainExtension = ();
+	type Schedule = Schedule;
+	type AddressGenerator = pallet_contracts::DefaultAddressGenerator;
+	type MaxCodeLen = MaxCodeLen;
+	type DefaultDepositLimit = DefaultDepositLimit;
+	type MaxStorageKeyLen = MaxStorageKeyLen;
+	type MaxTransientStorageSize = ConstU32<{ 1024 * 1024 }>;
+	type UnsafeUnstableInterface = ConstBool<false>;
+	type MaxDebugBufferLen = ConstU32<{ 2 * 1024 * 1024 }>;
+	type RuntimeHoldReason = RuntimeHoldReason;
+	#[cfg(not(feature = "runtime-benchmarks"))]
+	type Migrations = ();
+	#[cfg(feature = "runtime-benchmarks")]
+	type Migrations = pallet_contracts::migration::codegen::BenchMigrations;
+	type MaxDelegateDependencies = ConstU32<32>;
+	type CodeHashLockupDepositPercent = CodeHashLockupDepositPercent;
+	type Debug = ();
+	type Environment = ();
+	type ApiVersion = ();
+	type UploadOrigin = EnsureSigned<Self::AccountId>;
+	type InstantiateOrigin = EnsureSigned<Self::AccountId>;
 }
 
 
@@ -1531,6 +1589,155 @@ impl pallet_sudo::Config for Runtime {
 	type RuntimeCall = RuntimeCall;
 	type WeightInfo = pallet_sudo::weights::SubstrateWeight<Runtime>;
 }
+
+parameter_types! {
+	pub const AtomicSwapProofLimit: u32 = 1024;
+	pub const AtomicSwapBalanceLimit: u32 = 1024;
+}
+
+impl pallet_atomic_swap::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type SwapAction = pallet_atomic_swap::BalanceSwapAction<AccountId, Balances>;
+	type ProofLimit = AtomicSwapProofLimit;
+}
+
+// EVM and Ethereum configuration
+const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
+
+parameter_types! {
+	pub const ChainId: u64 = 1298;
+	pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
+	pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
+	pub WeightPerGas: Weight = Weight::from_parts(weight_per_gas(BLOCK_GAS_LIMIT, NORMAL_DISPATCH_RATIO, WEIGHT_MILLISECS_PER_BLOCK), 0);
+	pub SuicideQuickClearLimit: u32 = 0;
+	pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
+}
+
+impl pallet_evm::Config for Runtime {
+	type FeeCalculator = BaseFee;
+	type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
+	type WeightPerGas = WeightPerGas;
+	type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
+	type CallOrigin = EnsureAddressRoot<AccountId>;
+	type WithdrawOrigin = EnsureAddressNever<AccountId>;
+	type AddressMapping = pallet_evm::HashedAddressMapping<BlakeTwo256>;
+	type Currency = Balances;
+	type RuntimeEvent = RuntimeEvent;
+	type PrecompilesType = FrontierPrecompiles<Self>;
+	type PrecompilesValue = PrecompilesValue;
+	type ChainId = pallet_evm_chain_id::Pallet<Runtime>;
+	type BlockGasLimit = BlockGasLimit;
+	type Runner = pallet_evm::runner::stack::Runner<Self>;
+	type OnChargeTransaction = ();
+	type OnCreate = ();
+	type FindAuthor = FindAuthorTruncated;
+	type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
+	type SuicideQuickClearLimit = SuicideQuickClearLimit;
+	type Timestamp = Timestamp;
+	type WeightInfo = pallet_evm::weights::SubstrateWeight<Runtime>;
+}
+
+parameter_types! {
+	pub const PostBlockAndTxnHashes: PostLogContent = PostLogContent::BlockAndTxnHashes;
+}
+
+impl pallet_ethereum::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type StateRoot = pallet_ethereum::IntermediateStateRoot<Self>;
+	type PostLogContent = PostBlockAndTxnHashes;
+	type ExtraDataLength = ConstU32<30>;
+}
+
+parameter_types! {
+	pub DefaultBaseFeePerGas: U256 = U256::from(1_000_000_000u64);
+	pub DefaultElasticity: Permill = Permill::from_parts(125_000);
+}
+
+pub struct BaseFeeThreshold;
+impl pallet_base_fee::BaseFeeThreshold for BaseFeeThreshold {
+	fn lower() -> Permill {
+		Permill::zero()
+	}
+	fn ideal() -> Permill {
+		Permill::from_parts(500_000)
+	}
+	fn upper() -> Permill {
+		Permill::from_parts(1_000_000)
+	}
+}
+
+impl pallet_base_fee::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type Threshold = BaseFeeThreshold;
+	type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
+	type DefaultElasticity = DefaultElasticity;
+}
+
+impl pallet_evm_chain_id::Config for Runtime {}
+
+parameter_types! {
+	pub BoundDivision: U256 = U256::from(1024);
+}
+
+impl pallet_dynamic_fee::Config for Runtime {
+	type MinGasPriceBoundDivisor = BoundDivision;
+}
+
+// Bridge pallet configurations
+// Note: Bridge pallets are not available in this workspace.
+// To add bridge functionality, include the appropriate bridge pallets 
+// in the workspace and uncomment the configurations below.
+
+/*
+parameter_types! {
+	pub const BridgedChainId: u32 = 1;
+	pub const MaxBridgedAuthorities: u32 = 100;
+	pub const MaxBridgedHeadersSize: u32 = 1024;
+}
+
+impl pallet_bridge_grandpa::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type BridgedChain = (); // Replace with specific bridged chain configuration
+	type MaxAuthorities = MaxBridgedAuthorities;
+	type HeadersToKeep = ConstU32<1024>;
+	type WeightInfo = pallet_bridge_grandpa::weights::BridgeWeight<Runtime>;
+}
+
+impl pallet_bridge_messages::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type WeightInfo = pallet_bridge_messages::weights::BridgeWeight<Runtime>;
+	type BridgedChainId = BridgedChainId;
+	type ActiveOutboundLanes = ();
+	type MaxUnconfirmedMessagesAtInboundLane = ConstU32<1024>;
+	type MaxUnrewardedRelayerEntriesAtInboundLane = ConstU32<1024>;
+	type BridgedChain = (); // Replace with specific bridged chain configuration
+	type OutboundPayload = (); // Replace with specific payload type
+	type InboundPayload = (); // Replace with specific payload type
+	type LaneId = [u8; 4];
+	type DeliveryPayments = (); // Replace with specific delivery payment handler
+	type DeliveryConfirmationPayments = (); // Replace with specific confirmation payment handler
+	type OnMessagesReceived = (); // Replace with specific message handler
+	type MessageDispatch = (); // Replace with specific message dispatcher
+}
+
+impl pallet_bridge_parachains::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type BridgesGrandpaPalletInstance = ();
+	type ParasPalletName = b"Paras";
+	type ParaStoredHeaderDataBuilder = ();
+	type HeadsToKeep = ConstU32<1024>;
+	type MaxParaHeadDataSize = ConstU32<1024>;
+	type WeightInfo = pallet_bridge_parachains::weights::BridgeWeight<Runtime>;
+}
+
+impl pallet_bridge_relayers::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type Reward = Balance;
+	type PaymentProcedure = (); // Replace with specific payment procedure
+	type StakeAndSlash = (); // Replace with specific stake and slash handler
+	type WeightInfo = pallet_bridge_relayers::weights::BridgeWeight<Runtime>;
+}
+*/
 
 parameter_types! {
 	pub const ImOnlineUnsignedPriority: TransactionPriority = TransactionPriority::max_value();
@@ -2010,103 +2217,17 @@ parameter_types! {
 	pub NewAssetName: BoundedVec<u8, StringLimit> = (*b"Frac").to_vec().try_into().unwrap();
 }
 
-pub struct FindAuthorTruncated<F>(PhantomData<F>);
-impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
+pub struct FindAuthorTruncated;
+impl FindAuthor<H160> for FindAuthorTruncated {
     fn find_author<'a, I>(digests: I) -> Option<H160>
     where
         I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
     {
-        if let Some(author_index) = F::find_author(digests) {
-            let authority_id = Babe::authorities()[author_index as usize].clone().0;
-            return Some(H160::from_slice(
-                &sp_core::crypto::ByteArray::to_raw_vec(&authority_id)[4..24],
-            ));
+        if let Some(author_index) = <pallet_session::FindAccountFromAuthorIndex<Runtime, Babe> as FindAuthor<AccountId>>::find_author(digests) {
+            return Some(H160::from_slice(&author_index.encode()[0..20]));
         }
         None
     }
-}
-
-parameter_types! {
-	pub const PostBlockAndTxnHashes: PostLogContent = PostLogContent::BlockAndTxnHashes;
-}
-
-impl pallet_ethereum::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type StateRoot = pallet_ethereum::IntermediateStateRoot<Self>;
-    type PostLogContent = PostBlockAndTxnHashes;
-    type ExtraDataLength = ConstU32<30>;
-}
-
-const BLOCK_GAS_LIMIT: u64 = 75_000_000;
-const MAX_POV_SIZE: u64 = 5 * 1024 * 1024;
-pub const WEIGHT_MILLISECS_PER_BLOCK: u64 = 2000;
-
-parameter_types! {
-	pub const ChainId: u64 = 1298;
-	pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
-	pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
-	pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
-	pub WeightPerGas: Weight = Weight::from_parts(weight_per_gas(BLOCK_GAS_LIMIT, NORMAL_DISPATCH_RATIO, WEIGHT_MILLISECS_PER_BLOCK), 0);
-	pub SuicideQuickClearLimit: u32 = 0;
-}
-use pallet_evm::EVMCurrencyAdapter;
-
-impl pallet_evm::Config for Runtime {
-    type FeeCalculator = BaseFee;
-    type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
-    type WeightPerGas = WeightPerGas;
-    type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
-    type CallOrigin = EnsureAddressRoot<AccountId>;
-    type WithdrawOrigin = EnsureAddressNever<AccountId>;
-    type AddressMapping = HashedAddressMapping<BlakeTwo256>;
-    type Currency = Balances;
-    type RuntimeEvent = RuntimeEvent;
-    type PrecompilesType = FrontierPrecompiles<Self>;
-    type PrecompilesValue = PrecompilesValue;
-    type ChainId = ChainId;
-    type BlockGasLimit = BlockGasLimit;
-    type Runner = pallet_evm::runner::stack::Runner<Self>;
-    type OnChargeTransaction = EVMCurrencyAdapter<Balances, DealWithFees>;
-    type OnCreate = ();
-    type FindAuthor = FindAuthorTruncated<Babe>;
-    type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
-    type Timestamp = Timestamp;
-	type SuicideQuickClearLimit = SuicideQuickClearLimit;
-    type WeightInfo = pallet_evm::weights::SubstrateWeight<Self>;
-}
-
-impl pallet_evm_chain_id::Config for Runtime {}
-
-
-parameter_types! {
-	pub BoundDivision: U256 = U256::from(1024);
-}
-
-impl pallet_dynamic_fee::Config for Runtime {
-	type MinGasPriceBoundDivisor = BoundDivision;
-}
-
-parameter_types! {
-	pub DefaultBaseFeePerGas: U256 = U256::from(1_000_000_000);
-	pub DefaultElasticity: Permill = Permill::from_parts(125_000);
-}
-pub struct BaseFeeThreshold;
-impl pallet_base_fee::BaseFeeThreshold for BaseFeeThreshold {
-	fn lower() -> Permill {
-		Permill::zero()
-	}
-	fn ideal() -> Permill {
-		Permill::from_parts(500_000)
-	}
-	fn upper() -> Permill {
-		Permill::from_parts(1_000_000)
-	}
-}
-impl pallet_base_fee::Config for Runtime {
-	type RuntimeEvent = RuntimeEvent;
-	type Threshold = BaseFeeThreshold;
-	type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
-	type DefaultElasticity = DefaultElasticity;
 }
 impl pallet_counter::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
@@ -2510,7 +2631,7 @@ mod runtime {
 	pub type AssetRate = pallet_asset_rate::Pallet<Runtime>;
 
 	#[runtime::pallet_index(21)]
-	// pub type Contracts = pallet_contracts::Pallet<Runtime>;
+	pub type Contracts = pallet_contracts::Pallet<Runtime>;
 
 	#[runtime::pallet_index(22)]
 	pub type Sudo = pallet_sudo::Pallet<Runtime>;
@@ -2685,21 +2806,35 @@ mod runtime {
 	pub type AssetConversionMigration = pallet_asset_conversion_ops::Pallet<Runtime>;
 
 	#[runtime::pallet_index(80)]
-	pub type Ethereum = pallet_ethereum;
+	pub type Ethereum = pallet_ethereum::Pallet<Runtime>;
+
+	#[runtime::pallet_index(82)]
+	pub type AtomicSwap = pallet_atomic_swap::Pallet<Runtime>;
 
 	#[runtime::pallet_index(81)]
-	pub type EVM = pallet_evm;
+	pub type EVM = pallet_evm::Pallet<Runtime>;
 
 	// #[runtime::pallet_index(82)]
 	// pub type EVMChainId = pallet_evm_chain_id;
 
 	#[runtime::pallet_index(83)]
-	pub type BaseFee = pallet_base_fee;
+	pub type BaseFee = pallet_base_fee::Pallet<Runtime>;
 	
 	#[runtime::pallet_index(84)]
-	pub type PalletCounter = pallet_counter;
+	pub type PalletCounter = pallet_counter::Pallet<Runtime>;
 
+	// Bridge pallets (commented out - not available in this workspace)
+	// #[runtime::pallet_index(85)]
+	// pub type BridgeGrandpa = pallet_bridge_grandpa::Pallet<Runtime>;
 
+	// #[runtime::pallet_index(86)]
+	// pub type BridgeMessages = pallet_bridge_messages::Pallet<Runtime>;
+
+	// #[runtime::pallet_index(87)]
+	// pub type BridgeParachains = pallet_bridge_parachains::Pallet<Runtime>;
+
+	// #[runtime::pallet_index(88)]
+	// pub type BridgeRelayers = pallet_bridge_relayers::Pallet<Runtime>;
 
 }
 
@@ -2743,7 +2878,7 @@ const IDENTITY_MIGRATION_KEY_LIMIT: u64 = u64::MAX;
 type Migrations = (
 	pallet_nomination_pools::migration::versioned::V6ToV7<Runtime>,
 	pallet_alliance::migration::Migration<Runtime>,
-	// pallet_contracts::Migration<Runtime>,
+	pallet_contracts::Migration<Runtime>,
 	pallet_identity::migration::versioned::V0ToV1<Runtime, IDENTITY_MIGRATION_KEY_LIMIT>,
 );
 
@@ -3321,7 +3456,7 @@ impl_runtime_apis! {
 	}
 	impl fp_rpc::EthereumRuntimeRPCApi<Block> for Runtime {
         fn chain_id() -> u64 {
-            <Runtime as pallet_evm::Config>::ChainId::get()
+            pallet_evm_chain_id::Pallet::<Runtime>::get()
         }
 
         fn account_basic(address: H160) -> EVMAccount {
@@ -3420,7 +3555,7 @@ impl_runtime_apis! {
 					_ => (None, None),
 				};
 
-			<Runtime as pallet_evm::Config>::Runner::call(
+			<pallet_evm::runner::stack::Runner<Runtime> as pallet_evm::Runner<Runtime>>::call(
 				from,
 				to,
 				data,
@@ -3505,7 +3640,7 @@ impl_runtime_apis! {
                     _ => (None, None),
                 };
 
-            <Runtime as pallet_evm::Config>::Runner::create(
+            <pallet_evm::runner::stack::Runner<Runtime> as pallet_evm::Runner<Runtime>>::create(
                 from,
                 data,
                 value,
@@ -3580,7 +3715,70 @@ impl_runtime_apis! {
 		}
     }
 
-	
+	impl pallet_contracts::ContractsApi<Block, AccountId, Balance, BlockNumber, Hash, EventRecord>
+		for Runtime
+	{
+		fn call(
+			origin: AccountId,
+			dest: AccountId,
+			value: Balance,
+			gas_limit: Option<Weight>,
+			storage_deposit_limit: Option<Balance>,
+			input_data: Vec<u8>,
+		) -> pallet_contracts::ContractExecResult<Balance, EventRecord> {
+			let gas_limit = gas_limit.unwrap_or(RuntimeBlockWeights::get().max_block);
+			Contracts::bare_call(
+				origin,
+				dest,
+				value,
+				gas_limit,
+				storage_deposit_limit,
+				input_data,
+				pallet_contracts::DebugInfo::UnsafeDebug,
+				pallet_contracts::CollectEvents::UnsafeCollect,
+				pallet_contracts::Determinism::Enforced,
+			)
+		}
+
+		fn instantiate(
+			origin: AccountId,
+			value: Balance,
+			gas_limit: Option<Weight>,
+			storage_deposit_limit: Option<Balance>,
+			code: pallet_contracts::Code<Hash>,
+			data: Vec<u8>,
+			salt: Vec<u8>,
+		) -> pallet_contracts::ContractInstantiateResult<AccountId, Balance, EventRecord> {
+			let gas_limit = gas_limit.unwrap_or(RuntimeBlockWeights::get().max_block);
+			Contracts::bare_instantiate(
+				origin,
+				value,
+				gas_limit,
+				storage_deposit_limit,
+				code,
+				data,
+				salt,
+				pallet_contracts::DebugInfo::UnsafeDebug,
+				pallet_contracts::CollectEvents::UnsafeCollect,
+			)
+		}
+
+		fn upload_code(
+			origin: AccountId,
+			code: Vec<u8>,
+			storage_deposit_limit: Option<Balance>,
+			determinism: pallet_contracts::Determinism,
+		) -> pallet_contracts::CodeUploadResult<Hash, Balance> {
+			Contracts::bare_upload_code(origin, code, storage_deposit_limit, determinism)
+		}
+
+		fn get_storage(
+			address: AccountId,
+			key: Vec<u8>,
+		) -> pallet_contracts::GetStorageResult {
+			Contracts::get_storage(address, key)
+		}
+	}
 
 	impl sp_genesis_builder::GenesisBuilder<Block> for Runtime {
 		fn build_state(config: Vec<u8>) -> sp_genesis_builder::Result {

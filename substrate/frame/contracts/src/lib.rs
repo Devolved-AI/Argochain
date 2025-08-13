@@ -476,14 +476,15 @@ pub mod pallet {
 		#[pallet::no_default_bounds]
 		type ApiVersion: Get<ApiVersion>;
 
-		/// A type that exposes XCM APIs, allowing contracts to interact with other parachains, and
-		/// execute XCM programs.
-		#[pallet::no_default_bounds]
-		type Xcm: xcm_builder::Controller<
-			OriginFor<Self>,
-			<Self as frame_system::Config>::RuntimeCall,
-			BlockNumberFor<Self>,
-		>;
+		// XCM functionality disabled - dependencies not available
+		// /// A type that exposes XCM APIs, allowing contracts to interact with other parachains, and
+		// /// execute XCM programs.
+		// #[pallet::no_default_bounds]
+		// type Xcm: xcm_builder::Controller<
+		// 	OriginFor<Self>,
+		// 	<Self as frame_system::Config>::RuntimeCall,
+		// 	BlockNumberFor<Self>,
+		// >;
 	}
 
 	/// Container for different types that implement [`DefaultConfig`]` of this pallet.
@@ -572,7 +573,6 @@ pub mod pallet {
 			type Debug = ();
 			type Environment = ();
 			type ApiVersion = ();
-			type Xcm = ();
 		}
 	}
 

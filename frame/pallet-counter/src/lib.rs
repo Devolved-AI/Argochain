@@ -35,7 +35,7 @@ pub mod pallet {
     use frame_system::pallet_prelude::*;
     use pallet_evm::Pallet as EvmPallet;
     use sp_core::{H160, U256, ecdsa};
-    use sp_runtime::traits::SaturatedConversion;
+    use sp_runtime::traits::{SaturatedConversion, Zero};
     use codec::Encode;
     extern crate alloc;
     #[allow(unused_imports)]
@@ -79,6 +79,11 @@ pub mod pallet {
     #[pallet::getter(fn locked_balance)]
     pub type LockedBalance<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, SubstrateBalanceOf<T>, ValueQuery>;
 
+    /// Storage for EVM destination addresses associated with locked balances
+    #[pallet::storage]
+    #[pallet::getter(fn locked_destination)]
+    pub type LockedDestination<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, H160, OptionQuery>;
+
     /// Storage for authorized backend accounts that can sign IPFS operations
     #[pallet::storage]
     #[pallet::getter(fn authorized_backends)]
@@ -89,7 +94,7 @@ pub mod pallet {
     pub enum Event<T: Config> {
         Minted { who: T::AccountId, amount: SubstrateBalanceOf<T> },
         Burned { who: T::AccountId, amount: SubstrateBalanceOf<T> },
-        Locked { who: T::AccountId, amount: SubstrateBalanceOf<T> },
+        Locked { who: T::AccountId, amount: SubstrateBalanceOf<T>, destination_evm_address: H160 },
         Unlocked { who: T::AccountId, amount: SubstrateBalanceOf<T> },
         EvmBalanceChecked(H160, U256),
         EvmBalanceMutated(H160, U256, bool),
@@ -152,12 +157,13 @@ pub mod pallet {
 
         #[pallet::weight(10_000)]
         #[pallet::call_index(2)]
-        pub fn lock(origin: OriginFor<T>, amount: SubstrateBalanceOf<T>) -> DispatchResult {
+        pub fn lock(origin: OriginFor<T>, amount: SubstrateBalanceOf<T>, destination_evm_address: H160) -> DispatchResult {
             let who = ensure_signed(origin)?;
 
             T::SubstrateCurrency::reserve(&who, amount)?;
             <LockedBalance<T>>::insert(&who, amount);
-            Self::deposit_event(Event::Locked { who: who.clone(), amount });
+            <LockedDestination<T>>::insert(&who, destination_evm_address);
+            Self::deposit_event(Event::Locked { who: who.clone(), amount, destination_evm_address });
             Ok(())
         }
         
@@ -172,6 +178,13 @@ pub mod pallet {
 
             T::SubstrateCurrency::unreserve(&who, amount);
             <LockedBalance<T>>::mutate(&who, |balance| *balance -= amount);
+            
+            // If fully unlocked, remove the destination address
+            let remaining_balance = <LockedBalance<T>>::get(&who);
+            if remaining_balance.is_zero() {
+                <LockedDestination<T>>::remove(&who);
+            }
+            
             Self::deposit_event(Event::Unlocked { who: who.clone(), amount });
             Ok(())
         }

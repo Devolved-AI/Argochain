@@ -2318,76 +2318,28 @@ pub mod env {
 	/// See [`pallet_contracts_uapi::HostFn::execute_xcm`].
 	#[mutating]
 	fn xcm_execute(
-		ctx: _,
-		memory: _,
-		msg_ptr: u32,
-		msg_len: u32,
+		_ctx: _,
+		_memory: _,
+		_msg_ptr: u32,
+		_msg_len: u32,
 	) -> Result<ReturnErrorCode, TrapReason> {
-		use frame_support::dispatch::DispatchInfo;
-		use xcm::VersionedXcm;
-		use xcm_builder::{ExecuteController, ExecuteControllerWeightInfo};
-
-		ctx.charge_gas(RuntimeCosts::CopyFromContract(msg_len))?;
-		let message: VersionedXcm<CallOf<E::T>> =
-			ctx.read_sandbox_memory_as_unbounded(memory, msg_ptr, msg_len)?;
-
-		let execute_weight =
-			<<E::T as Config>::Xcm as ExecuteController<_, _>>::WeightInfo::execute();
-		let weight = ctx.ext.gas_meter().gas_left().max(execute_weight);
-		let dispatch_info = DispatchInfo { weight, ..Default::default() };
-
-		ctx.call_dispatchable::<XcmExecutionFailed>(
-			dispatch_info,
-			RuntimeCosts::CallXcmExecute,
-			|ctx| {
-				let origin = crate::RawOrigin::Signed(ctx.ext.address().clone()).into();
-				let weight_used = <<E::T as Config>::Xcm>::execute(
-					origin,
-					Box::new(message),
-					weight.saturating_sub(execute_weight),
-				)?;
-
-				Ok(Some(weight_used.saturating_add(execute_weight)).into())
-			},
-		)
+		// XCM functionality disabled - dependencies not available
+		Ok(ReturnErrorCode::XcmExecutionFailed)
 	}
 
 	/// Send an XCM program from the contract to the specified destination.
 	/// See [`pallet_contracts_uapi::HostFn::send_xcm`].
 	#[mutating]
 	fn xcm_send(
-		ctx: _,
-		memory: _,
-		dest_ptr: u32,
-		msg_ptr: u32,
-		msg_len: u32,
-		output_ptr: u32,
+		_ctx: _,
+		_memory: _,
+		_dest_ptr: u32,
+		_msg_ptr: u32,
+		_msg_len: u32,
+		_output_ptr: u32,
 	) -> Result<ReturnErrorCode, TrapReason> {
-		use xcm::{VersionedLocation, VersionedXcm};
-		use xcm_builder::{SendController, SendControllerWeightInfo};
-
-		ctx.charge_gas(RuntimeCosts::CopyFromContract(msg_len))?;
-		let dest: VersionedLocation = ctx.read_sandbox_memory_as(memory, dest_ptr)?;
-
-		let message: VersionedXcm<()> =
-			ctx.read_sandbox_memory_as_unbounded(memory, msg_ptr, msg_len)?;
-		let weight = <<E::T as Config>::Xcm as SendController<_>>::WeightInfo::send();
-		ctx.charge_gas(RuntimeCosts::CallRuntime(weight))?;
-		let origin = crate::RawOrigin::Signed(ctx.ext.address().clone()).into();
-
-		match <<E::T as Config>::Xcm>::send(origin, dest.into(), message.into()) {
-			Ok(message_id) => {
-				ctx.write_sandbox_memory(memory, output_ptr, &message_id.encode())?;
-				Ok(ReturnErrorCode::Success)
-			},
-			Err(e) => {
-				if ctx.ext.append_debug_buffer("") {
-					ctx.ext.append_debug_buffer("seal0::xcm_send failed with: ");
-					ctx.ext.append_debug_buffer(e.into());
-				};
-				Ok(ReturnErrorCode::XcmSendFailed)
-			},
-		}
+		// XCM functionality disabled - dependencies not available
+		Ok(ReturnErrorCode::XcmSendFailed)
 	}
 
 	/// Recovers the ECDSA public key from the given message hash and signature.

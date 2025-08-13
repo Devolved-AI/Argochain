@@ -601,11 +601,11 @@ pallet-bounties = { path = "substrate/frame/bounties", default-features = false,
 pallet-broker = { path = "substrate/frame/broker", default-features = false, version = "0.16.0" }
 pallet-child-bounties = { path = "substrate/frame/child-bounties", default-features = false, version = "36.0.0" }
 pallet-collective = { path = "substrate/frame/collective", default-features = false, version = "37.0.0" }
-# pallet-contracts = { path = "substrate/frame/contracts", default-features = false, version = "37.0.0" }
-# pallet-contracts-fixtures = { path = "substrate/frame/contracts/fixtures" }
-# pallet-contracts-mock-network = { default-features = false, path = "substrate/frame/contracts/mock-network" }
-# pallet-contracts-proc-macro = { path = "substrate/frame/contracts/proc-macro", default-features = false, version = "23.0.1" }
-# pallet-contracts-uapi = { path = "substrate/frame/contracts/uapi", default-features = false, version = "12.0.0" }
+pallet-contracts = { path = "substrate/frame/contracts", default-features = false, version = "37.0.0" }
+pallet-contracts-fixtures = { path = "substrate/frame/contracts/fixtures" }
+pallet-contracts-mock-network = { default-features = false, path = "substrate/frame/contracts/mock-network" }
+pallet-contracts-proc-macro = { path = "substrate/frame/contracts/proc-macro", default-features = false, version = "23.0.1" }
+pallet-contracts-uapi = { path = "substrate/frame/contracts/uapi", default-features = false, version = "12.0.0" }
 pallet-conviction-voting = { path = "substrate/frame/conviction-voting", default-features = false, version = "37.0.0" }
 pallet-core-fellowship = { path = "substrate/frame/core-fellowship", default-features = false, version = "21.1.0" }
 pallet-default-config-example = { path = "substrate/frame/examples/default-config", default-features = false, version = "10.0.0" }

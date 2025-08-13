@@ -21,10 +21,17 @@
 use crate::keyring::*;
 use argochain_runtime::{
 	constants::currency::*, AccountId, AssetsConfig, BalancesConfig, IndicesConfig,
-	RuntimeGenesisConfig, SessionConfig, SocietyConfig, StakerStatus, StakingConfig,
+	RuntimeGenesisConfig, SessionConfig, SocietyConfig, StakerStatus, StakingConfig, SudoConfig,
 };
 use sp_keyring::Ed25519Keyring;
 use sp_runtime::Perbill;
+use sp_core::crypto::Ss58Codec;
+
+/// Helper function to get sudo account from SS58 address
+fn get_sudo_account() -> Option<AccountId> {
+	// First wallet address: 5GP6QhAFgC2AGqk4SjBxjo8QbsyFSqLerFXkeei3Ja4ub6yC
+	AccountId::from_ss58check("5GP6QhAFgC2AGqk4SjBxjo8QbsyFSqLerFXkeei3Ja4ub6yC").ok()
+}
 
 /// Create genesis runtime configuration for tests.
 pub fn config() -> RuntimeGenesisConfig {
@@ -69,6 +76,7 @@ pub fn config_endowed(extra_endowed: Vec<AccountId>) -> RuntimeGenesisConfig {
 		},
 		society: SocietyConfig { pot: 0 },
 		assets: AssetsConfig { assets: vec![(9, alice(), true, 1)], ..Default::default() },
+		sudo: SudoConfig { key: get_sudo_account() },
 		..Default::default()
 	}
 }

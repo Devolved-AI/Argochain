@@ -53,6 +53,14 @@ pallet-evm-precompile-sha3fips = { workspace = true }
 pallet-evm-precompile-simple = { workspace = true }
 pallet-hotfix-sufficients = { workspace = true}
 pallet-counter={workspace = true}
+pallet-contracts = { workspace = true }
+pallet-atomic-swap = { workspace = true }
+# Bridge pallets
+# Note: Bridge pallets are not available in this workspace
+# pallet-bridge-grandpa = { workspace = true }
+# pallet-bridge-messages = { workspace = true }
+# pallet-bridge-parachains = { workspace = true }
+# pallet-bridge-relayers = { workspace = true }
 hex-literal = "0.4.1"
 
 
@@ -87,15 +95,36 @@ std = [
 	"pallet-evm-precompile-sha3fips/std",
 	"pallet-evm-precompile-simple/std",
 	"pallet-counter/std",
+	"pallet-contracts/std",
+	"pallet-atomic-swap/std",
+	# Bridge pallets std features (commented out - not available in this workspace)
+	# "pallet-bridge-grandpa/std",
+	# "pallet-bridge-messages/std",
+	# "pallet-bridge-parachains/std",
+	# "pallet-bridge-relayers/std",
 ]
 runtime-benchmarks = [
 	"pallet-example-mbm/runtime-benchmarks",
 	"pallet-example-tasks/runtime-benchmarks",
+	"pallet-contracts/runtime-benchmarks",
+	# "pallet-atomic-swap/runtime-benchmarks", # Feature not available
+	# Bridge pallets runtime-benchmarks (commented out - not available in this workspace)
+	# "pallet-bridge-grandpa/runtime-benchmarks",
+	# "pallet-bridge-messages/runtime-benchmarks",
+	# "pallet-bridge-parachains/runtime-benchmarks",
+	# "pallet-bridge-relayers/runtime-benchmarks",
 	"polkadot-sdk/runtime-benchmarks",
 ]
 try-runtime = [
 	"pallet-example-mbm/try-runtime",
 	"pallet-example-tasks/try-runtime",
+	"pallet-contracts/try-runtime",
+	# "pallet-atomic-swap/try-runtime", # Feature not available
+	# Bridge pallets try-runtime (commented out - not available in this workspace)
+	# "pallet-bridge-grandpa/try-runtime",
+	# "pallet-bridge-messages/try-runtime",
+	# "pallet-bridge-parachains/try-runtime",
+	# "pallet-bridge-relayers/try-runtime",
 	"polkadot-sdk/try-runtime",
 	"pallet-ethereum/runtime-benchmarks",
 	"pallet-evm/runtime-benchmarks",
