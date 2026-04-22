@@ -334,7 +334,7 @@ dependencies = [
  "pallet-transaction-payment-rpc-runtime-api",
  "parity-scale-codec",
  "platforms",
- "rand 0.8.5",
+ "rand 0.8.6",
  "regex",
  "sc-authority-discovery",
  "sc-basic-authorship",
@@ -654,7 +654,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "94893f1e0c6eeab764ade8dc4c0db24caf4fe7cbbaafc0eba0a9030f447b5185"
 dependencies = [
  "num-traits",
- "rand 0.8.5",
+ "rand 0.8.6",
 ]
 
 [[package]]
@@ -2817,7 +2817,7 @@ dependencies = [
  "pallet-evm",
  "parity-scale-codec",
  "prometheus",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rlp",
  "sc-block-builder",
  "sc-client-api",
@@ -2956,7 +2956,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "835c052cb0c08c1acf6ffd71c022172e18723949c8282f2b9f27efbc51e64534"
 dependencies = [
  "byteorder",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rustc-hex",
  "static_assertions",
 ]
@@ -3187,7 +3187,7 @@ dependencies = [
  "linked-hash-map",
  "log",
  "parity-scale-codec",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rand_pcg",
  "sc-block-builder",
  "sc-cli",
@@ -4240,7 +4240,7 @@ dependencies = [
  "async-trait",
  "bytes",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rtcp",
  "rtp",
  "thiserror",
@@ -4413,7 +4413,7 @@ dependencies = [
  "hyper",
  "jsonrpsee-types",
  "parking_lot 0.12.1",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rustc-hash",
  "serde",
  "serde_json",
@@ -4789,7 +4789,7 @@ dependencies = [
  "parking_lot 0.12.1",
  "pin-project",
  "quick-protobuf",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rw-stream-sink",
  "smallvec",
  "thiserror",
@@ -4845,7 +4845,7 @@ dependencies = [
  "multiaddr",
  "multihash",
  "quick-protobuf",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sha2 0.10.7",
  "thiserror",
  "zeroize",
@@ -4870,7 +4870,7 @@ dependencies = [
  "libp2p-swarm",
  "log",
  "quick-protobuf",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sha2 0.10.7",
  "smallvec",
  "thiserror",
@@ -4892,7 +4892,7 @@ dependencies = [
  "libp2p-identity",
  "libp2p-swarm",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "smallvec",
  "socket2 0.4.9",
  "tokio",
@@ -4928,7 +4928,7 @@ dependencies = [
  "log",
  "once_cell",
  "quick-protobuf",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sha2 0.10.7",
  "snow",
  "static_assertions",
@@ -4950,7 +4950,7 @@ dependencies = [
  "libp2p-core",
  "libp2p-swarm",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "void",
 ]
 
@@ -4970,7 +4970,7 @@ dependencies = [
  "log",
  "parking_lot 0.12.1",
  "quinn-proto",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rustls 0.20.8",
  "thiserror",
  "tokio",
@@ -4988,7 +4988,7 @@ dependencies = [
  "libp2p-core",
  "libp2p-identity",
  "libp2p-swarm",
- "rand 0.8.5",
+ "rand 0.8.6",
  "smallvec",
 ]
 
@@ -5007,7 +5007,7 @@ dependencies = [
  "libp2p-identity",
  "libp2p-swarm-derive",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "smallvec",
  "tokio",
  "void",
@@ -5093,7 +5093,7 @@ dependencies = [
  "multihash",
  "quick-protobuf",
  "quick-protobuf-codec",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rcgen 0.9.3",
  "serde",
  "stun",
@@ -5164,7 +5164,7 @@ dependencies = [
  "libsecp256k1-core",
  "libsecp256k1-gen-ecmult",
  "libsecp256k1-gen-genmult",
- "rand 0.8.5",
+ "rand 0.8.6",
  "serde",
  "sha2 0.9.9",
  "typenum",
@@ -5693,7 +5693,7 @@ version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e7d66043b25d4a6cccb23619d10c19c25304b355a7dccd4a8e11423dd2382146"
 dependencies = [
- "rand 0.8.5",
+ "rand 0.8.6",
 ]
 
 [[package]]
@@ -6412,7 +6412,7 @@ dependencies = [
  "pallet-contracts-primitives",
  "pallet-contracts-proc-macro",
  "parity-scale-codec",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rand_pcg",
  "scale-info",
  "serde",
@@ -6551,7 +6551,7 @@ dependencies = [
  "log",
  "pallet-election-provider-support-benchmarking",
  "parity-scale-codec",
- "rand 0.8.5",
+ "rand 0.8.6",
  "scale-info",
  "sp-arithmetic",
  "sp-core",
@@ -7379,7 +7379,7 @@ dependencies = [
  "frame-system",
  "pallet-session",
  "pallet-staking",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sp-runtime",
  "sp-session",
  "sp-std",
@@ -7692,7 +7692,7 @@ dependencies = [
  "lz4",
  "memmap2",
  "parking_lot 0.12.1",
- "rand 0.8.5",
+ "rand 0.8.6",
  "siphasher",
  "snap",
 ]
@@ -8348,7 +8348,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f31999cfc7927c4e212e60fd50934ab40e8e8bfd2d493d6095d2d306bc0764d9"
 dependencies = [
  "bytes",
- "rand 0.8.5",
+ "rand 0.8.6",
  "ring",
  "rustc-hash",
  "rustls 0.20.8",
@@ -8389,9 +8389,9 @@ dependencies = [
 
 [[package]]
 name = "rand"
-version = "0.8.5"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
+checksum = "5ca0ecfa931c29007047d1bc58e623ab12e5590e8c7cc53200d5202b69266d8a"
 dependencies = [
  "libc",
  "rand_chacha 0.3.1",
@@ -8754,7 +8754,7 @@ checksum = "a2a095411ff00eed7b12e4c6a118ba984d113e1079582570d56a5ee723f11f80"
 dependencies = [
  "async-trait",
  "bytes",
- "rand 0.8.5",
+ "rand 0.8.6",
  "serde",
  "thiserror",
  "webrtc-util",
@@ -8990,7 +8990,7 @@ dependencies = [
  "parity-scale-codec",
  "prost",
  "prost-build",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sc-client-api",
  "sc-network",
  "sp-api",
@@ -9085,7 +9085,7 @@ dependencies = [
  "log",
  "names",
  "parity-scale-codec",
- "rand 0.8.5",
+ "rand 0.8.6",
  "regex",
  "rpassword",
  "sc-client-api",
@@ -9274,7 +9274,7 @@ dependencies = [
  "log",
  "parity-scale-codec",
  "parking_lot 0.12.1",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sc-block-builder",
  "sc-chain-spec",
  "sc-client-api",
@@ -9446,7 +9446,7 @@ dependencies = [
  "parking_lot 0.12.1",
  "partial_sort",
  "pin-project",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sc-client-api",
  "sc-network-common",
  "sc-utils",
@@ -9628,7 +9628,7 @@ dependencies = [
  "once_cell",
  "parity-scale-codec",
  "parking_lot 0.12.1",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sc-client-api",
  "sc-network",
  "sc-network-common",
@@ -9759,7 +9759,7 @@ dependencies = [
  "parity-scale-codec",
  "parking_lot 0.12.1",
  "pin-project",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sc-block-builder",
  "sc-chain-spec",
  "sc-client-api",
@@ -9915,7 +9915,7 @@ dependencies = [
  "futures",
  "libc",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rand_pcg",
  "regex",
  "sc-telemetry",
@@ -9937,7 +9937,7 @@ dependencies = [
  "log",
  "parking_lot 0.12.1",
  "pin-project",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sc-utils",
  "serde",
  "serde_json",
@@ -10144,7 +10144,7 @@ version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d22a5ef407871893fd72b4562ee15e4742269b173959db4b8df6f538c414e13"
 dependencies = [
- "rand 0.8.5",
+ "rand 0.8.6",
  "substring",
  "thiserror",
  "url",
@@ -10511,7 +10511,7 @@ dependencies = [
  "http",
  "httparse",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "sha-1",
 ]
 
@@ -10724,7 +10724,7 @@ dependencies = [
  "parking_lot 0.12.1",
  "paste",
  "primitive-types",
- "rand 0.8.5",
+ "rand 0.8.6",
  "regex",
  "scale-info",
  "schnorrkel",
@@ -10953,7 +10953,7 @@ dependencies = [
  "log",
  "parity-scale-codec",
  "paste",
- "rand 0.8.5",
+ "rand 0.8.6",
  "scale-info",
  "serde",
  "sp-application-crypto",
@@ -11032,7 +11032,7 @@ dependencies = [
  "log",
  "parity-scale-codec",
  "parking_lot 0.12.1",
- "rand 0.8.5",
+ "rand 0.8.6",
  "smallvec",
  "sp-core",
  "sp-externalities",
@@ -11478,7 +11478,7 @@ dependencies = [
  "crc",
  "lazy_static",
  "md-5",
- "rand 0.8.5",
+ "rand 0.8.6",
  "ring",
  "subtle",
  "thiserror",
@@ -11509,7 +11509,7 @@ dependencies = [
  "byteorder",
  "crunchy",
  "lazy_static",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rustc-hex",
 ]
 
@@ -11928,7 +11928,7 @@ dependencies = [
  "hmac 0.12.1",
  "once_cell",
  "pbkdf2 0.11.0",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rustc-hash",
  "sha2 0.10.7",
  "thiserror",
@@ -12009,7 +12009,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f57eb36ecbe0fc510036adff84824dd3c24bb781e21bfa67b69d556aa85214f"
 dependencies = [
  "pin-project",
- "rand 0.8.5",
+ "rand 0.8.6",
  "tokio",
 ]
 
@@ -12281,7 +12281,7 @@ dependencies = [
  "idna 0.2.3",
  "ipnet",
  "lazy_static",
- "rand 0.8.5",
+ "rand 0.8.6",
  "smallvec",
  "socket2 0.4.9",
  "thiserror",
@@ -12370,7 +12370,7 @@ dependencies = [
  "futures",
  "log",
  "md-5",
- "rand 0.8.5",
+ "rand 0.8.6",
  "ring",
  "stun",
  "thiserror",
@@ -12386,7 +12386,7 @@ checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
 dependencies = [
  "cfg-if",
  "digest 0.10.7",
- "rand 0.8.5",
+ "rand 0.7.3",
  "static_assertions",
 ]
 
@@ -12979,7 +12979,7 @@ dependencies = [
  "memfd",
  "memoffset 0.8.0",
  "paste",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rustix 0.36.15",
  "wasmtime-asm-macros",
  "wasmtime-environ",
@@ -13051,7 +13051,7 @@ dependencies = [
  "interceptor",
  "lazy_static",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rcgen 0.9.3",
  "regex",
  "ring",
@@ -13116,7 +13116,7 @@ dependencies = [
  "oid-registry 0.6.1",
  "p256",
  "p384",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rand_core 0.6.4",
  "rcgen 0.9.3",
  "ring",
@@ -13145,7 +13145,7 @@ dependencies = [
  "async-trait",
  "crc",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "serde",
  "serde_json",
  "stun",
@@ -13180,7 +13180,7 @@ checksum = "f72e1650a8ae006017d1a5280efb49e2610c19ccc3c0905b03b648aee9554991"
 dependencies = [
  "byteorder",
  "bytes",
- "rand 0.8.5",
+ "rand 0.8.6",
  "rtp",
  "thiserror",
 ]
@@ -13196,7 +13196,7 @@ dependencies = [
  "bytes",
  "crc",
  "log",
- "rand 0.8.5",
+ "rand 0.8.6",
  "thiserror",
  "tokio",
  "webrtc-util",
@@ -13241,7 +13241,7 @@ dependencies = [
  "libc",
  "log",
  "nix 0.24.3",
- "rand 0.8.5",
+ "rand 0.8.6",
  "thiserror",
  "tokio",
  "winapi",
@@ -13586,7 +13586,7 @@ dependencies = [
  "log",
  "nohash-hasher",
  "parking_lot 0.12.1",
- "rand 0.8.5",
+ "rand 0.8.6",
  "static_assertions",
 ]
 
